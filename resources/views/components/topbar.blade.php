@@ -18,8 +18,8 @@ $programs = [
     
     <!-- Left Side: Brand -->
     <div class="flex items-center gap-4">
-        <!-- Mobile menu button -->
-        <button @click="sidebarOpen = true" class="lg:hidden text-textMuted-light dark:text-textMuted-dark hover:text-navy-light dark:hover:text-teal-light transition-colors">
+        <!-- Mobile & Desktop menu button -->
+        <button @click="sidebarOpen = !sidebarOpen" class="text-textMuted-light dark:text-textMuted-dark hover:text-navy-light dark:hover:text-teal-light transition-colors p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
             <i class="fa-solid fa-bars text-xl"></i>
         </button>
 
@@ -60,25 +60,22 @@ $programs = [
         </nav>
         @else
         <div class="hidden lg:flex items-center">
-            <span class="bg-teal-light/10 text-teal-light dark:bg-teal-dark/20 dark:text-teal-400 px-3 py-1.5 rounded-lg text-sm font-bold border border-teal-light/20 dark:border-teal-dark/30">
-                <i class="fa-solid fa-server mr-2"></i> Pengaturan Sistem Terpadu
-            </span>
+            <a href="/greetings" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-textMain-light dark:text-textMain-dark text-sm font-bold transition-colors">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
         </div>
         @endif
 
         <!-- Theme Toggle & Profile Info -->
         <div class="flex items-center gap-3 pl-3 lg:pl-4 border-l border-gray-200 dark:border-gray-700">
             <!-- Ganti Program -->
+            @if($activeModule !== 'Pengguna')
             <a href="/greetings" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-xs font-bold transition-colors">
                 <i class="fa-solid fa-grid-2"></i> Ganti Program
             </a>
-            
-            @if(session('username') === 'admin')
-            <!-- Manajemen Pengguna (Admin) -->
-            <a href="/users" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-teal-light/20 bg-teal-light/5 hover:bg-teal-light/10 dark:border-teal-dark/30 dark:bg-teal-dark/10 dark:hover:bg-teal-dark/20 text-teal-light dark:text-teal-400 text-xs font-bold transition-colors">
-                <i class="fa-solid fa-users-gear"></i> Pengguna
-            </a>
             @endif
+            
+
             
             <!-- Theme Toggle -->
             <button @click="darkMode = !darkMode; if(darkMode) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }" 

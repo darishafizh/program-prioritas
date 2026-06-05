@@ -25,7 +25,7 @@
         }
     </script>
 </head>
-<body x-data="{ sidebarOpen: false, darkMode: document.documentElement.classList.contains('dark') }" class="antialiased bg-bgBody-light dark:bg-bgBody-dark text-textMain-light dark:text-textMain-dark transition-colors duration-300">
+<body x-data="{ sidebarOpen: window.innerWidth >= 1024, darkMode: document.documentElement.classList.contains('dark') }" @resize.window="sidebarOpen = window.innerWidth >= 1024" class="antialiased bg-bgBody-light dark:bg-bgBody-dark text-textMain-light dark:text-textMain-dark transition-colors duration-300">
 
     <!-- Top Navigation (Module Nav) -->
     <x-topbar :activeProgram="$activeProgram ?? 'Bioflok'" :activeModule="$activeModule ?? 'Dashboard'" />
