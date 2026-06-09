@@ -51,45 +51,77 @@
     </div>
 </div>
 
-<!-- KPI Cards & Pipeline (Row 2) -->
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-    <!-- Left KPI -->
-    <div class="lg:col-span-1 flex flex-col gap-6">
-        <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-info/10 dark:bg-info/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="flex items-center gap-4 mb-4 relative z-10">
-                <div class="w-12 h-12 rounded-xl bg-info/10 dark:bg-info/20 flex items-center justify-center text-info dark:text-blue-400 text-xl">
-                    <i class="fa-solid fa-house-chimney-window"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Lokasi</h3>
-                    <div class="text-3xl font-extrabold">124 <span class="text-lg font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
-                </div>
+<!-- KPI Cards (Row 2) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-info/10 dark:bg-info/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-info/10 dark:bg-info/20 flex items-center justify-center text-info dark:text-blue-400 text-xl">
+                <i class="fa-solid fa-house-chimney-window"></i>
             </div>
-            <div class="flex items-center gap-2 text-xs font-medium text-success relative z-10">
-                <i class="fa-solid fa-arrow-trend-up"></i> +12 Lokasi dari tahun lalu
+            <div>
+                <h3 class="text-sm font-semibold text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Lokasi</h3>
+                <div class="text-3xl font-extrabold">124 <span class="text-lg font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
             </div>
         </div>
-
-        <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 dark:bg-teal-400/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <div class="flex items-center gap-4 mb-4 relative z-10">
-                <div class="w-12 h-12 rounded-xl bg-teal-light/10 dark:bg-teal-400/20 flex items-center justify-center text-teal-light dark:text-teal-400 text-xl">
-                    <i class="fa-solid fa-chart-pie"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Rata-Rata Progres</h3>
-                    <div class="text-3xl font-extrabold text-teal-light dark:text-teal-400">45.8%</div>
-                </div>
-            </div>
-            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 relative z-10">
-                <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full" style="width: 45.8%"></div>
-            </div>
+        <div class="flex items-center gap-2 text-xs font-medium text-success relative z-10">
+            <i class="fa-solid fa-arrow-trend-up"></i> +12 Lokasi dari tahun lalu
         </div>
     </div>
 
-    <!-- Pipeline Process UI -->
-    <div class="lg:col-span-3 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm flex flex-col">
+    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 dark:bg-teal-400/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-teal-light/10 dark:bg-teal-400/20 flex items-center justify-center text-teal-light dark:text-teal-400 text-xl">
+                <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Rata-Rata Progres</h3>
+                <div class="text-3xl font-extrabold text-teal-light dark:text-teal-400">45.8%</div>
+            </div>
+        </div>
+        <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 relative z-10 mt-2">
+            <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full" style="width: 45.8%"></div>
+        </div>
+    </div>
+
+    <!-- Total Selesai -->
+    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-success/10 dark:bg-success/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-success/10 dark:bg-success/20 flex items-center justify-center text-success dark:text-emerald-400 text-xl">
+                <i class="fa-solid fa-check-double"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Selesai</h3>
+                <div class="text-3xl font-extrabold text-success dark:text-emerald-400">9 <span class="text-lg font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-medium text-success relative z-10">
+            <i class="fa-solid fa-arrow-trend-up"></i> Telah serah terima
+        </div>
+    </div>
+
+    <!-- Dalam Pembangunan -->
+    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-warning/10 dark:bg-amber-400/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-warning/10 dark:bg-amber-400/20 flex items-center justify-center text-warning dark:text-amber-500 text-xl">
+                <i class="fa-solid fa-person-digging"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Dalam Pembangunan</h3>
+                <div class="text-3xl font-extrabold text-warning dark:text-amber-500">18 <span class="text-lg font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-medium text-textMuted-light relative z-10">
+            Tahap konstruksi aktif
+        </div>
+    </div>
+</div>
+
+<!-- Pipeline Process UI -->
+<div class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm flex flex-col">
         <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
             <i class="fa-solid fa-timeline text-info dark:text-blue-400"></i> Pipeline Status KNMP
         </h3>
@@ -177,41 +209,40 @@
 
 <!-- 3 Columns: Distribution, Top 10, Bottom 10 (Row 3) -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-    <!-- Distribution Range -->
+    <!-- Status Kesehatan & Deviasi -->
     <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-6">
             <h3 class="font-bold text-sm uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2">
-                <i class="fa-solid fa-chart-bar text-purple-500"></i> Sebaran Persentase
+                <i class="fa-solid fa-heart-pulse text-danger"></i> Status Kesehatan Proyek
             </h3>
         </div>
         <div class="space-y-4">
             <div class="flex items-center gap-3">
-                <div class="w-16 text-xs font-bold text-right">0 - 25%</div>
+                <div class="w-32 text-xs font-bold text-right flex items-center justify-end gap-1"><i class="fa-solid fa-circle-check text-success"></i> Sesuai / Cepat</div>
                 <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-3">
-                    <div class="bg-danger h-3 rounded-full" style="width: 65%"></div>
+                    <div class="bg-success dark:bg-emerald-500 h-3 rounded-full" style="width: 65%"></div>
                 </div>
-                <div class="w-8 text-xs font-bold text-textMuted-light">65</div>
+                <div class="w-8 text-xs font-bold text-textMuted-light">42</div>
             </div>
             <div class="flex items-center gap-3">
-                <div class="w-16 text-xs font-bold text-right">26 - 50%</div>
+                <div class="w-32 text-xs font-bold text-right flex items-center justify-end gap-1"><i class="fa-solid fa-circle-exclamation text-warning"></i> Terlambat Ringan</div>
                 <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-3">
                     <div class="bg-warning dark:bg-amber-500 h-3 rounded-full" style="width: 25%"></div>
-                </div>
-                <div class="w-8 text-xs font-bold text-textMuted-light">25</div>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="w-16 text-xs font-bold text-right">51 - 75%</div>
-                <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-3">
-                    <div class="bg-info dark:bg-blue-400 h-3 rounded-full" style="width: 20%"></div>
                 </div>
                 <div class="w-8 text-xs font-bold text-textMuted-light">20</div>
             </div>
             <div class="flex items-center gap-3">
-                <div class="w-16 text-xs font-bold text-right">76 - 100%</div>
+                <div class="w-32 text-xs font-bold text-right flex items-center justify-end gap-1"><i class="fa-solid fa-triangle-exclamation text-danger"></i> Kritis / Berat</div>
                 <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-3">
-                    <div class="bg-success dark:bg-emerald-500 h-3 rounded-full" style="width: 14%"></div>
+                    <div class="bg-danger h-3 rounded-full" style="width: 15%"></div>
                 </div>
-                <div class="w-8 text-xs font-bold text-textMuted-light">14</div>
+                <div class="w-8 text-xs font-bold text-textMuted-light">8</div>
+            </div>
+            <div class="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div class="flex-1 flex items-center justify-between bg-danger/10 text-danger px-4 py-3 rounded-xl border border-danger/20">
+                    <div class="text-xs font-bold flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Isu & Kendala Terbuka</div>
+                    <div class="font-extrabold text-lg">12 <span class="text-xs font-medium">Kasus</span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -321,8 +352,8 @@
                 <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
                 <input type="text" placeholder="Cari nama lokasi/desa..." class="w-full pl-8 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:border-info focus:ring-1 focus:ring-info outline-none transition-all">
             </div>
-            <button class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-textMain-light dark:text-textMain-dark rounded-xl text-sm font-bold shadow-sm hover:bg-gray-50 transition-colors">
-                <i class="fa-solid fa-download"></i> Export
+            <button class="px-4 py-2 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-xl text-sm font-bold shadow-sm hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> PDF
             </button>
         </div>
     </div>
@@ -333,10 +364,9 @@
                 <tr>
                     <th class="px-6 py-4">Lokasi / Desa</th>
                     <th class="px-6 py-4">Konstruktor (Vendor)</th>
-                    <th class="px-6 py-4">Tahap Saat Ini</th>
-                    <th class="px-6 py-4">Progres Fisik</th>
-                    <th class="px-6 py-4">Deviasi Rencana</th>
-                    <th class="px-6 py-4 text-right">Detail</th>
+                    <th class="px-6 py-4">Rencana</th>
+                    <th class="px-6 py-4">Progres & Deviasi</th>
+                    <th class="px-6 py-4">Keterangan</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -353,27 +383,30 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-bold bg-info/10 text-info dark:text-blue-400">
-                            Konstruksi
-                        </span>
+                        <div class="font-bold text-textMain-light dark:text-textMain-dark">{{ 45 + ($i * 5) }}%</div>
+                        <div class="text-[0.65rem] text-textMuted-light mt-0.5">Target bulan ini</div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                <div class="bg-info h-2 rounded-full" style="width: {{ 40 + ($i * 10) }}%"></div>
+                        <div class="flex flex-col gap-1.5 w-48">
+                            <div class="flex justify-between items-end">
+                                <span class="font-bold text-sm">{{ 40 + ($i * 10) }}%</span>
+                                @if($i % 2 == 0)
+                                <span class="text-success font-bold text-[0.65rem] flex items-center gap-1 bg-success/10 px-1.5 py-0.5 rounded"><i class="fa-solid fa-arrow-up"></i> +2.5%</span>
+                                @else
+                                <span class="text-danger font-bold text-[0.65rem] flex items-center gap-1 bg-danger/10 px-1.5 py-0.5 rounded"><i class="fa-solid fa-arrow-down"></i> -1.2%</span>
+                                @endif
                             </div>
-                            <span class="font-bold">{{ 40 + ($i * 10) }}%</span>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                <div class="bg-info h-1.5 rounded-full" style="width: {{ 40 + ($i * 10) }}%"></div>
+                            </div>
                         </div>
                     </td>
                     <td class="px-6 py-4">
                         @if($i % 2 == 0)
-                        <span class="text-success font-bold text-xs flex items-center gap-1"><i class="fa-solid fa-arrow-up"></i> +2.5%</span>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-800 text-textMuted-light">Sesuai timeline</span>
                         @else
-                        <span class="text-danger font-bold text-xs flex items-center gap-1"><i class="fa-solid fa-arrow-down"></i> -1.2%</span>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-danger/10 text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Kendala Cuaca</span>
                         @endif
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <button class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-textMuted-light hover:text-info hover:bg-info/10 transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
                     </td>
                 </tr>
                 @endfor

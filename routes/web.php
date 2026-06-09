@@ -20,7 +20,7 @@ Route::get('/users', [PortalController::class, 'users'])->name('users');
 
 // Program Specific Routes
 Route::get('/dashboard/{program}', [ProgramController::class, 'dashboard'])->name('program.dashboard');
-Route::get('/master/{program}', [ProgramController::class, 'master'])->name('program.master');
-Route::get('/operasional/{program}', [ProgramController::class, 'operasional'])->name('program.operasional');
-Route::get('/evaluasi/{program}', [ProgramController::class, 'evaluasi'])->name('program.evaluasi');
+Route::get('/master/{program}/{menu?}', [ProgramController::class, 'master'])->name('program.master');
+Route::get('/operasional/{program}/{menu?}', [ProgramController::class, 'operasional'])->name('program.operasional');
+Route::get('/evaluasi/{program}/{menu?}', [ProgramController::class, 'evaluasi'])->name('program.evaluasi');
 

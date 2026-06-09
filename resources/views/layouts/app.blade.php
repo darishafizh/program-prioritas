@@ -54,5 +54,8 @@
         </div>
     </div>
 
+    <!-- Dynamic Confirm Modal -->
+    <x-confirm-modal />
+
 </body>
 </html>
