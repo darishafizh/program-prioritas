@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo-kkp.png') }}">
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Styles / Scripts -->
@@ -31,34 +31,34 @@
     <div class="min-h-screen w-full relative flex items-center justify-center bg-cover bg-center" style="background-image: url('{{ asset('assets/images/login-bg.png') }}');">
         
         <!-- Overlay -->
-        <div class="absolute inset-0 bg-navy-light/30 dark:bg-navy-dark/50"></div>
+        <div class="absolute inset-0 bg-navy-light/40 dark:bg-navy-dark/60"></div>
 
         <!-- Theme Toggle Absolute -->
         <button @click="darkMode = !darkMode; if(darkMode) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }" 
-                class="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center bg-white/20 dark:bg-black/20 backdrop-blur-md text-white hover:bg-white/30 transition-all z-20 shadow-lg border border-white/10">
+                class="absolute top-6 right-6 w-10 h-10 rounded-md flex items-center justify-center bg-white/15 backdrop-blur-md text-white hover:bg-white/25 transition-all z-20 border border-white/10">
             <i class="fa-solid" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
         </button>
 
         <!-- Login Card Container -->
         <div class="relative z-10 w-full max-w-md px-6">
             
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-[2rem] shadow-2xl overflow-hidden border border-white/20 dark:border-gray-800 transition-colors duration-300">
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-colors duration-300">
                 
                 <!-- Card Header -->
-                <div class="pt-10 pb-6 px-8 text-center bg-gradient-to-b from-gray-50/50 to-transparent dark:from-gray-800/50 dark:to-transparent border-b border-gray-100 dark:border-gray-800">
-                    <div class="w-20 h-20 mx-auto mb-4 relative">
-                        <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-full h-full object-contain relative z-10 dark:bg-white dark:rounded-full dark:p-1.5 transition-all">
+                <div class="pt-10 pb-6 px-8 text-center border-b border-gray-100 dark:border-gray-800">
+                    <div class="w-18 h-18 mx-auto mb-4">
+                        <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-full h-full object-contain dark:bg-white dark:rounded-full dark:p-1.5 transition-all">
                     </div>
-                    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-navy-light to-teal-light dark:from-teal-dark dark:to-teal-light tracking-tight mb-1">
+                    <h1 class="text-base font-medium text-textMain-light dark:text-white tracking-tight mb-1">
                         Program Prioritas
                     </h1>
-                    <p class="text-sm font-medium text-textMuted-light dark:text-textMuted-dark">Portal Sistem Terpadu KKP</p>
+                    <p class="text-sm text-textMuted-light dark:text-textMuted-dark">Portal Sistem Terpadu KKP</p>
                 </div>
 
                 <!-- Card Body -->
                 <div class="p-8">
                     @if(session('error'))
-                    <div class="mb-4 p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-xs font-bold flex items-center gap-2">
+                    <div class="mb-4 p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm font-medium flex items-center gap-2">
                         <i class="fa-solid fa-circle-exclamation"></i>
                         {{ session('error') }}
                     </div>
@@ -69,22 +69,22 @@
                         
                         <!-- Username Field -->
                         <div>
-                            <label class="block text-xs font-bold text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest mb-2">Username</label>
+                            <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-2">Username</label>
                             <div class="relative">
-                                <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-textMuted-light dark:text-textMuted-dark"></i>
+                                <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="text" name="username" required placeholder="Masukkan username Anda" 
-                                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
+                                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
                             </div>
                         </div>
 
                         <!-- Password Field -->
                         <div x-data="{ showPassword: false }">
-                            <label class="block text-xs font-bold text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest mb-2">Password</label>
+                            <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-2">Password</label>
                             <div class="relative">
-                                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-textMuted-light dark:text-textMuted-dark"></i>
+                                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="••••••••" 
-                                       class="w-full pl-11 pr-12 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
-                                <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-textMuted-light hover:text-teal-light transition-colors">
+                                       class="w-full pl-11 pr-12 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
+                                <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-textMain-light transition-colors">
                                     <i class="fa-regular" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                                 </button>
                             </div>
@@ -92,16 +92,16 @@
 
                         <!-- Captcha Field -->
                         <div>
-                            <label class="block text-xs font-bold text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest mb-2">Berapa hasil dari {{ $num1 }} + {{ $num2 }}?</label>
+                            <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-2">Berapa hasil dari {{ $num1 }} + {{ $num2 }}?</label>
                             <div class="relative">
-                                <i class="fa-solid fa-calculator absolute left-4 top-1/2 -translate-y-1/2 text-textMuted-light dark:text-textMuted-dark"></i>
+                                <i class="fa-solid fa-calculator absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                 <input type="number" name="captcha" required placeholder="Masukkan jawaban" 
-                                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
+                                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
                             </div>
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-navy-light to-teal-light dark:from-navy-dark dark:to-teal-dark text-white font-bold text-sm shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <button type="submit" class="w-full py-3 rounded-md bg-teal-light hover:bg-teal-light/90 text-white font-medium text-xs shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
                             Masuk ke Sistem <i class="fa-solid fa-arrow-right-to-bracket"></i>
                         </button>
                     </form>
@@ -109,7 +109,7 @@
                 
                 <!-- Footer -->
                 <div class="pb-6 text-center">
-                    <p class="text-[0.65rem] font-medium text-textMuted-light/70 dark:text-textMuted-dark/50">
+                    <p class="text-xs text-textMuted-light/60 dark:text-textMuted-dark/50">
                         &copy; 2026 Kementerian Kelautan dan Perikanan
                     </p>
                 </div>
@@ -119,3 +119,8 @@
 
 </body>
 </html>
+
+
+
+
+

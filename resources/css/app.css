@@ -7,11 +7,11 @@
   --color-teal-dark: #06b6d4;
   --color-navyLight-light: #1E3A5F;
   --color-navyLight-dark: #1e293b;
-  --color-textMain-light: #334155;
+  --color-textMain-light: #1e293b;
   --color-textMain-dark: #F9FAFB;
-  --color-textMuted-light: #4B5563;
-  --color-textMuted-dark: #9CA3AF;
-  --color-bgBody-light: #FAFAFB;
+  --color-textMuted-light: #64748b;
+  --color-textMuted-dark: #94a3b8;
+  --color-bgBody-light: #F8FAFC;
   --color-bgBody-dark: #0b0f19;
   --color-bgSurface-light: #FFFFFF;
   --color-bgSurface-dark: #111827;
@@ -22,16 +22,29 @@
   --color-info: #3B82F6;
   --color-warning: #F59E0B;
   
-  --font-sans: "Poppins", sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 15px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 32px;
 }
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
   body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     background-color: var(--color-bgBody-light);
     color: var(--color-textMain-light);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
@@ -40,18 +53,28 @@
     background-color: var(--color-bgBody-dark);
     color: var(--color-textMain-dark);
   }
+
+  /* Clean heading defaults */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+    line-height: 1.3;
+  }
+  h1 { font-weight: 600; }
+  h2 { font-weight: 600; }
+  h3 { font-weight: 600; }
+  h4 { font-weight: 500; }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: #e2e8f0;
   border-radius: 20px;
 }
 .dark ::-webkit-scrollbar-thumb {
