@@ -1,27 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Knmp;
+namespace App\Http\Controllers\Knmp\Operasional;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
 use App\Models\Knmp;
 use App\Models\KonstruksiKnmp;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsulanTemplateExport;
+use App\Imports\UsulanImport;
+use App\Exports\ProgresTemplateExport;
+use App\Imports\ProgresImport;
 
-class OperasionalController extends ProgramBaseController
+class PelaksanaanController extends ProgramBaseController
 {
-    public function index(Request $request, $program, $menu = null)
+    public function index(Request $request, $program)
     {
         $this->checkAuth();
         $activeProgram = $this->formatProgramName($program);
         
-        if ($menu === 'kendala') {
-            return view('programs.knmp.operasional.kendala', ['activeModule' => 'Operasional', 'activeProgram' => $activeProgram]);
-        }
-        if ($menu === 'pencairan') {
-            return view('programs.knmp.operasional.pencairan', ['activeModule' => 'Operasional', 'activeProgram' => $activeProgram]);
-        }
-        
-        // Query data from database grouped by tahap_saat_ini
         $usulanData = Knmp::where('tahap_saat_ini', 'usulan')
             ->select('id', 'nama', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'status', 'latitude', 'longitude')
             ->get()->map(fn($k) => [
@@ -159,5 +156,69 @@ class OperasionalController extends ProgramBaseController
         }
 
         return back()->with('success', 'Foto berhasil diunggah dan disimpan.');
+    }
+
+    public function moveStage(Request $request, $program)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:mysql_knmp.knmp,id',
+            'target_stage' => 'required|in:survey,ded,lelang,konstruksi,serah_terima'
+        ]);
+
+        // When moving to 'konstruksi', we need to create a KonstruksiKnmp entry if it doesn't exist
+        if ($request->target_stage === 'konstruksi') {
+            foreach ($request->ids as $id) {
+                KonstruksiKnmp::firstOrCreate(['knmp_id' => $id], [
+                    'penyedia_jasa_id' => null,
+                    'nomor_kontrak' => '-',
+                    'nilai_kontrak' => 0,
+                    'tanggal_mulai' => now(),
+                    'tanggal_selesai' => now()->addMonths(3),
+                ]);
+            }
+        }
+
+        Knmp::whereIn('id', $request->ids)->update(['tahap_saat_ini' => $request->target_stage]);
+
+        return back()->with('success', count($request->ids) . ' lokasi berhasil dipindahkan ke tahap ' . ucfirst($request->target_stage) . '.');
+    }
+
+    public function downloadTemplateUsulan()
+    {
+        return Excel::download(new UsulanTemplateExport, 'Template_Usulan_KNMP.xlsx');
+    }
+
+    public function importUsulan(Request $request, $program)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'file_excel' => 'required|file|mimes:xlsx,xls|max:5120'
+        ]);
+
+        Excel::import(new UsulanImport, $request->file('file_excel'));
+
+        return back()->with('success', 'Data usulan berhasil diimport.');
+    }
+
+    public function downloadTemplateProgres()
+    {
+        return Excel::download(new ProgresTemplateExport, 'Template_Progres_KNMP.xlsx');
+    }
+
+    public function importProgres(Request $request, $program)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'file_excel' => 'required|file|mimes:xlsx,xls|max:5120'
+        ]);
+
+        Excel::import(new ProgresImport, $request->file('file_excel'));
+
+        return back()->with('success', 'Data progres harian berhasil diimport.');
     }
 }

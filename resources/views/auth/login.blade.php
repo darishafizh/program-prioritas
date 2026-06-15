@@ -45,18 +45,18 @@
  <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-colors duration-300">
  
  <!-- Card Header -->
- <div class="pt-10 pb-6 px-8 text-center border-b border-gray-100 dark:border-gray-800">
- <div class="w-18 h-18 mx-auto mb-4">
+ <div class="pt-8 pb-5 px-6 text-center border-b border-gray-100 dark:border-gray-800">
+ <div class="w-14 h-14 mx-auto mb-3">
  <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-full h-full object-contain dark:bg-white dark:rounded-full dark:p-1.5 transition-all">
  </div>
- <h1 class="text-base font-medium text-textMain-light dark:text-white tracking-tight mb-1">
- Program Prioritas
- </h1>
- <p class="text-sm text-textMuted-light dark:text-textMuted-dark">Portal Sistem Terpadu KKP</p>
+    <h1 class="text-xl font-semibold tracking-tight text-textMain-light dark:text-white">
+        Sistem Terintegrasi
+    </h1>
+    <p class="text-[11px] font-normal text-textMuted-light dark:text-textMuted-dark mt-1">Program Prioritas Kementerian Kelautan dan Perikanan</p>
  </div>
 
  <!-- Card Body -->
- <div class="p-8">
+ <div class="p-6">
  @if(session('error'))
  <div class="mb-4 p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm font-medium flex items-center gap-2">
  <i class="fa-solid fa-circle-exclamation"></i>
@@ -64,26 +64,26 @@
  </div>
  @endif
  
- <form action="/login" method="POST" class="space-y-5">
+ <form action="/login" method="POST" class="space-y-4">
  @csrf
  
  <!-- Username Field -->
  <div>
- <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-2">Username</label>
+ <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Username</label>
  <div class="relative">
  <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
  <input type="text" name="username" required placeholder="Masukkan username Anda" 
- class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
+ class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
  </div>
  </div>
 
  <!-- Password Field -->
  <div x-data="{ showPassword: false }">
- <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-2">Password</label>
+ <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Password</label>
  <div class="relative">
  <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
  <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="••••••••" 
- class="w-full pl-11 pr-12 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
+ class="w-full pl-11 pr-12 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
  <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-textMain-light transition-colors">
  <i class="fa-regular" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
  </button>
@@ -92,23 +92,23 @@
 
  <!-- Captcha Field -->
  <div>
- <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-2">Berapa hasil dari {{ $num1 }} + {{ $num2 }}?</label>
+ <label class="block text-sm font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Berapa hasil dari {{ $num1 }} + {{ $num2 }}?</label>
  <div class="relative">
  <i class="fa-solid fa-calculator absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
  <input type="number" name="captcha" required placeholder="Masukkan jawaban" 
- class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
+ class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900 text-sm focus:border-teal-light focus:ring-1 focus:ring-teal-light outline-none transition-all placeholder:text-gray-400">
  </div>
  </div>
 
  <!-- Submit Button -->
- <button type="submit" class="w-full py-3 rounded-md bg-teal-light hover:bg-teal-light/90 text-white font-medium text-xs transition-all flex items-center justify-center gap-2">
+ <button type="submit" class="w-full py-2.5 mt-2 rounded-lg bg-teal-light hover:bg-teal-light/90 text-white font-medium text-xs transition-all flex items-center justify-center gap-2">
  Masuk ke Sistem <i class="fa-solid fa-arrow-right-to-bracket"></i>
  </button>
  </form>
  </div>
  
  <!-- Footer -->
- <div class="pb-6 text-center">
+ <div class="pb-5 text-center">
  <p class="text-xs text-textMuted-light/60 dark:text-textMuted-dark/50">
  &copy; 2026 Kementerian Kelautan dan Perikanan
  </p>

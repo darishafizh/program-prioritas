@@ -6,6 +6,11 @@ return [
             'heading' => 'Ringkasan Eksekutif',
             'items' => [
                 [
+                    'label' => 'Siklus & Operasional',
+                    'icon' => 'fa-arrows-spin',
+                    'url' => '/dashboard/knmp/siklus',
+                ],
+                [
                     'label' => 'Progres Fisik',
                     'icon' => 'fa-person-digging',
                     'url' => '/dashboard/knmp',
@@ -16,19 +21,24 @@ return [
             'heading' => 'Manajemen Data',
             'items' => [
                 [
-                    'label' => 'Calon Lokasi',
-                    'icon' => 'fa-map-location-dot',
-                    'url' => '/master/knmp',
+                    'label' => 'Tahap (Batch)',
+                    'icon' => 'fa-layer-group',
+                    'url' => '/master/knmp/batch',
                 ],
                 [
-                    'label' => 'Komponen Pekerjaan',
+                    'label' => 'Kriteria Lokasi',
                     'icon' => 'fa-list-check',
-                    'url' => '/master/knmp/komponen',
+                    'url' => '/master/knmp/kriteria-lokasi',
                 ],
                 [
                     'label' => 'Data Vendor/Penyedia',
                     'icon' => 'fa-building-user',
                     'url' => '/master/knmp/vendor',
+                ],
+                [
+                    'label' => 'Calon Lokasi',
+                    'icon' => 'fa-map-location-dot',
+                    'url' => '/master/knmp',
                 ]
             ]
         ],
@@ -39,16 +49,6 @@ return [
                     'label' => 'Pelaksanaan Proyek',
                     'icon' => 'fa-helmet-safety',
                     'url' => '/operasional/knmp',
-                ],
-                [
-                    'label' => 'Log Kendala Lapangan',
-                    'icon' => 'fa-triangle-exclamation',
-                    'url' => '/operasional/knmp/kendala',
-                ],
-                [
-                    'label' => 'Manajemen Pencairan',
-                    'icon' => 'fa-money-check-dollar',
-                    'url' => '/operasional/knmp/pencairan',
                 ]
             ]
         ],

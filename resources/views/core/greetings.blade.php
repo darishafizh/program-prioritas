@@ -83,18 +83,18 @@
  <!-- Main Content -->
  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10 flex flex-col">
  
- <div class="text-center mb-6 sm:mb-8">
- <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-light/10 text-textMain-light dark:bg-teal-900/30 dark:text-teal-300 text-xs font-medium mb-3">
+ <div class="text-center mb-10 sm:mb-12">
+ <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-light/10 text-textMain-light dark:bg-teal-900/30 dark:text-teal-300 text-xs font-semibold tracking-wide mb-4">
  <i class="fa-solid fa-anchor"></i> Portal Utama Program Prioritas
  </div>
- <h2 class="text-3xl sm:text-4xl font-medium mb-3 tracking-tight">Selamat Datang, <span class="text-textMain-light">Administrator</span></h2>
- <p class="text-textMuted-light dark:text-textMuted-dark max-w-2xl mx-auto text-sm sm:text-base">Silakan pilih Program Prioritas yang ingin Anda kelola. Setiap program memiliki ruang lingkup pelaporan, pengawasan, dan analisis datanya sendiri.</p>
+ <h2 class="text-3xl sm:text-4xl font-semibold mb-3 tracking-tight">Selamat Datang, <span class="text-textMain-light">Administrator</span></h2>
+ <p class="text-textMuted-light dark:text-textMuted-dark max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">Silakan pilih Program Prioritas yang ingin Anda kelola. Setiap program memiliki ruang lingkup pelaporan, pengawasan, dan analisis datanya sendiri.</p>
  </div>
 
- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto pb-12">
+ <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 gap-6 lg:gap-8 max-w-6xl mx-auto pb-12">
  @foreach($programs as $index => $prog)
  <a href="/dashboard/{{ strtolower(str_replace(' ', '-', $prog['name'])) }}" 
- class="group block bg-bgSurface-light dark:bg-bgSurface-dark/90 rounded-2xl p-6 sm:p-7 border border-gray-100 dark:border-gray-800 hover:border-teal-light/30 dark:hover:border-teal-dark/30 transition-all duration-300 transform hover:-translate-y-0.5 relative overflow-hidden flex flex-col h-full">
+ class="group bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col h-full hover:border-teal-light/30 dark:hover:border-teal-dark/30 transition-all duration-300">
  
  @php
  $themeMap = [
@@ -111,32 +111,28 @@
  $colors = $themeMap[$prog['color']] ?? ['bg' => 'bg-gray-500/10 dark:bg-gray-400/15', 'text' => 'text-gray-500 dark:text-gray-400', 'glow' => 'bg-gray-500'];
  @endphp
  
+ <!-- Decoration Blob like in KNMP -->
+ <div class="absolute top-0 right-0 w-32 h-32 {{ $colors['bg'] }} rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
+
  <div class="flex-1 flex flex-col relative z-10">
- <div class="w-12 h-12 rounded-xl {{ $colors['bg'] }} flex items-center justify-center transition-colors mb-4">
- <i class="fa-solid {{ $prog['icon'] }} text-base {{ $colors['text'] }} transition-colors"></i>
+ <div class="flex items-center gap-4 mb-6">
+ <div class="w-14 h-14 rounded-2xl {{ $colors['bg'] }} flex items-center justify-center">
+ <i class="fa-solid {{ $prog['icon'] }} text-xl {{ $colors['text'] }}"></i>
  </div>
- 
- <h3 class="text-base font-medium text-textMain-light dark:text-textMain-dark transition-colors mb-2 tracking-tight group-hover:text-textMain-light dark:group-hover:text-teal-400">
+ <div>
+ <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark tracking-tight">
  {{ in_array(strtolower($prog['name']), ['knmp', 'bins']) ? strtoupper($prog['name']) : $prog['name'] }}
  </h3>
+ <div class="text-[11px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider mt-0.5">Program Prioritas</div>
+ </div>
+ </div>
  
- <p class="text-sm text-textMuted-light dark:text-textMuted-dark leading-relaxed mb-5 flex-1">
+ <p class="text-[13px] text-textMuted-light dark:text-textMuted-dark leading-relaxed mb-6 flex-1">
  {{ $prog['narrative'] }}
  </p>
  
- <div class="grid grid-cols-2 gap-3 mb-5">
- @foreach($prog['stats'] as $label => $value)
- <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-100 dark:border-gray-800">
- <div class="text-xs text-textMuted-light dark:text-textMuted-dark mb-1 flex items-center gap-1.5 font-medium">
- <span class="w-1.5 h-1.5 rounded-full {{ $colors['glow'] }}"></span> {{ $label }}
- </div>
- <div class="text-base font-medium text-textMain-light dark:text-textMain-dark">{{ $value }}</div>
- </div>
- @endforeach
- </div>
- 
- <div class="mt-auto inline-flex items-center justify-between w-full {{ $colors['text'] }} font-medium text-sm bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 px-4 py-2.5 rounded-xl transition-all">
- <span>Buka Modul</span> <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+ <div class="mt-auto flex items-center gap-2 text-xs font-medium {{ $colors['text'] }} transition-transform group-hover:translate-x-1">
+ Buka Modul Program <i class="fa-solid fa-arrow-right"></i>
  </div>
  </div>
  </a>

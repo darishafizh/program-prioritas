@@ -12,10 +12,10 @@
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <template x-if="currentStage === 'usulan'">
-                    <button class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
                 </template>
                 <template x-if="currentStage === 'konstruksi'">
-                    <button class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
                 </template>
             </div>
         </div>
@@ -51,9 +51,23 @@
         <div class="px-6 pt-5 pb-3 flex justify-between items-center">
             <h3 class="text-base font-medium text-textMuted-light dark:text-textMuted-dark" x-text="stages[currentStage].label"></h3>
             <template x-if="currentStage !== 'serah-terima'">
-                <button class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 w-max"> 
-                    Pindah Tahap <i class="fa-solid fa-arrow-right"></i> 
-                </button>
+                <form action="{{ route('program.operasional.pindah-tahap', ['program' => strtolower($activeProgram)]) }}" method="POST" class="inline-block">
+                    @csrf
+                    <input type="hidden" name="target_stage" :value="
+                        currentStage === 'usulan' ? 'survey' :
+                        (currentStage === 'survei' ? 'ded' :
+                        (currentStage === 'ded' ? 'lelang' :
+                        (currentStage === 'lelang' ? 'konstruksi' : 'serah_terima')))
+                    ">
+                    <template x-for="id in selectedIds" :key="id">
+                        <input type="hidden" name="ids[]" :value="id">
+                    </template>
+                    <button type="submit" :disabled="selectedIds.length === 0" 
+                            class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 w-max disabled:opacity-50 disabled:cursor-not-allowed"> 
+                        <span x-show="selectedIds.length > 0" class="bg-white text-teal-light rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold mr-1" x-text="selectedIds.length"></span>
+                        Pindah Tahap <i class="fa-solid fa-arrow-right"></i> 
+                    </button>
+                </form>
             </template>
         </div>
 
@@ -88,7 +102,7 @@
                 <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                     <tr>
                         <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
@@ -97,9 +111,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
                             <td class="px-6 py-4 text-center">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                                <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
@@ -121,7 +135,7 @@
                 <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                     <tr>
                         <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
@@ -131,9 +145,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
                             <td class="px-6 py-4 text-center">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                                <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
@@ -155,7 +169,7 @@
                 <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                     <tr>
                         <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
@@ -166,9 +180,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
                             <td class="px-6 py-4 text-center">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                                <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
@@ -193,7 +207,7 @@
                 <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                     <tr>
                         <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
@@ -204,9 +218,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
                             <td class="px-6 py-4 text-center">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                                <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
@@ -231,7 +245,7 @@
                 <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                     <tr>
                         <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
@@ -242,9 +256,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
                             <td class="px-6 py-4 text-center">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                                <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
@@ -277,7 +291,7 @@
                 <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                     <tr>
                         <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
@@ -287,9 +301,9 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
                             <td class="px-6 py-4 text-center">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                                <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
@@ -386,13 +400,29 @@
                                     <p class="text-[10px] text-textMuted-light dark:text-textMuted-dark mb-4">Pilih hingga 2 foto kondisi awal (Before).</p>
                                     
                                     <div class="space-y-3">
-                                        <div>
-                                            <label class="block text-[10px] font-medium text-gray-500 mb-1">Foto Before 1</label>
-                                            <input class="block w-full text-sm text-textMuted-light dark:text-textMuted-dark file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-white file:text-red-500 hover:file:bg-red-50 file:shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all relative z-10 p-1" id="foto_before_1" type="file" name="foto_before[]" accept="image/jpeg, image/png, image/jpg">
+                                        <div x-data="{ imgName: '' }">
+                                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Foto Before 1</label>
+                                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50 hover:border-red-400 transition-colors cursor-pointer relative z-10">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                                    <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-red-500">Klik untuk upload</span> atau drag and drop</p>
+                                                    <p class="text-xs text-gray-500">JPG/PNG (Maks. 2MB)</p>
+                                                </div>
+                                                <input id="foto_before_1" type="file" name="foto_before[]" accept="image/jpeg, image/png, image/jpg" class="hidden" @change="imgName = $event.target.files.length ? $event.target.files[0].name : ''">
+                                            </label>
+                                            <p x-show="imgName" class="text-xs text-success mt-2 font-medium text-center truncate" x-text="`File: ${imgName}`"></p>
                                         </div>
-                                        <div>
-                                            <label class="block text-[10px] font-medium text-gray-500 mb-1">Foto Before 2</label>
-                                            <input class="block w-full text-sm text-textMuted-light dark:text-textMuted-dark file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-white file:text-red-500 hover:file:bg-red-50 file:shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all relative z-10 p-1" id="foto_before_2" type="file" name="foto_before[]" accept="image/jpeg, image/png, image/jpg">
+                                        <div x-data="{ imgName: '' }">
+                                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Foto Before 2</label>
+                                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50 hover:border-red-400 transition-colors cursor-pointer relative z-10">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                                    <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-red-500">Klik untuk upload</span> atau drag and drop</p>
+                                                    <p class="text-xs text-gray-500">JPG/PNG (Maks. 2MB)</p>
+                                                </div>
+                                                <input id="foto_before_2" type="file" name="foto_before[]" accept="image/jpeg, image/png, image/jpg" class="hidden" @change="imgName = $event.target.files.length ? $event.target.files[0].name : ''">
+                                            </label>
+                                            <p x-show="imgName" class="text-xs text-success mt-2 font-medium text-center truncate" x-text="`File: ${imgName}`"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -406,13 +436,29 @@
                                     <p class="text-[10px] text-textMuted-light dark:text-textMuted-dark mb-4">Pilih hingga 2 foto kondisi progres (After).</p>
                                     
                                     <div class="space-y-3">
-                                        <div>
-                                            <label class="block text-[10px] font-medium text-gray-500 mb-1">Foto After 1</label>
-                                            <input class="block w-full text-sm text-textMuted-light dark:text-textMuted-dark file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-white file:text-teal-600 hover:file:bg-teal-50 file:shadow-sm border border-teal-200 dark:border-teal-700/50 rounded-xl cursor-pointer bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all relative z-10 p-1" id="foto_after_1" type="file" name="foto_after[]" accept="image/jpeg, image/png, image/jpg">
+                                        <div x-data="{ imgName: '' }">
+                                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Foto After 1</label>
+                                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-teal-300 dark:border-teal-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-50 hover:border-teal-400 transition-colors cursor-pointer relative z-10">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                                    <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-600">Klik untuk upload</span> atau drag and drop</p>
+                                                    <p class="text-xs text-gray-500">JPG/PNG (Maks. 2MB)</p>
+                                                </div>
+                                                <input id="foto_after_1" type="file" name="foto_after[]" accept="image/jpeg, image/png, image/jpg" class="hidden" @change="imgName = $event.target.files.length ? $event.target.files[0].name : ''">
+                                            </label>
+                                            <p x-show="imgName" class="text-xs text-success mt-2 font-medium text-center truncate" x-text="`File: ${imgName}`"></p>
                                         </div>
-                                        <div>
-                                            <label class="block text-[10px] font-medium text-gray-500 mb-1">Foto After 2</label>
-                                            <input class="block w-full text-sm text-textMuted-light dark:text-textMuted-dark file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-white file:text-teal-600 hover:file:bg-teal-50 file:shadow-sm border border-teal-200 dark:border-teal-700/50 rounded-xl cursor-pointer bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all relative z-10 p-1" id="foto_after_2" type="file" name="foto_after[]" accept="image/jpeg, image/png, image/jpg">
+                                        <div x-data="{ imgName: '' }">
+                                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Foto After 2</label>
+                                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-teal-300 dark:border-teal-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-50 hover:border-teal-400 transition-colors cursor-pointer relative z-10">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                                    <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-600">Klik untuk upload</span> atau drag and drop</p>
+                                                    <p class="text-xs text-gray-500">JPG/PNG (Maks. 2MB)</p>
+                                                </div>
+                                                <input id="foto_after_2" type="file" name="foto_after[]" accept="image/jpeg, image/png, image/jpg" class="hidden" @change="imgName = $event.target.files.length ? $event.target.files[0].name : ''">
+                                            </label>
+                                            <p x-show="imgName" class="text-xs text-success mt-2 font-medium text-center truncate" x-text="`File: ${imgName}`"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -422,6 +468,130 @@
                                 <button type="button" @click="isUploadModalOpen = false" class="flex-1 justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-white dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10">Batal</button>
                                 <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-teal-light/30 px-4 py-2.5 bg-gradient-to-r from-teal-light to-emerald-500 text-sm font-semibold text-white hover:from-teal-light/90 hover:to-emerald-500/90 focus:outline-none hover:-translate-y-0.5 transition-all duration-200 relative z-10">
                                     <i class="fa-solid fa-arrow-up-from-bracket mr-2"></i> Simpan Data
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Modal Import Progres -->
+    <template x-teleport="body">
+        <div x-data="{ isImportModalOpen: false }" @open-import-modal.window="isImportModalOpen = true" x-show="isImportModalOpen" class="fixed inset-0 overflow-y-auto" style="display: none; z-index: 99999;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <!-- Background overlay -->
+                <div x-show="isImportModalOpen" @click="isImportModalOpen = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" aria-hidden="true"></div>
+
+                <!-- Modal panel -->
+                <div x-show="isImportModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-bgSurface-dark shadow-2xl rounded-3xl border border-gray-100 dark:border-gray-800">
+                    
+                    <!-- Header Icon & Close -->
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center justify-center w-12 h-12 bg-teal-light/10 text-teal-light rounded-full mb-4">
+                            <i class="fa-solid fa-file-excel text-xl"></i>
+                        </div>
+                        <button type="button" @click="isImportModalOpen = false" class="text-gray-400 hover:text-gray-500 focus:outline-none transition-colors relative z-10">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="mt-2 text-left">
+                            <h3 class="text-xl font-bold leading-6 text-textMain-light dark:text-textMain-dark" id="modal-title">
+                                Import Progres Fisik
+                            </h3>
+                            <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-2 leading-relaxed">Unggah file Excel (Template) untuk memperbarui data progres harian lokasi tahap konstruksi sekaligus.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 space-y-5">
+                        <a href="{{ route('program.operasional.template-progres', ['program' => strtolower($activeProgram)]) }}" class="w-full justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10 flex items-center gap-2">
+                            <i class="fa-solid fa-download text-teal-light text-sm"></i> Download Template Excel
+                        </a>
+                        
+                        <form action="{{ route('program.operasional.import-progres', ['program' => strtolower($activeProgram)]) }}" method="POST" enctype="multipart/form-data" class="w-full">
+                            @csrf
+                            <div x-data="{ fileName: '' }" class="w-full">
+                                <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Upload File Excel <span class="text-danger">*</span></label>
+                                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer relative z-10">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                        <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
+                                        <p class="text-xs text-gray-500">Excel (Maks. 5MB)</p>
+                                    </div>
+                                    <input type="file" name="file_excel" class="hidden" required accept=".xlsx, .xls" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />
+                                </label>
+                                <p x-show="fileName" class="text-sm text-success mt-2 font-medium text-center" x-text="`File terpilih: ${fileName}`"></p>
+                            </div>
+                            
+                            <div class="flex gap-3 mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
+                                <button type="button" @click="isImportModalOpen = false" class="flex-1 justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-white dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10">Batal</button>
+                                <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-teal-light/30 px-4 py-2.5 bg-gradient-to-r from-teal-light to-emerald-500 text-sm font-semibold text-white hover:from-teal-light/90 hover:to-emerald-500/90 focus:outline-none hover:-translate-y-0.5 transition-all duration-200 relative z-10">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Import Data
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Modal Import Usulan -->
+    <template x-teleport="body">
+        <div x-data="{ isImportUsulanModalOpen: false }" @open-import-usulan-modal.window="isImportUsulanModalOpen = true" x-show="isImportUsulanModalOpen" class="fixed inset-0 overflow-y-auto" style="display: none; z-index: 99999;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <!-- Background overlay -->
+                <div x-show="isImportUsulanModalOpen" @click="isImportUsulanModalOpen = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" aria-hidden="true"></div>
+
+                <!-- Modal panel -->
+                <div x-show="isImportUsulanModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-bgSurface-dark shadow-2xl rounded-3xl border border-gray-100 dark:border-gray-800">
+                    
+                    <!-- Header Icon & Close -->
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center justify-center w-12 h-12 bg-teal-light/10 text-teal-light rounded-full mb-4">
+                            <i class="fa-solid fa-file-excel text-xl"></i>
+                        </div>
+                        <button type="button" @click="isImportUsulanModalOpen = false" class="text-gray-400 hover:text-gray-500 focus:outline-none transition-colors relative z-10">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="mt-2 text-left">
+                            <h3 class="text-xl font-bold leading-6 text-textMain-light dark:text-textMain-dark" id="modal-title">
+                                Import Data Usulan
+                            </h3>
+                            <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-2 leading-relaxed">Unggah file Excel (Template) untuk menambahkan data lokasi usulan baru ke dalam sistem.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 space-y-5">
+                        <a href="{{ route('program.operasional.template-usulan', ['program' => strtolower($activeProgram)]) }}" class="w-full justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10 flex items-center gap-2">
+                            <i class="fa-solid fa-download text-teal-light text-sm"></i> Download Template Excel
+                        </a>
+                        
+                        <form action="{{ route('program.operasional.import-usulan', ['program' => strtolower($activeProgram)]) }}" method="POST" enctype="multipart/form-data" class="w-full">
+                            @csrf
+                            <div x-data="{ fileName: '' }" class="w-full">
+                                <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Upload File Excel <span class="text-danger">*</span></label>
+                                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer relative z-10">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                        <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
+                                        <p class="text-xs text-gray-500">Excel (Maks. 5MB)</p>
+                                    </div>
+                                    <input type="file" name="file_excel" class="hidden" required accept=".xlsx, .xls" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />
+                                </label>
+                                <p x-show="fileName" class="text-sm text-success mt-2 font-medium text-center" x-text="`File terpilih: ${fileName}`"></p>
+                            </div>
+                            
+                            <div class="flex gap-3 mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
+                                <button type="button" @click="isImportUsulanModalOpen = false" class="flex-1 justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-white dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10">Batal</button>
+                                <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-teal-light/30 px-4 py-2.5 bg-gradient-to-r from-teal-light to-emerald-500 text-sm font-semibold text-white hover:from-teal-light/90 hover:to-emerald-500/90 focus:outline-none hover:-translate-y-0.5 transition-all duration-200 relative z-10">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Import Data
                                 </button>
                             </div>
                         </form>
@@ -441,7 +611,26 @@
             currentPage: 1,
 
             isUploadModalOpen: false,
+            isImportModalOpen: false,
+            isImportUsulanModalOpen: false,
             uploadItem: null,
+            selectedIds: [],
+
+            get allSelected() {
+                const currentIds = this.paginatedData().map(item => item.id);
+                if (currentIds.length === 0) return false;
+                return currentIds.every(id => this.selectedIds.includes(id));
+            },
+
+            toggleAll() {
+                const currentIds = this.paginatedData().map(item => item.id);
+                if (this.allSelected) {
+                    this.selectedIds = this.selectedIds.filter(id => !currentIds.includes(id));
+                } else {
+                    const newIds = currentIds.filter(id => !this.selectedIds.includes(id));
+                    this.selectedIds.push(...newIds);
+                }
+            },
 
             openUploadModal(item) {
                 console.log('Upload clicked for item:', item);
@@ -475,6 +664,7 @@
                 this.currentStage = key;
                 this.currentPage = 1;
                 this.searchQuery = '';
+                this.selectedIds = [];
             },
 
             // Get current stage's raw data

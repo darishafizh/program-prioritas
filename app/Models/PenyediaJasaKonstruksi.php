@@ -8,5 +8,12 @@ class PenyediaJasaKonstruksi extends Model
 {
     protected $connection = 'mysql_knmp';
     protected $table = 'penyedia_jasa_konstruksi';
-    protected $fillable = ['nama'];
+    protected $fillable = [
+        'nama', 
+        'npwp', 
+        'direktur_utama', 
+        'kontak', 
+        'kualifikasi_sbu', 
+        'status'
+    ];
 }

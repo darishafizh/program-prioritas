@@ -27,7 +27,9 @@
  <!-- Action Buttons -->
  <div class="flex flex-wrap items-center gap-3">
  @if($currentStage === 'pengajuan')
- <button @click="openUploadModal()" class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2"> Input Pengajuan <i class="fa-solid fa-plus"></i> </button>
+ <a href="{{ route('program.master.calon-lokasi.create') }}" class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2.5 text-xs font-semibold transition-all flex items-center justify-between gap-2 shadow-sm whitespace-nowrap"> 
+ Tambah Pengajuan <i class="fa-solid fa-plus bg-white/20 p-1.5 rounded-lg"></i> 
+ </a>
  @endif
  </div>
  </div>
@@ -71,7 +73,7 @@
 
  <div class="relative w-full sm:w-64">
  <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
- <input type="text" placeholder="Cari data lokasi..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:border-teal-light outline-none transition-all ">
+ <input x-model="searchQuery" type="text" placeholder="Cari data lokasi..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:border-teal-light outline-none transition-all ">
  </div>
  </div>
 
@@ -90,7 +92,7 @@
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
- <template x-for="item in proposals" :key="item.id">
+ <template x-for="item in filterData(proposals)" :key="item.id">
  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
@@ -123,7 +125,7 @@
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
- <template x-for="item in verifList" :key="item.id">
+ <template x-for="item in filterData(verifList)" :key="item.id">
  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
@@ -157,7 +159,7 @@
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
- <template x-for="item in baAktivasiList" :key="item.id">
+ <template x-for="item in filterData(baAktivasiList)" :key="item.id">
  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
@@ -191,7 +193,7 @@
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
- <template x-for="item in verifTeknisList" :key="item.id">
+ <template x-for="item in filterData(verifTeknisList)" :key="item.id">
  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
@@ -225,7 +227,7 @@
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
- <template x-for="item in baCalonList" :key="item.id">
+ <template x-for="item in filterData(baCalonList)" :key="item.id">
  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
@@ -259,7 +261,7 @@
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
- <template x-for="item in penetapanList" :key="item.id">
+ <template x-for="item in filterData(penetapanList)" :key="item.id">
  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
@@ -281,57 +283,7 @@
  </tbody>
  </table><!-- SEMUA MODALS DI BAWAH SINI -->
 
- <!-- MODAL: Input Pengajuan (Upload) -->
- <div x-show="showUploadModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
- <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
- <div x-show="showUploadModal" x-transition.opacity class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showUploadModal = false"></div>
- <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
- <div x-show="showUploadModal" x-transition.scale.origin.bottom class="relative z-10 inline-block align-bottom bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full border border-gray-100 dark:border-gray-800">
- <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
- <h3 class="text-base font-medium text-textMain-light dark:text-textMain-dark" id="modal-title">Upload Pengajuan Baru</h3>
- <button @click="showUploadModal = false" class="text-gray-400 hover:text-danger transition-colors">
- <i class="fa-solid fa-xmark text-base"></i>
- </button>
- </div>
- <div class="px-6 py-5">
- <div class="space-y-4">
- <div>
- <label class="block text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">Nama Desa Calon Lokasi</label>
- <input type="text" x-model="newProposal.desa" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:ring-2 focus:ring-teal-light outline-none" placeholder="Contoh: Desa Bahari Maju">
- </div>
- <div class="grid grid-cols-2 gap-4">
- <div>
- <label class="block text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">Kecamatan</label>
- <input type="text" x-model="newProposal.kecamatan" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:ring-2 focus:ring-teal-light outline-none" placeholder="Nama Kecamatan">
- </div>
- <div>
- <label class="block text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">Kabupaten</label>
- <input type="text" x-model="newProposal.kabupaten" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:ring-2 focus:ring-teal-light outline-none" placeholder="Nama Kabupaten">
- </div>
- </div>
- <div>
- <label class="block text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">Dokumen Surat / Proposal (PDF)</label>
- <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer">
- <div class="flex flex-col items-center justify-center pt-5 pb-6">
- <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
- <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
- <p class="text-xs text-gray-500">PDF (Maks. 5MB)</p>
- </div>
- <input type="file" class="hidden" accept=".pdf" @change="newProposal.fileName = $event.target.files[0].name" />
- </label>
- <p x-show="newProposal.fileName" class="text-sm text-success mt-2 font-medium" x-text="`File terpilih: ${newProposal.fileName}`"></p>
- </div>
- </div>
- </div>
- <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
- <button @click="showUploadModal = false" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-textMain-light dark:text-textMain-dark rounded-md text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Batal</button>
- <button @click="submitProposal()" class="px-4 py-2 bg-teal-light hover:bg-teal-600 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-between gap-2"> Kirim Pengajuan <i class="fa-solid fa-paper-plane"></i> </button>
- </div>
- </div>
- </div>
- </div>
-
- <!-- MODAL 1: Preview PDF Pengajuan -->
+ <!-- MODAL: Preview PDF Pengajuan -->
  <div x-show="showPreviewModal" style="display: none;" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
  <div class="flex items-center justify-center min-h-screen p-0 sm:p-4">
  <div x-show="showPreviewModal" x-transition.opacity class="fixed inset-0 bg-gray-900/90 backdrop-blur-sm transition-opacity" @click="showPreviewModal = false"></div>
@@ -477,7 +429,8 @@
  <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer">
  <div class="flex flex-col items-center justify-center pt-5 pb-6">
  <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
- <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Pilih file PDF BA</span></p>
+ <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
+ <p class="text-xs text-gray-500">PDF (Maks. 5MB)</p>
  </div>
  <input type="file" class="hidden" accept=".pdf" @change="uploadBaFile = $event.target.files[0].name" />
  </label>
@@ -491,15 +444,33 @@
  </div>
  </div>
  </div>
+    </div>
+
+    <!-- Toast Notification HTML -->
+    <div x-show="toast.show" x-transition.opacity style="display: none;" class="fixed top-24 right-8 z-[100] flex items-center p-4 mb-4 w-full max-w-xs text-gray-500 bg-white rounded-xl shadow-xl dark:text-gray-400 dark:bg-gray-800 border-l-4 border-teal-light" role="alert">
+        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-teal-light bg-teal-light/10 rounded-lg dark:bg-teal-light/20">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div class="ml-3 text-sm font-medium text-gray-800 dark:text-white" x-text="toast.message"></div>
+        <button type="button" @click="toast.show = false" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700">
+            <span class="sr-only">Close</span>
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
 </div>
 
 <script>
  document.addEventListener('alpine:init', () => {
  Alpine.data('calonLokasiManager', (initialStage) => ({
  currentStage: initialStage,
- 
+ // State filter pencarian
+ searchQuery: '',
+
+ // Toast Notification
+ toast: { show: false, message: '', type: 'success' },
+
  // Pengajuan
- proposals: [], showUploadModal: false, showPreviewModal: false, activeProposal: null, newProposal: { desa: '', kecamatan: '', kabupaten: '', fileName: '' },
+ proposals: [], showPreviewModal: false, activeProposal: null,
 
  // Verif Admin
  verifList: [], showChecklistModal: false, activeVerif: null,
@@ -516,47 +487,34 @@
  // Penetapan Calon
  penetapanList: [],
 
+ // Data Master Wilayah
+ provinces: [], regencies: [], districts: [], villages: [],
+
  initData() {
- // Table 1 Mock Data (Pengajuan)
- this.proposals = [
- { id: 1, idUser: '#USR-1042', desa: 'Desa Pesisir Indah', kecamatan: 'Kecamatan Muara', kabupaten: 'Kabupaten Bahari', tanggal: '10 Jun 2026', dokumen: 'Proposal_2026.pdf', kriteria: '4/6' },
- { id: 2, idUser: '#USR-2918', desa: 'Kampung Nelayan Sejahtera', kecamatan: 'Kecamatan Pantai', kabupaten: 'Kabupaten Samudera', tanggal: '12 Jun 2026', dokumen: 'Proposal_Update.pdf', kriteria: '2/6' }
- ];
+ // Data diambil secara real-time dari database via Controller
+ this.proposals = @json($proposals);
+ this.verifList = @json($verifList);
+ this.baAktivasiList = @json($baAktivasiList);
+ this.verifTeknisList = @json($verifTeknisList);
+ this.baCalonList = @json($baCalonList);
+ this.penetapanList = @json($penetapanList);
+ },
 
- // Table 2 Mock Data (Verif Administrasi)
- this.verifList = [
- { id: 101, idUser: '#USR-1042', desa: 'Kampung Nelayan Sejahtera', kabupaten: 'Kabupaten Samudera', dokumen: 'Dokumen_Verif.pdf', nilaiSkala: '85/100', status: 'Lolos Verifikasi' }
- ];
+ filterData(list) {
+ if (!this.searchQuery) return list;
+ const q = this.searchQuery.toLowerCase();
+ return list.filter(item => Object.values(item).some(val => String(val).toLowerCase().includes(q)));
+ },
 
- // Table 3 Mock Data (BA Aktivasi)
- this.baAktivasiList = [
- { id: 201, idUser: '#USR-3810', desa: 'Desa Bahari Makmur', kabupaten: 'Kabupaten Pesisir Barat', dokumen: 'BA-AKT-001.pdf', status: 'Selesai' },
- { id: 202, idUser: '#USR-4412', desa: 'Kampung Maju Bersama', kabupaten: 'Kabupaten Maritim', dokumen: 'Menunggu Upload', status: 'Proses TTD' }
- ];
-
- // Table 4 Mock Data (Verifikasi Teknis Lapangan)
- this.verifTeknisList = [
- { id: 301, idUser: '#USR-5591', desa: 'Desa Nelayan 1', dokumen: 'Laporan_Teknis.pdf', nilaiSkala: '90/100', status: 'Selesai Verifikasi' }
- ];
-
- // Table 5 Mock Data (BA Calon)
- this.baCalonList = [
- { id: 401, idUser: '#USR-6122', desa: 'Desa Pesisir Timur', dokumen: 'BA-CLN-099.pdf', nilaiSkala: '88/100', status: 'BA Diterbitkan' }
- ];
-
- // Table 6 Mock Data (Penetapan Calon)
- this.penetapanList = [
- { id: 501, idUser: '#USR-7881', desa: 'Desa Bahari Makmur', kabupaten: 'Kabupaten Pesisir Barat', dokumen: 'SK_Penetapan.pdf', nilaiSkala: '95/100', status: 'SK Ditetapkan' }
- ];
+ // --- Fungsi Toast ---
+ showToastMsg(msg, type='success') {
+ this.toast.message = msg;
+ this.toast.type = type;
+ this.toast.show = true;
+ setTimeout(() => this.toast.show = false, 3000);
  },
 
  // --- Fungsi Tabel Pengajuan ---
- openUploadModal() { this.newProposal = { desa: '', kecamatan: '', kabupaten: '', fileName: '' }; this.showUploadModal = true; },
- submitProposal() {
- if(!this.newProposal.desa || !this.newProposal.fileName) return alert('Lengkapi data!');
- this.proposals.unshift({ id: Date.now(), desa: this.newProposal.desa, kecamatan: this.newProposal.kecamatan, kabupaten: this.newProposal.kabupaten, pengusul: 'Pengguna Daerah', status: 'Menunggu Review', history: [] });
- this.showUploadModal = false;
- },
  openPreviewModal(item) { this.activeProposal = item; this.showPreviewModal = true; },
  verifyProposal(newStatus, noteStr) {
  window.dispatchEvent(new CustomEvent('trigger-confirm', {
@@ -634,26 +592,3 @@
  });
 </script>
 @endsection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

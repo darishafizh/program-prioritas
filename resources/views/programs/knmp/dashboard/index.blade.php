@@ -3,6 +3,7 @@
 @section('title', 'KNMP - Dashboard Analisis Eksekutif')
 
 @section('content')
+<div x-data="dashboardTableManager()">
 <!-- Header & Global Filters (Row 1) -->
 <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
  <div>
@@ -11,27 +12,22 @@
  </div>
  
  <!-- Filters -->
- <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+ <form id="dashboardFilterForm" action="{{ url()->current() }}" method="GET" class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
  <div class="relative">
- <select class="appearance-none bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-2 pr-10 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-light focus:border-teal-light text-textMain-light dark:text-textMain-dark ">
+ <select name="batch_id" onchange="this.form.submit()" class="appearance-none bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-2 pr-10 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-light focus:border-teal-light text-textMain-light dark:text-textMain-dark ">
  <option value="">Semua Tahap</option>
- <option value="usulan">Usulan</option>
- <option value="survey">Survey</option>
- <option value="ded">DED</option>
- <option value="lelang">Lelang</option>
- <option value="konstruksi">Konstruksi</option>
- <option value="serah_terima">Serah Terima</option>
+ @foreach($stats['filter_batches'] ?? [] as $batch)
+ <option value="{{ $batch['id'] }}" {{ request('batch_id') == $batch['id'] ? 'selected' : '' }}>{{ $batch['name'] }}</option>
+ @endforeach
  </select>
  <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
  </div>
  
  <div class="relative flex items-center bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-2 text-xs font-medium focus-within:ring-2 focus-within:ring-teal-light focus-within:border-teal-light">
  <i class="fa-regular fa-calendar text-gray-400 mr-2"></i>
- <input type="text" placeholder="Jan 2026 - Des 2026" class="bg-transparent border-none outline-none text-textMain-light dark:text-textMain-dark w-36">
+ <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()" class="bg-transparent border-none outline-none text-textMain-light dark:text-textMain-dark w-32">
  </div>
- 
- <button class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2"> Filter <i class="fa-solid fa-filter"></i> </button>
- </div>
+ </form>
 </div>
 
 <!-- Narrative Storytelling Block -->
@@ -118,91 +114,6 @@
  </div>
 </div>
 
-<!-- Pipeline Process UI -->
-<div class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col">
- <h3 class="text-sm font-medium mb-6 flex items-center gap-2">
- <i class="fa-solid fa-timeline text-teal-light dark:text-teal-400"></i> Pipeline Status KNMP
- </h3>
- 
- <div class="flex-1 flex items-center justify-center relative px-4 py-8">
- <!-- Connecting Line -->
- <div class="absolute top-1/2 left-8 right-8 h-1.5 bg-gray-100 dark:bg-gray-800 -translate-y-1/2 rounded-full hidden md:block z-0"></div>
- 
- <div class="grid grid-cols-2 md:grid-cols-6 w-full gap-4 relative z-10">
- 
- <!-- Step 1: Usulan -->
- <div class="flex flex-col items-center group cursor-pointer">
- <div class="w-12 h-12 rounded-full bg-white dark:bg-gray-900 border-4 border-gray-100 dark:border-gray-700 flex items-center justify-center mb-3 group-hover:border-teal-light dark:group-hover:border-teal-500 transition-colors ">
- <i class="fa-solid fa-file-signature text-gray-400 group-hover:text-teal-light dark:group-hover:text-teal-400"></i>
- </div>
- <div class="text-center">
- <div class="font-medium text-xs">Usulan</div>
- <div class="text-sm font-semibold text-teal-light dark:text-teal-400 mt-1">{{ $stats['pipeline']['usulan'] ?? 0 }}</div>
- </div>
- </div>
-
- <!-- Step 2: Survey -->
- <div class="flex flex-col items-center group cursor-pointer">
- <div class="w-12 h-12 rounded-full bg-white dark:bg-gray-900 border-4 border-gray-100 dark:border-gray-700 flex items-center justify-center mb-3 group-hover:border-teal-500 transition-colors ">
- <i class="fa-solid fa-map-location-dot text-gray-400 group-hover:text-teal-500"></i>
- </div>
- <div class="text-center">
- <div class="font-medium text-xs">Survey</div>
- <div class="text-sm font-semibold text-teal-500 mt-1">{{ $stats['pipeline']['survei'] ?? 0 }}</div>
- </div>
- </div>
-
- <!-- Step 3: DED -->
- <div class="flex flex-col items-center group cursor-pointer">
- <div class="w-12 h-12 rounded-full bg-white dark:bg-gray-900 border-4 border-gray-100 dark:border-gray-700 flex items-center justify-center mb-3 group-hover:border-teal-500 transition-colors ">
- <i class="fa-solid fa-compass-drafting text-gray-400 group-hover:text-teal-500"></i>
- </div>
- <div class="text-center">
- <div class="font-medium text-xs">DED</div>
- <div class="text-sm font-semibold text-teal-500 mt-1">{{ $stats['pipeline']['ded'] ?? 0 }}</div>
- </div>
- </div>
-
- <!-- Step 4: Lelang -->
- <div class="flex flex-col items-center group cursor-pointer">
- <div class="w-12 h-12 rounded-full bg-white dark:bg-gray-900 border-4 border-gray-100 dark:border-gray-700 flex items-center justify-center mb-3 group-hover:border-warning dark:group-hover:border-amber-500 transition-colors ">
- <i class="fa-solid fa-gavel text-gray-400 group-hover:text-warning dark:group-hover:text-amber-500"></i>
- </div>
- <div class="text-center">
- <div class="font-medium text-xs">Lelang</div>
- <div class="text-sm font-semibold text-warning dark:text-amber-500 mt-1">{{ $stats['pipeline']['lelang'] ?? 0 }}</div>
- </div>
- </div>
-
- <!-- Step 5: Konstruksi -->
- <div class="flex flex-col items-center group cursor-pointer relative">
- <!-- Active Pulsing Indicator for bottleneck -->
- <span class="absolute top-0 right-0 flex h-3 w-3 -mt-1 -mr-1">
- <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger opacity-75"></span>
- <span class="relative inline-flex rounded-full h-3 w-3 bg-danger"></span>
- </span>
- <div class="w-14 h-14 rounded-full bg-teal-light text-white border-4 border-teal-light/30 flex items-center justify-center mb-2 transform scale-110">
- <i class="fa-solid fa-helmet-safety"></i>
- </div>
- <div class="text-center">
- <div class="font-medium text-xs">Konstruksi</div>
- <div class="text-sm font-semibold text-teal-light dark:text-teal-400 mt-1">{{ $stats['pipeline']['konstruksi'] ?? 0 }}</div>
- </div>
- </div>
-
- <!-- Step 6: Serah Terima -->
- <div class="flex flex-col items-center group cursor-pointer">
- <div class="w-12 h-12 rounded-full bg-white dark:bg-gray-900 border-4 border-gray-100 dark:border-gray-700 flex items-center justify-center mb-3 group-hover:border-success dark:group-hover:border-emerald-500 transition-colors ">
- <i class="fa-solid fa-handshake text-gray-400 group-hover:text-success dark:group-hover:text-emerald-500"></i>
- </div>
- <div class="text-center">
- <div class="font-medium text-xs">Selesai</div>
- <div class="text-sm font-semibold text-success dark:text-emerald-500 mt-1">{{ $stats['pipeline']['serah_terima'] ?? 0 }}</div>
- </div>
- </div>
- </div>
- </div>
-</div>
 
 <!-- 2 Columns: Top 10, Bottom 10 (Row 3) -->
 <div class="grid grid-cols-2 gap-6 mb-6">
@@ -213,16 +124,8 @@
                 <i class="fa-solid fa-arrow-up-right-dots text-success"></i> Top 10 KNMP Tertinggi
             </h3>
         </div>
-        <div class="flex-1 overflow-y-auto pr-2 space-y-1">
-            @foreach($stats['top10'] ?? [] as $idx => $item)
-            <div class="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
-                <div class="w-4 text-textMuted-light dark:text-textMuted-dark font-medium text-[11px] text-right">{{ $idx + 1 }}.</div>
-                <div class="flex-1 overflow-hidden">
-                    <div class="font-medium text-[11px] text-textMain-light dark:text-textMain-dark truncate">{{ $item['lokasi'] }}</div>
-                </div>
-                <div class="font-medium text-success text-[10px]">{{ $item['progres'] }}%</div>
-            </div>
-            @endforeach
+        <div class="flex-1 w-full relative min-h-[300px]">
+            <div id="chart-top10" class="w-full h-full"></div>
         </div>
     </div>
 
@@ -233,19 +136,51 @@
                 <i class="fa-solid fa-arrow-down-right-dots text-danger"></i> Top 10 KNMP Terendah
             </h3>
         </div>
-        <div class="flex-1 overflow-y-auto pr-2 space-y-1">
-            @foreach($stats['bottom10'] ?? [] as $idx => $item)
-            <div class="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
-                <div class="w-4 text-textMuted-light dark:text-textMuted-dark font-medium text-[11px] text-right">{{ $idx + 1 }}.</div>
-                <div class="flex-1 overflow-hidden">
-                    <div class="font-medium text-[11px] text-textMain-light dark:text-textMain-dark truncate">{{ $item['lokasi'] }}</div>
-                </div>
-                <div class="font-medium text-danger text-[10px]">{{ $item['progres'] }}%</div>
-            </div>
-            @endforeach
+        <div class="flex-1 w-full relative min-h-[300px]">
+            <div id="chart-bottom10" class="w-full h-full"></div>
         </div>
     </div>
 </div>
+
+<!-- Warning Stagnant Progress -->
+@if(count($stats['stagnant_list'] ?? []) > 0)
+<div class="mb-6 bg-warning/10 dark:bg-warning/5 border border-warning/30 dark:border-warning/20 rounded-3xl p-6">
+    <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center text-warning shrink-0">
+            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+        </div>
+        <div>
+            <h3 class="font-bold text-sm text-warning dark:text-amber-500">Peringatan Risiko: Progres Stagnan</h3>
+            <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">Lokasi konstruksi di bawah ini tidak mencatatkan penambahan progres fisik sedikitpun selama lebih dari 5 hari terakhir.</p>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @foreach($stats['stagnant_list'] as $item)
+        <div class="bg-white/60 dark:bg-gray-900/40 border border-warning/20 rounded-2xl p-4 flex flex-col relative overflow-hidden hover:bg-white dark:hover:bg-gray-900/80 transition-colors shadow-sm">
+            <div class="absolute right-0 top-0 bottom-0 w-1 bg-warning"></div>
+            <div class="flex justify-between items-start mb-2">
+                <div class="font-bold text-xs text-textMain-light dark:text-textMain-dark truncate pr-2" title="{{ $item['lokasi'] }}">{{ $item['lokasi'] }}</div>
+                <div class="text-[10px] font-black text-warning bg-warning/10 px-2 py-1 rounded-full shrink-0 flex items-center gap-1">
+                    <i class="fa-regular fa-clock"></i> {{ $item['days_stagnant'] }} Hari
+                </div>
+            </div>
+            
+            <div class="space-y-1.5 mt-1">
+                <div class="flex justify-between items-center text-[10px]">
+                    <span class="text-textMuted-light dark:text-textMuted-dark"><i class="fa-solid fa-chart-simple w-3"></i> Stuck di Angka</span>
+                    <span class="font-bold text-textMain-light dark:text-textMain-dark">{{ $item['progres'] }}%</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px]">
+                    <span class="text-textMuted-light dark:text-textMuted-dark"><i class="fa-solid fa-hard-hat w-3"></i> Kontraktor</span>
+                    <span class="font-medium text-textMain-light dark:text-textMain-dark truncate max-w-[130px] text-right" title="{{ $item['konstruktor'] }}">{{ $item['konstruktor'] }}</span>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
 
 <!-- Map Distribution (Row 4) -->
 <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden mb-6 flex flex-col lg:flex-row">
@@ -334,7 +269,7 @@
 </script>
 
 <!-- All Data Table (Row 5) -->
-<div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col" x-data="dashboardTableManager()">
+<div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col">
     <!-- Header -->
     <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -373,7 +308,7 @@
         <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
                 <tr>
-                    <th class="px-6 py-4">Lokasi / Desa</th>
+                    <th class="px-6 py-4">Nama KNMP</th>
                     <th class="px-6 py-4">Konstruktor (Vendor)</th>
                     <th class="px-6 py-4">Rencana</th>
                     <th class="px-6 py-4">Progres & Deviasi</th>
@@ -383,8 +318,17 @@
                 <template x-for="(item, index) in paginatedData()" :key="index">
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4">
-                        <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
-                        <div class="text-xs text-textMuted-light" x-text="item.daerah"></div>
+                        <div class="flex items-center gap-2">
+                            <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
+                            <template x-if="item.is_stagnant">
+                                <i class="fa-solid fa-triangle-exclamation text-warning text-sm" title="Progres Stagnan"></i>
+                            </template>
+                        </div>
+                        <template x-if="item.is_stagnant">
+                            <div class="text-[9px] text-warning font-medium mt-1 bg-warning/10 inline-block px-1.5 py-0.5 rounded">
+                                <i class="fa-regular fa-clock mr-0.5"></i> Stagnan selama <span x-text="item.days_stagnant"></span> hari
+                            </div>
+                        </template>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-2">
@@ -415,7 +359,7 @@
                 </tr>
                 </template>
                 <tr x-show="paginatedData().length === 0">
-                    <td colspan="4" class="px-6 py-8 text-center text-textMuted-light">Belum ada proyek yang memasuki tahap konstruksi aktif atau tidak ada hasil pencarian.</td>
+                    <td colspan="4" class="px-6 py-8 text-center text-textMuted-light">Belum ada proyek atau tidak ada hasil pencarian.</td>
                 </tr>
             </tbody>
         </table>
@@ -451,6 +395,131 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    // ApexCharts initialization for Top 10 and Bottom 10
+    document.addEventListener('DOMContentLoaded', function() {
+        const top10Data = @json($stats['top10'] ?? []);
+        const bottom10Data = @json($stats['bottom10'] ?? []);
+        const isDark = document.documentElement.classList.contains('dark');
+
+        function renderBarChart(elementId, data, color) {
+            if (!document.getElementById(elementId) || data.length === 0) return;
+            
+            const categories = data.map(item => item.lokasi);
+            const progresData = data.map(item => item.progres);
+            const rencanaData = data.map(item => item.rencana);
+            
+            const options = {
+                series: [{
+                    name: 'Progres Aktual',
+                    data: progresData
+                }],
+                chart: {
+                    type: 'bar',
+                    height: Math.max(300, data.length * 35),
+                    toolbar: { show: false },
+                    background: 'transparent',
+                    fontFamily: 'Inter, sans-serif'
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        dataLabels: {
+                            position: 'top',
+                        },
+                        borderRadius: 2,
+                        barHeight: '70%'
+                    }
+                },
+                colors: [color],
+                dataLabels: {
+                    enabled: true,
+                    offsetX: -6,
+                    style: {
+                        fontSize: '9px',
+                        colors: ['#fff']
+                    },
+                    formatter: function (val) {
+                        return val + "%";
+                    }
+                },
+                stroke: {
+                    show: true,
+                    width: 1,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: categories,
+                    max: 100,
+                    labels: {
+                        style: {
+                            colors: isDark ? '#9CA3AF' : '#6B7280',
+                            fontSize: '10px'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: isDark ? '#E5E7EB' : '#374151',
+                            fontSize: '11px',
+                            fontWeight: 500
+                        },
+                        maxWidth: 180
+                    }
+                },
+                grid: {
+                    borderColor: isDark ? '#374151' : '#F3F4F6',
+                    strokeDashArray: 4,
+                },
+                theme: {
+                    mode: isDark ? 'dark' : 'light'
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val, opts) {
+                            if(opts.seriesIndex === 0) {
+                                let dev = data[opts.dataPointIndex].deviasi;
+                                let sign = dev > 0 ? '+' : '';
+                                return val + "% (Deviasi: " + sign + dev + "%)";
+                            }
+                            return val + "%";
+                        }
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'center',
+                    fontSize: '11px'
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#" + elementId), options);
+            chart.render();
+            
+            // Re-render chart on theme change
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const newIsDark = document.documentElement.classList.contains('dark');
+                        chart.updateOptions({
+                            theme: { mode: newIsDark ? 'dark' : 'light' },
+                            xaxis: { labels: { style: { colors: newIsDark ? '#9CA3AF' : '#6B7280' } } },
+                            yaxis: { labels: { style: { colors: newIsDark ? '#E5E7EB' : '#374151' } } },
+                            grid: { borderColor: newIsDark ? '#374151' : '#F3F4F6' }
+                        });
+                    }
+                });
+            });
+            observer.observe(document.documentElement, { attributes: true });
+        }
+
+        renderBarChart('chart-top10', top10Data, '#10B981'); // Success green
+        renderBarChart('chart-bottom10', bottom10Data, '#EF4444'); // Danger red
+    });
+</script>
+
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('dashboardTableManager', () => ({
@@ -461,8 +530,10 @@
 
             filteredData() {
                 const q = this.searchQuery.toLowerCase().trim();
-                if (!q) return this.tableData;
-                return this.tableData.filter(item => {
+                let data = this.tableData;
+                
+                if (!q) return data;
+                return data.filter(item => {
                     return Object.values(item).some(val => 
                         String(val).toLowerCase().includes(q)
                     );
@@ -505,6 +576,7 @@
         }));
     });
 </script>
+</div>
 @endsection
 
 

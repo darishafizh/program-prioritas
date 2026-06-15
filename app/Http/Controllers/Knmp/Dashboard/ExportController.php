@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Knmp;
+namespace App\Http\Controllers\Knmp\Dashboard;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
