@@ -15,7 +15,7 @@ class VendorController extends ProgramBaseController
         
         $vendors = PenyediaJasaKonstruksi::orderBy('id', 'desc')->get();
 
-        return view('programs.knmp.master.vendor', [
+        return view('programs.knmp.master.vendor.index', [
             'activeModule' => 'Master Data', 
             'activeProgram' => $activeProgram,
             'vendors' => $vendors

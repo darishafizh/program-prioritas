@@ -80,24 +80,6 @@ class ProgresFisikController extends ProgramBaseController
                     $latestProgres = $allProgres->first();
                     $progres = $latestProgres ? (float)$latestProgres->progres : 0;
                     
-                    if ($k->tahap_saat_ini === 'konstruksi' && $progres < 100 && $latestProgres) {
-                        $effectiveDateObj = \Carbon\Carbon::parse($effectiveDate);
-                        $dateFirstAchieved = $latestProgres->tanggal;
-                        
-                        foreach($allProgres as $pRecord) {
-                            if ((float)$pRecord->progres === $progres) {
-                                $dateFirstAchieved = $pRecord->tanggal;
-                            } else {
-                                break;
-                            }
-                        }
-                        
-                        $daysStagnant = \Carbon\Carbon::parse($dateFirstAchieved)->diffInDays($effectiveDateObj);
-                        if ($daysStagnant >= 5) {
-                            $isStagnant = true;
-                        }
-                    }
-                    
                     if ($kons->tanggal_mulai) {
                         $tanggalMulai = \Carbon\Carbon::parse($kons->tanggal_mulai);
                         $targetDate = \Carbon\Carbon::parse($effectiveDate);
@@ -120,15 +102,31 @@ class ProgresFisikController extends ProgramBaseController
                     }
                     
                     $deviasi = round($progres - $rencana, 2);
+                    
+                    if ($deviasi >= 0) $kesehatan['sesuai']++;
+                    elseif ($deviasi >= -5) $kesehatan['ringan']++;
+                    else $kesehatan['kritis']++;
 
-                    if ($k->tahap_saat_ini === 'konstruksi') {
-                        if ($deviasi >= 0) $kesehatan['sesuai']++;
-                        elseif ($deviasi >= -5) $kesehatan['ringan']++;
-                        else $kesehatan['kritis']++;
-
-                        if ($latestProgres) {
-                            $totalProgres += $progres;
-                            $countWithProgres++;
+                    if ($latestProgres) {
+                        $totalProgres += $progres;
+                        $countWithProgres++;
+                    }
+                    
+                    if ($k->tahap_saat_ini === 'konstruksi' && $progres < 100 && $latestProgres) {
+                        $effectiveDateObj = \Carbon\Carbon::parse($effectiveDate);
+                        $dateFirstAchieved = $latestProgres->tanggal;
+                        
+                        foreach($allProgres as $pRecord) {
+                            if ((float)$pRecord->progres === $progres) {
+                                $dateFirstAchieved = $pRecord->tanggal;
+                            } else {
+                                break;
+                            }
+                        }
+                        
+                        $daysStagnant = \Carbon\Carbon::parse($dateFirstAchieved)->diffInDays($effectiveDateObj);
+                        if ($daysStagnant >= 5) {
+                            $isStagnant = true;
                         }
                     }
                 }
@@ -154,14 +152,13 @@ class ProgresFisikController extends ProgramBaseController
             }
         }
 
-        $konstruksiOnly = collect($konstruksiDetails)->where('tahap', 'konstruksi');
-        $sortedByProgres = $konstruksiOnly->sortByDesc('progres')->values();
+        $sortedByProgres = collect($konstruksiDetails)->sortByDesc('progres')->values();
         $top10 = $sortedByProgres->take(10);
-        $bottom10 = $konstruksiOnly->sortBy('progres')->values()->take(10);
+        $bottom10 = collect($konstruksiDetails)->sortBy('progres')->values()->take(10);
         
-        $stagnantList = $konstruksiOnly->where('is_stagnant', true)->sortByDesc('days_stagnant')->values()->all();
+        $stagnantList = collect($konstruksiDetails)->where('is_stagnant', true)->sortByDesc('days_stagnant')->values()->all();
         
-        $allTableData = collect($konstruksiDetails)->sortByDesc('progres')->values()->all();
+        $allTableData = $sortedByProgres->all();
 
         $mapQuery = \App\Models\Knmp::select('nama', 'latitude', 'longitude', 'status')
             ->whereNotNull('latitude')

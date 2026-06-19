@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
-        if (session('logged_in')) {
+        if (Auth::check()) {
             return redirect('/greetings');
         }
         
@@ -26,18 +27,21 @@ class AuthController extends Controller
             return back()->with('error', 'Jawaban perhitungan matematika salah.');
         }
 
-        // Mockup Database logic
-        if ($request->username === 'Admin Roren' && $request->password === 'r0rEn9$pr!or!ta5') {
-            session(['logged_in' => true, 'username' => 'Admin Roren']);
+        // Database Auth logic
+        if (Auth::attempt(['name' => $request->username, 'password' => $request->password])) {
+            $request->session()->regenerate();
             return redirect('/greetings');
         }
         
         return back()->with('error', 'Username atau password salah.');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        session()->forget('logged_in');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
         return redirect('/login');
     }
 }

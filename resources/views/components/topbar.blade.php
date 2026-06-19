@@ -87,12 +87,12 @@ $programs = [
  <div x-data="{ open: false }" class="relative" @click.away="open = false">
  <button @click="open = !open" class="flex items-center gap-3 focus:outline-none text-left rounded-md p-1 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
  <div class="text-right hidden sm:block">
- <div class="font-medium text-sm text-textMain-light dark:text-textMain-dark">{{ session('username') === 'admin' ? 'Administrator' : 'Pengguna' }}</div>
+ <div class="font-medium text-sm text-textMain-light dark:text-textMain-dark">{{ Auth::user()->name }}</div>
  <div class="text-xs text-textMuted-light dark:text-textMuted-dark">Program Prioritas</div>
  </div>
  <div class="flex items-center gap-2">
  <div class="w-8 h-8 rounded-full bg-teal-light text-white flex items-center justify-center font-medium text-sm">
- {{ session('username') === 'admin' ? 'A' : 'P' }}
+ {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
  </div>
  <i class="fa-solid fa-chevron-down text-[0.6rem] text-textMuted-light dark:text-textMuted-dark"></i>
  </div>
@@ -101,7 +101,7 @@ $programs = [
  <div x-show="open" x-transition class="absolute top-full right-0 mt-2 w-48 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-xl py-2">
  <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-1">
  <p class="text-xs text-textMuted-light dark:text-textMuted-dark">Login sebagai:</p>
- <p class="text-sm font-medium truncate">{{ session('username') ?? 'User' }}</p>
+ <p class="text-sm font-medium truncate">{{ Auth::user()->name }}</p>
  </div>
  <a href="/logout" class="block px-4 py-2 text-sm text-danger hover:bg-red-50 dark:hover:bg-red-900/10 font-medium transition-colors">
  <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Keluar

@@ -20,8 +20,8 @@
  <p class="text-sm text-textMuted-light dark:text-textMuted-dark mb-6" x-text="message"></p>
  
  <div class="flex flex-col sm:flex-row gap-3 w-full">
- <button @click="cancel()" class="flex-1 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-textMain-light dark:text-textMain-dark rounded-md text-xs font-medium transition-colors" x-text="cancelText"></button>
- <button @click="confirm()" class="flex-1 px-4 py-2.5 text-white rounded-md text-xs font-medium transition-colors" :class="confirmColor" x-text="confirmText"></button>
+ <button @click="cancel()" class="flex-1 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-textMain-light dark:text-textMain-dark rounded-md text-xs font-medium transition-colors cursor-pointer" x-text="cancelText"></button>
+ <button @click="confirm()" class="flex-1 px-4 py-2.5 text-white rounded-md text-xs font-medium transition-colors cursor-pointer" :class="confirmColor" x-text="confirmText"></button>
  </div>
  </div>
  </div>

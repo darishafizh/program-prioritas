@@ -279,7 +279,7 @@
             <p class="text-xs text-textMuted-light mt-1">Detail menyeluruh status pembangunan lokasi KNMP yang sedang berjalan.</p>
         </div>
         <div class="flex gap-2 w-full sm:w-auto self-end sm:self-auto">
-            <a href="{{ route('program.dashboard.export-pdf', ['program' => strtolower($activeProgram)]) }}" target="_blank" class="px-4 py-2 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-md text-xs font-medium hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center justify-between gap-2"> PDF <i class="fa-solid fa-file-pdf"></i> </a>
+            <button @click="isPdfModalOpen = true" class="px-4 py-2 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-md text-xs font-medium hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center justify-between gap-2"> PDF <i class="fa-solid fa-file-pdf"></i> </button>
         </div>
     </div>
 
@@ -527,6 +527,9 @@
             perPage: '25',
             currentPage: 1,
             tableData: @json($stats['all_konstruksi'] ?? []),
+            isPdfModalOpen: false,
+            pdfBatchId: '{{ request('batch_id') }}',
+            pdfDate: '{{ request('date') ?: date('Y-m-d') }}',
 
             filteredData() {
                 const q = this.searchQuery.toLowerCase().trim();
@@ -576,6 +579,43 @@
         }));
     });
 </script>
+    <!-- Modal PDF -->
+    <div x-show="isPdfModalOpen" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div @click.away="isPdfModalOpen = false" x-transition.opacity.duration.200ms class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-xl border border-gray-100 dark:border-gray-800 relative">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-lg font-bold text-textMain-light dark:text-textMain-dark">Export Laporan PDF</h3>
+                <button @click="isPdfModalOpen = false" class="text-gray-400 hover:text-danger transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form action="{{ route('program.dashboard.export-pdf', ['program' => strtolower($activeProgram)]) }}" method="GET" target="_blank" @submit="setTimeout(() => isPdfModalOpen = false, 500)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Pilih Tahap (Batch)</label>
+                        <select name="batch_id" x-model="pdfBatchId" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
+                            <option value="">Semua Tahap</option>
+                            @foreach($stats['filter_batches'] ?? [] as $batch)
+                            <option value="{{ $batch['id'] }}">{{ $batch['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Pilih Tanggal</label>
+                        <input type="date" name="date" x-model="pdfDate" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" @click="isPdfModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Generate PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 

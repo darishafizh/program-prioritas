@@ -17,7 +17,7 @@ class KriteriaLokasiController extends ProgramBaseController
         $activeProgram = $this->formatProgramName($program);
 
         $kriterias = KriteriaLokasi::orderBy('id', 'desc')->get();
-        return view('programs.knmp.master.kriteria-lokasi', [
+        return view('programs.knmp.master.kriteria.index', [
             'activeModule' => 'Master Data',
             'activeProgram' => $activeProgram,
             'kriterias' => $kriterias

@@ -13,12 +13,38 @@ class ExportController extends ProgramBaseController
         $this->checkAuth();
         $activeProgram = $this->formatProgramName($program);
 
-        $dalamPembangunan = \App\Models\Knmp::where('tahap_saat_ini', 'konstruksi')->count();
+        $requestedDate = request('date');
+        $requestedBatchId = request('batch_id');
+
+        // Determine effective date: use request date, or find the latest progres_harian date
+        if (!$requestedDate) {
+            $latestDateQuery = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
+                ->table('progres_harian')
+                ->join('konstruksi_knmp', 'konstruksi_knmp.id', '=', 'progres_harian.knmp_konstruksi_id')
+                ->join('knmp', 'knmp.id', '=', 'konstruksi_knmp.knmp_id');
+
+            if ($requestedBatchId) {
+                $latestDateQuery->where('knmp.batch_id', $requestedBatchId);
+            }
+
+            $latestDateRecord = $latestDateQuery->orderBy('progres_harian.tanggal', 'desc')->select('progres_harian.tanggal')->first();
+            $effectiveDate = $latestDateRecord ? $latestDateRecord->tanggal : now()->format('Y-m-d');
+        } else {
+            $effectiveDate = $requestedDate;
+        }
+
+        // Build base query with optional batch filter
+        $queryKnmp = \App\Models\Knmp::query();
+        if ($requestedBatchId) {
+            $queryKnmp->where('batch_id', $requestedBatchId);
+        }
+
+        $totalLokasi = (clone $queryKnmp)->count();
         $avgProgres = 0;
         $konstruksiDetails = [];
 
-        if ($dalamPembangunan > 0) {
-            $konstruksis = \App\Models\Knmp::where('tahap_saat_ini', 'konstruksi')
+        if ($totalLokasi > 0) {
+            $konstruksis = (clone $queryKnmp)
                 ->with('konstruksiKnmp.penyediaJasa', 'konstruksiKnmp.tahapKonstruksi')
                 ->get();
             
@@ -29,17 +55,24 @@ class ExportController extends ProgramBaseController
                 $kons = $k->konstruksiKnmp;
                 if (!$kons) continue;
 
-                $latestProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
+                // Query progres_harian with effective date filter (matching dashboard logic)
+                $query = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
                     ->table('progres_harian')
-                    ->where('knmp_konstruksi_id', $kons->id)
-                    ->orderBy('tanggal', 'desc')
-                    ->first();
+                    ->where('knmp_konstruksi_id', $kons->id);
+
+                if ($effectiveDate) {
+                    $query->whereDate('tanggal', '<=', $effectiveDate);
+                }
+
+                $latestProgres = $query->orderBy('tanggal', 'desc')->first();
                 $progres = $latestProgres ? (float)$latestProgres->progres : 0;
                 
+                // Calculate rencana using effective date instead of now()
                 $rencana = 0;
                 if ($kons->tanggal_mulai) {
                     $tanggalMulai = \Carbon\Carbon::parse($kons->tanggal_mulai);
-                    $daysDiff = $tanggalMulai->diffInDays(now(), false);
+                    $targetDate = \Carbon\Carbon::parse($effectiveDate);
+                    $daysDiff = $tanggalMulai->diffInDays($targetDate, false);
                     $currentWeek = $daysDiff < 0 ? 1 : floor($daysDiff / 7) + 1;
                     
                     $tahapKonstruksi = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('tahap_konstruksi')
@@ -62,11 +95,24 @@ class ExportController extends ProgramBaseController
                     $countWithProgres++;
                 }
 
-                $foto = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('bukti_uploads')
+                $fotoAfter = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('bukti_uploads')
                     ->where('knmp_id', $k->id)
-                    ->orderBy('kondisi', 'asc')
+                    ->where('kondisi', 'after')
+                    ->where('tipe_file', 'like', 'image/%')
+                    ->orderBy('created_at', 'desc')
                     ->first();
-                $fotoPath = $foto ? $foto->path_file : null;
+
+                if ($fotoAfter) {
+                    $fotoPath = $fotoAfter->path_file;
+                } else {
+                    $fotoBefore = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('bukti_uploads')
+                        ->where('knmp_id', $k->id)
+                        ->where('kondisi', 'before')
+                        ->where('tipe_file', 'like', 'image/%')
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                    $fotoPath = $fotoBefore ? $fotoBefore->path_file : null;
+                }
 
                 $konstruksiDetails[] = [
                     'lokasi' => $k->nama,
@@ -86,12 +132,22 @@ class ExportController extends ProgramBaseController
 
         $sortedByProgres = collect($konstruksiDetails)->sortByDesc('progres')->values()->all();
 
+        $effectiveDateFormatted = \Carbon\Carbon::parse($effectiveDate)->translatedFormat('d F Y');
+
+        $tahapStr = 'Nasional';
+        if ($requestedBatchId == 1) $tahapStr = 'Tahap_I';
+        elseif ($requestedBatchId == 2) $tahapStr = 'Tahap_II';
+        elseif ($requestedBatchId == 3) $tahapStr = 'Tahap_III';
+
+        $dateFormatted = \Carbon\Carbon::parse($effectiveDate)->locale('id')->translatedFormat('d_F_Y');
+        $filename = "Progres_KNMP_{$tahapStr}_{$dateFormatted}.pdf";
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('programs.knmp.dashboard.pdf', [
             'data' => $sortedByProgres,
             'avgProgres' => str_replace('.', ',', $avgProgres),
-            'tanggal' => now()->translatedFormat('d F Y')
+            'tanggal' => $effectiveDateFormatted
         ])->setPaper('A4', 'portrait');
 
-        return $pdf->stream('Progres_KNMP_' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->stream($filename);
     }
 }

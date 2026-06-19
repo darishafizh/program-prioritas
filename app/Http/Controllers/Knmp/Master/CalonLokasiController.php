@@ -12,6 +12,7 @@ use App\Models\Region\Regency;
 use App\Models\Region\District;
 use App\Models\Region\Village;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 class CalonLokasiController extends ProgramBaseController
 {
     public function index(Request $request, $program)
@@ -21,7 +22,7 @@ class CalonLokasiController extends ProgramBaseController
         
         $stage = $request->query('stage', 'pengajuan');
         
-        $allCalon = CalonLokasi::with(['knmp', 'pengajuan', 'verifAdmin', 'baAktivasi', 'verifTeknis', 'baCalon', 'penetapan'])->get();
+        $allCalon = CalonLokasi::with(['user', 'knmp', 'detail', 'pengajuan', 'verifAdmin', 'baAktivasi', 'verifTeknis', 'baCalon', 'penetapan'])->get();
         
         $proposals = [];
         $verifList = [];
@@ -31,75 +32,72 @@ class CalonLokasiController extends ProgramBaseController
         $penetapanList = [];
 
         foreach($allCalon as $calon) {
-            $desa = $calon->knmp->desa ?? '-';
-            $kecamatan = $calon->knmp->kecamatan ?? '-';
-            $kabupaten = $calon->knmp->kabupaten ?? '-';
-            $idUser = '#USR-'.$calon->user_id;
+            $desa = $calon->desa ?? '-';
+            $kecamatan = $calon->kecamatan ?? '-';
+            $kabupaten = $calon->kabupaten ?? '-';
+            $provinsi = $calon->provinsi ?? '-';
+            $idUser = $calon->user ? $calon->user->name : ('#USR-'.$calon->user_id);
+
+            // Penanganan Dokumen Pengajuan (URL Publik atau Local Storage)
+            $dokumen = $calon->pengajuan?->dokumen_proposal;
+            $dokumenLink = filter_var($dokumen, FILTER_VALIDATE_URL) ? $dokumen : ($dokumen ? asset('storage/' . $dokumen) : null);
+
+            // Base Data untuk Detail Modal
+            $baseData = [
+                'id' => $calon->id,
+                'idUser' => $idUser,
+                'desa' => $desa,
+                'kecamatan' => $kecamatan,
+                'kabupaten' => $kabupaten,
+                'provinsi' => $provinsi,
+                'lat' => $calon->latitude,
+                'lng' => $calon->longitude,
+                'detail' => $calon->detail,
+                'pengajuan' => $calon->pengajuan,
+                'keterangan' => json_decode($calon->keterangan ?? '{}', true),
+            ];
 
             if ($calon->status_tahapan == 'pengajuan') {
-                $proposals[] = [
-                    'id' => $calon->id,
-                    'idUser' => $idUser,
-                    'desa' => $desa,
-                    'kecamatan' => $kecamatan,
-                    'kabupaten' => $kabupaten,
+                $proposals[] = array_merge($baseData, [
                     'tanggal' => $calon->pengajuan?->tanggal_pengajuan ?? '-',
-                    'dokumen' => $calon->pengajuan?->dokumen_proposal ? asset('storage/' . $calon->pengajuan->dokumen_proposal) : null,
+                    'dokumen' => $dokumenLink,
                     'kriteria' => '0/6'
-                ];
+                ]);
             } else if ($calon->status_tahapan == 'verif_admin') {
-                $verifList[] = [
-                    'id' => $calon->id,
-                    'idUser' => $idUser,
-                    'desa' => $desa,
-                    'kabupaten' => $kabupaten,
-                    'dokumen' => $calon->pengajuan?->dokumen_proposal ? asset('storage/' . $calon->pengajuan->dokumen_proposal) : null,
+                $verifList[] = array_merge($baseData, [
+                    'dokumen' => $dokumenLink,
                     'nilaiSkala' => ($calon->verifAdmin?->skor_nilai ?? 0) . '/100',
                     'status' => $calon->verifAdmin?->status_verif ?? 'Proses Review'
-                ];
+                ]);
             } else if ($calon->status_tahapan == 'ba_aktivasi') {
-                $baAktivasiList[] = [
-                    'id' => $calon->id,
-                    'idUser' => $idUser,
-                    'desa' => $desa,
-                    'kabupaten' => $kabupaten,
+                $baAktivasiList[] = array_merge($baseData, [
                     'dokumen' => $calon->baAktivasi?->dokumen_ba ? asset('storage/' . $calon->baAktivasi->dokumen_ba) : null,
                     'status' => $calon->baAktivasi?->status_ba ?? 'Menunggu Draft'
-                ];
+                ]);
             } else if ($calon->status_tahapan == 'verif_teknis') {
-                $verifTeknisList[] = [
-                    'id' => $calon->id,
-                    'idUser' => $idUser,
-                    'desa' => $desa,
+                $verifTeknisList[] = array_merge($baseData, [
                     'dokumen' => $calon->verifTeknis?->dokumen_laporan ? asset('storage/' . $calon->verifTeknis->dokumen_laporan) : null,
                     'nilaiSkala' => ($calon->verifTeknis?->skor_teknis ?? 0) . '/100',
                     'status' => $calon->verifTeknis?->status_verif ?? 'Proses Survey'
-                ];
+                ]);
             } else if ($calon->status_tahapan == 'ba_calon') {
-                $baCalonList[] = [
-                    'id' => $calon->id,
-                    'idUser' => $idUser,
-                    'desa' => $desa,
+                $baCalonList[] = array_merge($baseData, [
                     'dokumen' => $calon->baCalon?->dokumen_ba ? asset('storage/' . $calon->baCalon->dokumen_ba) : null,
                     'nilaiSkala' => '-',
                     'status' => $calon->baCalon?->status_ba ?? 'Menunggu Draft'
-                ];
+                ]);
             } else if ($calon->status_tahapan == 'penetapan') {
-                $penetapanList[] = [
-                    'id' => $calon->id,
-                    'idUser' => $idUser,
-                    'desa' => $desa,
-                    'kabupaten' => $kabupaten,
+                $penetapanList[] = array_merge($baseData, [
                     'dokumen' => $calon->penetapan?->dokumen_sk ? asset('storage/' . $calon->penetapan->dokumen_sk) : null,
                     'nilaiSkala' => '-',
                     'status' => $calon->penetapan?->status_sk ?? 'Menunggu Penerbitan'
-                ];
+                ]);
             }
         }
 
         $kriteriaLokasiList = \App\Models\KriteriaLokasi::all();
 
-        return view('programs.knmp.master.index', [
+        return view('programs.knmp.master.calon-lokasi.index', [
             'activeModule' => 'Master Data',
             'activeProgram' => $activeProgram,
             'stage' => $stage,
@@ -119,7 +117,7 @@ class CalonLokasiController extends ProgramBaseController
         $activeProgram = $this->formatProgramName($program);
         $kriteriaLokasiList = \App\Models\KriteriaLokasi::orderBy('id', 'asc')->get();
 
-        return view('programs.knmp.master.create', [
+        return view('programs.knmp.master.calon-lokasi.create', [
             'activeModule' => 'Master Data',
             'activeProgram' => $activeProgram,
             'kriteriaLokasiList' => $kriteriaLokasiList,
@@ -135,7 +133,7 @@ class CalonLokasiController extends ProgramBaseController
             'kabupaten' => 'required',
             'kecamatan' => 'required',
             'desa' => 'required',
-            'q20_proposal_knmp' => 'required|file|max:10240', // File Utama
+            'link_dokumen' => 'required|url', // Tautan Dokumen Pendukung
         ]);
 
         try {
@@ -147,18 +145,11 @@ class CalonLokasiController extends ProgramBaseController
             $kecName = District::find($request->kecamatan)->name ?? '-';
             $desaName = Village::find($request->desa)->name ?? '-';
 
-            // Simpan Semua File Tambahan secara dinamis
+            // Simpan Semua File Tambahan secara dinamis (jika ada)
             $uploadedFiles = [];
-            $proposalPath = null;
+            $proposalPath = $request->link_dokumen; // Ambil URL dari form input
             
             foreach ($request->allFiles() as $field => $fileData) {
-                if ($field === 'q20_proposal_knmp') {
-                    $file = is_array($fileData) ? $fileData[0] : $fileData;
-                    $filename = time() . '_proposal_' . str_replace(' ', '_', $file->getClientOriginalName());
-                    $proposalPath = $file->storeAs('dokumen_proposal', $filename, 'public');
-                    continue;
-                }
-                
                 $files = is_array($fileData) ? $fileData : [$fileData];
                 $paths = [];
                 foreach ($files as $f) {
@@ -168,41 +159,58 @@ class CalonLokasiController extends ProgramBaseController
                 $uploadedFiles[$field] = count($paths) > 1 ? $paths : $paths[0];
             }
 
-            // Kumpulkan data JSON untuk Keterangan Lahan secara dinamis
-            // Abaikan field yang bukan isian pertanyaan lahan
-            $excludedFields = ['_token', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'kriteria', 'q20_proposal_knmp'];
-            $lahanData = $request->except($excludedFields);
-
+            // Kumpulkan data JSON untuk kriteria tambahan (jika ada struktur dinamis lain)
             $jsonData = [
-                'form_data' => $lahanData,
                 'kriteria' => is_array($request->kriteria) ? $request->kriteria : json_decode($request->kriteria ?? '[]', true),
                 'files' => $uploadedFiles
             ];
 
-            // 1. Insert ke tabel knmp
-            $knmp = Knmp::create([
-                'nama_lokasi' => $desaName . ', ' . $kecName . ', ' . $kabName . ', ' . $provName,
-                'provinsi_id' => $request->provinsi,
-                'kabupaten_id' => $request->kabupaten,
-                'kecamatan_id' => $request->kecamatan,
-                'desa_id' => $request->desa,
-                'status' => 'active'
-            ]);
+            // 1. (Dihapus) Tidak lagi menyimpan ke tabel knmp saat pengajuan awal
 
             // 2. Insert ke calon_lokasi
             $calonLokasi = CalonLokasi::create([
-                'knmp_id' => $knmp->id,
+                'provinsi' => $provName,
+                'kabupaten' => $kabName,
+                'kecamatan' => $kecName,
+                'desa' => $desaName,
+                'latitude' => $request->q66_lampirkanTitik ?? null,
+                'longitude' => $request->q67_masukkanTitik ?? null,
                 'user_id' => Auth::id(),
                 'status_tahapan' => 'pengajuan',
                 'is_active' => true,
                 'keterangan' => json_encode($jsonData),
             ]);
 
-            // 3. Insert ke calon_lokasi_pengajuan
+            // 3. Insert ke calon_lokasi_detail (Menampung jawaban kuesioner - non fisik)
+            \App\Models\CalonLokasiDetail::create([
+                'calon_lokasi_id' => $calonLokasi->id,
+                'nama_pengisi' => $request->q14_5Nama,
+                'jabatan_pengisi' => $request->q22_6Jabatan,
+                'no_hp_pengisi' => $request->q15_7No,
+                'status_kepemilikan' => $request->q24_typeA,
+                'kesesuaian_rtrw' => $request->q30_typeA30,
+                'is_mangrove' => $request->q32_typeA32,
+                'is_konservasi' => $request->q33_3Apakah,
+                'is_hutan_lindung' => $request->q34_4Apakah,
+                'is_kawasan_budidaya' => $request->q35_5Apakah,
+                'is_das' => $request->q40_9Apakah,
+                'is_pasang_surut' => $request->q52_15Apakah,
+            ]);
+
+            // 4. Insert ke calon_lokasi_pengajuan (Tahap awal + Karakteristik Fisik)
             CalonLokasiPengajuan::create([
                 'calon_lokasi_id' => $calonLokasi->id,
                 'dokumen_proposal' => $proposalPath,
                 'tanggal_pengajuan' => now(),
+                'luas_lahan' => $request->q36_7Luas,
+                'panjang_lahan' => $request->q68_panjangLahan,
+                'lebar_lahan' => $request->q69_lebarLahan,
+                'kemiringan_lahan' => $request->q43_10bJika43,
+                'jarak_pantai' => $request->q38_7Luas38,
+                'jarak_sungai' => $request->q41_jikaYa,
+                'lebar_sungai' => $request->q42_jikaYa42,
+                'tekstur_tanah' => $request->q44_typeA44,
+                'salinitas_air' => $request->q50_typeA50,
             ]);
 
             DB::connection('mysql_knmp')->commit();
@@ -212,6 +220,43 @@ class CalonLokasiController extends ProgramBaseController
                 'message' => 'Pengajuan berhasil dikirim.'
             ]);
 
+        } catch (\Exception $e) {
+            DB::connection('mysql_knmp')->rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateStatus(Request $request, $program, $id)
+    {
+        $this->checkAuth();
+        
+        $calon = CalonLokasi::findOrFail($id);
+        $status = $request->input('status_tahapan');
+        
+        try {
+            DB::connection('mysql_knmp')->beginTransaction();
+            $calon->status_tahapan = $status;
+            $calon->save();
+
+            // Jika pindah ke verif_admin, buat record awal untuk verifikasi jika belum ada
+            if ($status == 'verif_admin') {
+                \App\Models\CalonLokasiVerifAdmin::firstOrCreate([
+                    'calon_lokasi_id' => $calon->id
+                ], [
+                    'status_verif' => 'Proses Review',
+                    'skor_nilai' => 0
+                ]);
+            }
+
+            DB::connection('mysql_knmp')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Status berhasil diupdate.'
+            ]);
         } catch (\Exception $e) {
             DB::connection('mysql_knmp')->rollBack();
             return response()->json([

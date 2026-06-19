@@ -50,6 +50,7 @@ Route::prefix('master/knmp')->name('program.')->group(function () {
     Route::get('/calon-lokasi', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'index'])->defaults('program', 'knmp')->name('master.calon-lokasi.index');
     Route::get('/calon-lokasi/create', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'create'])->defaults('program', 'knmp')->name('master.calon-lokasi.create');
     Route::post('/calon-lokasi/store', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'store'])->defaults('program', 'knmp')->name('master.calon-lokasi.store');
+    Route::post('/calon-lokasi/{id}/update-status', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'updateStatus'])->defaults('program', 'knmp')->name('master.calon-lokasi.update-status');
 });
 Route::prefix('operasional/knmp')->name('program.')->group(function () {
     Route::post('/upload-foto', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'uploadFoto'])->defaults('program', 'knmp')->name('operasional.upload-foto');

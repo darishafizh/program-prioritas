@@ -13,7 +13,7 @@ class BatchController extends ProgramBaseController
         $activeProgram = $this->formatProgramName($program);
         
         $batches = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('batch')->get();
-        return view('programs.knmp.master.batch', [
+        return view('programs.knmp.master.batch.index', [
             'activeModule' => 'Master Data', 
             'activeProgram' => $activeProgram,
             'batches' => $batches

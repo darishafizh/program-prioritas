@@ -94,15 +94,13 @@
         }
         .dok-img-wrapper {
             width: 100%;
-            height: 140px;
-            background-color: #f8fafc;
+            text-align: center;
             margin-bottom: 10px;
-            overflow: hidden;
         }
         .dok-img {
+            height: 120px;
             max-width: 100%;
-            max-height: 100%;
-            object-fit: cover;
+            width: auto;
         }
         .dok-title {
             font-weight: bold;
@@ -199,12 +197,49 @@
                 @endif
                 <td class="dok-card">
                     <div class="dok-img-wrapper">
-                        @if($row['foto'] && file_exists(storage_path('app/public/' . $row['foto'])))
+                        @php
+                            $fotoPath = null;
+                            if ($row['foto']) {
+                                if (file_exists(public_path('storage/' . $row['foto']))) {
+                                    $fotoPath = public_path('storage/' . $row['foto']);
+                                } elseif (file_exists(storage_path('app/public/' . $row['foto']))) {
+                                    $fotoPath = storage_path('app/public/' . $row['foto']);
+                                }
+                            }
+                        @endphp
+                        @if($fotoPath)
                             @php
-                                $imgData = base64_encode(file_get_contents(storage_path('app/public/' . $row['foto'])));
-                                $src = 'data:image/png;base64,'.$imgData;
+                                $src = '';
+                                if (file_exists($fotoPath)) {
+                                    $type = strtolower(pathinfo($fotoPath, PATHINFO_EXTENSION));
+                                    // DOMPDF struggles with some PNGs (e.g. interlaced). Convert all images safely if GD is available.
+                                    if (extension_loaded('gd')) {
+                                        $imgDataRaw = file_get_contents($fotoPath);
+                                        $gdImage = @imagecreatefromstring($imgDataRaw);
+                                        if ($gdImage) {
+                                            // Convert to white background
+                                            $bg = imagecreatetruecolor(imagesx($gdImage), imagesy($gdImage));
+                                            imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+                                            imagecopy($bg, $gdImage, 0, 0, 0, 0, imagesx($gdImage), imagesy($gdImage));
+                                            
+                                            ob_start();
+                                            imagejpeg($bg, null, 85);
+                                            $safeData = ob_get_clean();
+                                            $src = 'data:image/jpeg;base64,' . base64_encode($safeData);
+                                            
+                                            imagedestroy($bg);
+                                            imagedestroy($gdImage);
+                                        } else {
+                                            if ($type === 'jpg') $type = 'jpeg';
+                                            $src = 'data:image/' . $type . ';base64,' . base64_encode($imgDataRaw);
+                                        }
+                                    } else {
+                                        if ($type === 'jpg') $type = 'jpeg';
+                                        $src = 'data:image/' . $type . ';base64,' . base64_encode(file_get_contents($fotoPath));
+                                    }
+                                }
                             @endphp
-                            <img src="{{ $src }}" class="dok-img">
+                            <img src="{{ $src }}" class="dok-img" />
                         @else
                             <div style="padding-top: 50px; color: #ccc;">No Image</div>
                         @endif

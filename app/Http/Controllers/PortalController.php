@@ -4,17 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 class PortalController extends Controller
 {
     public function greetings()
     {
-        if (!session('logged_in')) {
+        if (!Auth::check()) {
             return redirect('/login');
-        }
-        
-        // Seamlessly upgrade existing users to admin
-        if (!session()->has('username') || session('username') !== 'admin') {
-            session(['username' => 'admin']);
         }
         
         $programs = [
