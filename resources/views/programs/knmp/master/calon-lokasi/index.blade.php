@@ -104,13 +104,13 @@
  </td>
  <td class="px-6 py-4 text-textMuted-light" x-text="item.tanggal"></td>
  <td class="px-6 py-4 text-center">
-  <a :href="item.dokumen_url || 'https://drive.google.com/drive'" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat Dokumen di Google Drive"><i class="fa-brands fa-google-drive"></i></a>
+  <a :href="item.dokumen || 'https://drive.google.com/drive'" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat Dokumen di Google Drive"><i class="fa-brands fa-google-drive"></i></a>
  </td>
  <td class="px-6 py-4 text-center">
  <div class="flex items-center justify-center gap-2">
-    <button @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Detail"><i class="fa-solid fa-eye"></i></button>
+    <button type="button" @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
     <template x-if="item.status === 'Menunggu Review' || item.status === undefined || item.status === null">
-        <button @click="verifyProposalDirect(item)" class="w-8 h-8 rounded-md bg-success/10 text-success hover:bg-success hover:text-white transition-colors flex items-center justify-center" title="Terima Proposal"><i class="fa-solid fa-check"></i></button>
+        <button type="button" @click="verifyProposalDirect(item)" class="w-8 h-8 rounded-md bg-success/10 text-success hover:bg-success hover:text-white transition-colors flex items-center justify-center" title="Terima Proposal"><i class="fa-solid fa-check"></i></button>
     </template>
  </div>
  </td>
@@ -126,7 +126,6 @@
  <th class="px-6 py-4">ID User</th>
  <th class="px-6 py-4">Usulan Lokasi</th>
  <th class="px-6 py-4 text-center">Dokumen</th>
- <th class="px-6 py-4">Nilai Skala Kriteria</th>
  <th class="px-6 py-4">Status</th>
  <th class="px-6 py-4 text-center">Aksi</th>
  </tr>
@@ -140,14 +139,16 @@
  <div class="text-[11px] text-textMuted-light dark:text-textMuted-dark mt-0.5" x-text="item.kabupaten"></div>
  </td>
  <td class="px-6 py-4 text-center">
-  <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Lihat Dokumen"><i class="fa-solid fa-file-pdf"></i></button>
+  <a :href="item.dokumen || 'https://drive.google.com/drive'" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat Dokumen di Google Drive"><i class="fa-brands fa-google-drive"></i></a>
  </td>
- <td class="px-6 py-4 font-medium text-teal-light" x-text="item.nilaiSkala"></td>
  <td class="px-6 py-4">
  <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.status"></span>
  </td>
  <td class="px-6 py-4 text-center">
- <button @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
+ <div class="flex items-center justify-center gap-2">
+ <button type="button" @click="openVerifAdminModal(item)" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center" title="Penilaian Verifikasi"><i class="fa-solid fa-clipboard-check pointer-events-none"></i></button>
+ <button type="button" @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
+ </div>
  </td>
  </tr>
  </template>
@@ -174,13 +175,21 @@
  <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
  </td>
  <td class="px-6 py-4 text-center">
-  <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Berita Acara"><i class="fa-solid fa-file-signature"></i></button>
+  <template x-if="item.dokumen">
+   <a :href="item.dokumen" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat BA Aktivasi"><i class="fa-solid fa-file-pdf"></i></a>
+  </template>
+  <template x-if="!item.dokumen">
+   <span class="text-gray-400 dark:text-gray-600">-</span>
+  </template>
  </td>
  <td class="px-6 py-4">
- <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-success/10 text-success" x-text="item.status"></span>
+ <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-warning/10 text-warning" x-text="item.status"></span>
  </td>
  <td class="px-6 py-4 text-center">
- <button @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
+ <div class="flex items-center justify-center gap-2">
+ <button type="button" @click="openUploadBaAktivasiModal(item)" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Unggah Berita Acara Aktivasi"><i class="fa-solid fa-file-arrow-up pointer-events-none"></i></button>
+ <button type="button" @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
+ </div>
  </td>
  </tr>
  </template>
@@ -194,8 +203,6 @@
  <th class="px-6 py-4">ID User</th>
  <th class="px-6 py-4">Usulan Lokasi</th>
  <th class="px-6 py-4 text-center">Dokumen</th>
- <th class="px-6 py-4">Nilai Skala Kriteria</th>
- <th class="px-6 py-4">Status</th>
  <th class="px-6 py-4 text-center">Aksi</th>
  </tr>
  </thead>
@@ -207,14 +214,18 @@
  <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.desa"></div>
  </td>
  <td class="px-6 py-4 text-center">
-  <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Lihat Dokumen"><i class="fa-solid fa-file-pdf"></i></button>
- </td>
- <td class="px-6 py-4 font-medium text-teal-light" x-text="item.nilaiSkala"></td>
- <td class="px-6 py-4">
- <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-600 dark:text-teal-400" x-text="item.status"></span>
+  <template x-if="item.dokumen">
+   <a :href="item.dokumen" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat BA Aktivasi"><i class="fa-solid fa-file-pdf"></i></a>
+  </template>
+  <template x-if="!item.dokumen">
+   <span class="text-gray-400 dark:text-gray-600">-</span>
+  </template>
  </td>
  <td class="px-6 py-4 text-center">
- <button @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
+ <div class="flex items-center justify-center gap-2">
+ <button type="button" @click="openVerifTeknisModal(item)" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Penilaian Lapangan"><i class="fa-solid fa-map-location-dot pointer-events-none"></i></button>
+ <button type="button" @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
+ </div>
  </td>
  </tr>
  </template>
@@ -228,7 +239,6 @@
  <th class="px-6 py-4">ID User</th>
  <th class="px-6 py-4">Usulan Lokasi</th>
  <th class="px-6 py-4 text-center">Berita Acara</th>
- <th class="px-6 py-4">Nilai Skala Kriteria</th>
  <th class="px-6 py-4">Status</th>
  <th class="px-6 py-4 text-center">Aksi</th>
  </tr>
@@ -239,16 +249,24 @@
  <td class="px-6 py-4"><span class="font-medium text-teal-light cursor-pointer hover:underline" x-text="item.idUser"></span></td>
  <td class="px-6 py-4">
  <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.desa"></div>
+ <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
  </td>
  <td class="px-6 py-4 text-center">
-  <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="BA Calon"><i class="fa-solid fa-file-contract"></i></button>
+  <template x-if="item.dokumen">
+   <a :href="item.dokumen" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat BA Calon"><i class="fa-solid fa-file-pdf"></i></a>
+  </template>
+  <template x-if="!item.dokumen">
+   <span class="text-gray-400 dark:text-gray-600">-</span>
+  </template>
  </td>
- <td class="px-6 py-4 font-medium text-teal-light" x-text="item.nilaiSkala"></td>
  <td class="px-6 py-4">
  <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-warning/10 text-warning" x-text="item.status"></span>
  </td>
  <td class="px-6 py-4 text-center">
- <button @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
+ <div class="flex items-center justify-center gap-2">
+ <button type="button" @click="openBaCalonModal(item)" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Unggah Berita Acara Calon"><i class="fa-solid fa-file-arrow-up pointer-events-none"></i></button>
+ <button type="button" @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
+ </div>
  </td>
  </tr>
  </template>
@@ -276,19 +294,26 @@
  <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
  </td>
  <td class="px-6 py-4 text-center">
-  <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Lihat Dokumen"><i class="fa-solid fa-file-pdf"></i></button>
+  <a :href="item.dokumen || '#'" target="_blank" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto" title="Lihat BA Calon"><i class="fa-solid fa-file-pdf"></i></a>
  </td>
  <td class="px-6 py-4 font-medium text-teal-light" x-text="item.nilaiSkala"></td>
  <td class="px-6 py-4">
  <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-success/10 text-success border border-success/20 w-max" x-text="item.status"></span>
  </td>
  <td class="px-6 py-4 text-center">
- <button @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
+ <div class="flex items-center justify-center gap-2">
+ <button type="button" @click="openPenetapanModal(item)" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Unggah SK Penetapan"><i class="fa-solid fa-file-circle-check"></i></button>
+ <button type="button" @click="openDetailModal(item)" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50" title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
+ </div>
  </td>
  </tr>
  </template>
  </tbody>
- </table><!-- SEMUA MODALS DI BAWAH SINI -->
+ </table>
+ </div><!-- close overflow-x-auto -->
+ </div><!-- close bg-bgSurface -->
+
+ <!-- SEMUA MODALS DI BAWAH SINI -->
 
  <!-- MODAL: Preview PDF Pengajuan -->
  <div x-show="showPreviewModal" style="display: none;" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -419,38 +444,256 @@
  </div>
  </div>
 
- <!-- MODAL 3: Upload BA Tertanda Tangan -->
- <div x-show="showUploadBAModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
- <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
- <div x-show="showUploadBAModal" x-transition.opacity class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showUploadBAModal = false"></div>
+ <!-- MODAL 2.5: Form Penilaian Verifikasi Administrasi -->
+ <div x-show="showVerifAdminModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+ <div class="flex items-center justify-center min-h-screen p-4 text-center">
+ <div x-show="showVerifAdminModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900/50 dark:bg-gray-900/80 backdrop-blur-sm transition-opacity" @click="showVerifAdminModal = false" aria-hidden="true"></div>
  <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
- <div x-show="showUploadBAModal" x-transition.scale.origin.bottom class="relative z-10 inline-block align-bottom bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100 dark:border-gray-800">
- <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
- <h3 class="text-base font-medium text-textMain-light dark:text-textMain-dark">Upload Dokumen BA</h3>
- <button @click="showUploadBAModal = false" class="text-gray-400 hover:text-danger transition-colors"><i class="fa-solid fa-xmark text-base"></i></button>
- </div>
- <div class="px-6 py-5">
- <div class="space-y-4">
- <p class="text-sm text-textMuted-light">Silakan unggah dokumen Berita Acara Aktivasi (<span class="font-medium text-teal-light" x-text="activeBa?.noBa"></span>) yang telah ditandatangani oleh Pemda setempat.</p>
+ <div x-show="showVerifAdminModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full sm:max-w-xl border border-gray-100 dark:border-gray-800 flex flex-col">
  
- <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer">
- <div class="flex flex-col items-center justify-center pt-5 pb-6">
- <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
- <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
- <p class="text-xs text-gray-500">PDF (Maks. 5MB)</p>
+ <!-- Header -->
+ <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 flex justify-between items-center shrink-0">
+ <div class="flex items-center gap-3">
+ <div class="w-10 h-10 rounded-full bg-teal-light/10 text-teal-light flex items-center justify-center">
+ <i class="fa-solid fa-clipboard-check text-lg"></i>
  </div>
- <input type="file" class="hidden" accept=".pdf" @change="uploadBaFile = $event.target.files[0].name" />
- </label>
- <p x-show="uploadBaFile" class="text-sm text-success mt-2 font-medium text-center" x-text="`File: ${uploadBaFile}`"></p>
+ <div>
+ <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark">Penilaian Verifikasi</h3>
+ <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">Tahap Administrasi</p>
+ </div>
+ </div>
+ <button type="button" @click="showVerifAdminModal = false" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+ </div>
+ 
+ <!-- Body -->
+ <div class="p-6 overflow-y-auto">
+ <!-- Context Info -->
+ <div class="mb-5 p-4 rounded-xl bg-teal-light/5 border border-teal-light/10 flex items-start gap-3">
+ <i class="fa-solid fa-circle-info text-teal-light mt-0.5"></i>
+ <div>
+ <p class="text-[11px] text-teal-light/80 font-medium uppercase tracking-wider mb-0.5">Target Usulan Lokasi</p>
+ <p class="text-sm font-semibold text-teal-900 dark:text-teal-100" x-text="activeVerif?.desa || '-'"></p>
+ <p class="text-xs text-teal-700/70 dark:text-teal-300/70" x-text="activeVerif?.kabupaten || '-'"></p>
+ </div>
+ </div>
+
+ <form @submit.prevent="submitVerifAdmin" id="formVerifAdmin" class="space-y-5">
+ <div class="grid grid-cols-1 gap-5">
+ <!-- Status -->
+ <div>
+ <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Keputusan <span class="text-danger">*</span></label>
+ <select x-model="formVerif.status" required class="w-full px-4 py-2.5 text-sm font-medium border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl focus:border-teal-light focus:ring-teal-light/20 transition-all shadow-sm">
+ <option value="Lolos">Lolos</option>
+ <option value="Revisi">Revisi</option>
+ <option value="Ditolak">Ditolak</option>
+ </select>
+ </div>
+ </div>
+
+ <!-- Catatan -->
+ <div>
+ <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Catatan Verifikasi</label>
+ <textarea x-model="formVerif.catatan" rows="3" class="w-full px-4 py-3 text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl focus:border-teal-light focus:ring-teal-light/20 transition-all shadow-sm placeholder-gray-400" placeholder="Berikan catatan detail terkait hasil verifikasi..."></textarea>
+ </div>
+
+ <div class="pt-5 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-800">
+ <button type="button" @click="showVerifAdminModal = false" class="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+ <button type="submit" class="px-5 py-2.5 bg-teal-light hover:bg-teal-600 shadow-lg shadow-teal-light/30 text-white rounded-xl text-sm font-medium transition-all flex items-center gap-2 transform active:scale-95"> 
+ <i class="fa-solid fa-paper-plane text-xs"></i> Simpan Hasil 
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
+ </div>
+
+
+ <!-- MODAL 5: Form Penilaian Verifikasi Teknis Lapangan -->
+ <div x-show="showVerifTeknisModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+ <div class="flex items-center justify-center min-h-screen p-4 text-center">
+ <div x-show="showVerifTeknisModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900/50 dark:bg-gray-900/80 backdrop-blur-sm transition-opacity" @click="showVerifTeknisModal = false" aria-hidden="true"></div>
+ <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ <div x-show="showVerifTeknisModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full sm:max-w-xl border border-gray-100 dark:border-gray-800 flex flex-col">
+ 
+ <!-- Header -->
+ <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 flex justify-between items-center shrink-0">
+ <div class="flex items-center gap-3">
+ <div class="w-10 h-10 rounded-full bg-teal-light/10 text-teal-light flex items-center justify-center">
+ <i class="fa-solid fa-map-location-dot text-lg"></i>
+ </div>
+ <div>
+ <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark">Penilaian Lapangan</h3>
+ <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">Tahap Verifikasi Teknis</p>
+ </div>
+ </div>
+ <button type="button" @click="showVerifTeknisModal = false" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+ </div>
+ 
+ <!-- Body -->
+ <div class="p-6 overflow-y-auto">
+ <div class="mb-5 p-4 rounded-xl bg-teal-light/5 border border-teal-light/10 flex items-start gap-3">
+ <i class="fa-solid fa-circle-info text-teal-light mt-0.5"></i>
+ <div>
+ <p class="text-[11px] text-teal-light/80 font-medium uppercase tracking-wider mb-0.5">Target Usulan Lokasi</p>
+ <p class="text-sm font-semibold text-teal-900 dark:text-teal-100" x-text="activeVerifTeknis?.desa || '-'"></p>
+ <p class="text-xs text-teal-700/70 dark:text-teal-300/70" x-text="activeVerifTeknis?.kabupaten || '-'"></p>
+ </div>
+ </div>
+
+ <form @submit.prevent="submitVerifTeknis" id="formVerifTeknis" class="space-y-5">
+ <div class="space-y-5">
+ <div>
+ <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Keputusan <span class="text-danger">*</span></label>
+ <select x-model="formVerifTeknis.status" required class="w-full px-4 py-2.5 text-sm font-medium border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl focus:border-teal-light focus:ring-teal-light/20 transition-all shadow-sm">
+ <option value="Lolos">Lolos (Lanjut BA Calon)</option>
+ <option value="Revisi">Revisi</option>
+ <option value="Ditolak">Ditolak</option>
+ </select>
+ </div>
+ <div>
+ <label class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Catatan Verifikasi Lapangan</label>
+ <textarea x-model="formVerifTeknis.catatan" rows="3" class="w-full px-4 py-3 text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl focus:border-teal-light focus:ring-teal-light/20 transition-all shadow-sm placeholder-gray-400" placeholder="Berikan catatan detail terkait hasil tinjauan lapangan..."></textarea>
+ </div>
+
+ <div class="pt-5 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-800">
+ <button type="button" @click="showVerifTeknisModal = false" class="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+ <button type="submit" class="px-5 py-2.5 bg-teal-light hover:bg-teal-600 shadow-lg shadow-teal-light/30 text-white rounded-xl text-sm font-medium transition-all flex items-center gap-2 transform active:scale-95"> 
+ <i class="fa-solid fa-paper-plane text-xs"></i> Simpan Penilaian 
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- MODAL 6: Upload BA Calon -->
+ <div x-show="showUploadBaCalonModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+ <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+ <div x-show="showUploadBaCalonModal" x-transition.opacity class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showUploadBaCalonModal = false"></div>
+ <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ <div x-show="showUploadBaCalonModal" x-transition.scale.origin.bottom class="relative z-10 inline-block align-bottom bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100 dark:border-gray-800">
+ <div class="absolute top-5 right-5 z-10">
+ <button @click="showUploadBaCalonModal = false" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+ </div>
+ <div class="px-6 py-6 pb-8">
+ <div class="space-y-4">
+ <div>
+ <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark mb-1">Unggah BA Calon Lokasi</h3>
+ <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Silakan unggah dokumen Berita Acara yang telah disetujui bersama.</p>
+ </div>
+ <div class="mt-4 p-5 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group" :class="fileNameBaCalon ? 'bg-teal-50 border-teal-light dark:bg-teal-900/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 hover:border-teal-light/50'">
+ <template x-if="!fileNameBaCalon">
+ <div>
+ <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2 group-hover:text-teal-light transition-colors"></i>
+ <p class="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Pilih File PDF</p>
+ <p class="text-[10px] text-gray-400">Maks. 2MB</p>
+ </div>
+ </template>
+ <template x-if="fileNameBaCalon">
+ <div>
+ <i class="fa-solid fa-file-pdf text-3xl text-teal-light mb-2"></i>
+ <p class="text-xs font-medium text-teal-700 dark:text-teal-300 mb-1 px-4 truncate max-w-[250px]" x-text="fileNameBaCalon"></p>
+ <p class="text-[10px] text-teal-600/70 dark:text-teal-400/70">Siap diunggah</p>
+ </div>
+ </template>
+ <input type="file" id="dokumen_ba_calon" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="const file = $event.target.files[0]; if (file) { if (file.size > 2 * 1024 * 1024) { showToastMsg('Ukuran file melebihi 2MB!', 'danger'); $event.target.value = ''; fileNameBaCalon = ''; } else { fileNameBaCalon = file.name; } } else { fileNameBaCalon = ''; }">
+ </div>
  </div>
  </div>
  <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
- <button @click="showUploadBAModal = false" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-textMain-light rounded-md text-xs font-medium transition-colors">Batal</button>
- <button @click="submitUploadBA()" class="px-4 py-2 bg-teal-light hover:bg-teal-600 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-between gap-2"> Selesaikan BA <i class="fa-solid fa-check"></i> </button>
+ <button @click="showUploadBaCalonModal = false" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-textMain-light rounded-md text-xs font-medium transition-colors">Batal</button>
+ <button @click="submitUploadBaCalon()" class="px-4 py-2 bg-teal-light hover:bg-teal-600 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-between gap-2"> Unggah <i class="fa-solid fa-check"></i> </button>
  </div>
  </div>
  </div>
  </div>
+
+ <!-- MODAL 7: Upload SK Penetapan -->
+ <div x-show="showUploadSkPenetapanModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+ <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+ <div x-show="showUploadSkPenetapanModal" x-transition.opacity class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showUploadSkPenetapanModal = false"></div>
+ <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ <div x-show="showUploadSkPenetapanModal" x-transition.scale.origin.bottom class="relative z-10 inline-block align-bottom bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100 dark:border-gray-800">
+ <div class="absolute top-5 right-5 z-10">
+ <button @click="showUploadSkPenetapanModal = false" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+ </div>
+ <div class="px-6 py-6 pb-8">
+ <div class="space-y-4">
+ <div>
+ <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark mb-1">Unggah SK Penetapan</h3>
+ <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Silakan unggah dokumen Surat Keputusan (SK) Penetapan final.</p>
+ </div>
+ <div class="mt-4 p-5 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group" :class="fileNameSkPenetapan ? 'bg-teal-50 border-teal-light dark:bg-teal-900/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 hover:border-teal-light/50'">
+ <template x-if="!fileNameSkPenetapan">
+ <div>
+ <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2 group-hover:text-teal-light transition-colors"></i>
+ <p class="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Pilih File PDF</p>
+ <p class="text-[10px] text-gray-400">Maks. 2MB</p>
+ </div>
+ </template>
+ <template x-if="fileNameSkPenetapan">
+ <div>
+ <i class="fa-solid fa-file-pdf text-3xl text-teal-light mb-2"></i>
+ <p class="text-xs font-medium text-teal-700 dark:text-teal-300 mb-1 px-4 truncate max-w-[250px]" x-text="fileNameSkPenetapan"></p>
+ <p class="text-[10px] text-teal-600/70 dark:text-teal-400/70">Siap diunggah</p>
+ </div>
+ </template>
+ <input type="file" id="dokumen_sk_penetapan" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="const file = $event.target.files[0]; if (file) { if (file.size > 2 * 1024 * 1024) { showToastMsg('Ukuran file melebihi 2MB!', 'danger'); $event.target.value = ''; fileNameSkPenetapan = ''; } else { fileNameSkPenetapan = file.name; } } else { fileNameSkPenetapan = ''; }">
+ </div>
+ </div>
+ </div>
+ <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+ <button @click="showUploadSkPenetapanModal = false" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-textMain-light rounded-md text-xs font-medium transition-colors">Batal</button>
+ <button @click="submitUploadSkPenetapan()" class="px-4 py-2 bg-teal-light hover:bg-teal-600 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-between gap-2"> Unggah <i class="fa-solid fa-check"></i> </button>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- MODAL 8: Upload BA Aktivasi -->
+ <div x-show="showUploadBaAktivasiModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+ <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+ <div x-show="showUploadBaAktivasiModal" x-transition.opacity class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showUploadBaAktivasiModal = false"></div>
+ <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ <div x-show="showUploadBaAktivasiModal" x-transition.scale.origin.bottom class="relative z-10 inline-block align-bottom bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100 dark:border-gray-800">
+ <div class="absolute top-5 right-5 z-10">
+ <button @click="showUploadBaAktivasiModal = false" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+ </div>
+ <div class="px-6 py-6 pb-8">
+ <div class="space-y-4">
+ <div>
+ <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark mb-1">Unggah BA Aktivasi</h3>
+ <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Silakan unggah salinan Berita Acara Aktivasi yang telah ditandatangani.</p>
+ </div>
+ <div class="mt-4 p-5 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group" :class="fileNameBaAktivasi ? 'bg-teal-50 border-teal-light dark:bg-teal-900/20' : 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 hover:border-teal-light/50'">
+ <template x-if="!fileNameBaAktivasi">
+ <div>
+ <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2 group-hover:text-teal-light transition-colors"></i>
+ <p class="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Pilih File PDF</p>
+ <p class="text-[10px] text-gray-400">Maks. 2MB</p>
+ </div>
+ </template>
+ <template x-if="fileNameBaAktivasi">
+ <div>
+ <i class="fa-solid fa-file-pdf text-3xl text-teal-light mb-2"></i>
+ <p class="text-xs font-medium text-teal-700 dark:text-teal-300 mb-1 px-4 truncate max-w-[250px]" x-text="fileNameBaAktivasi"></p>
+ <p class="text-[10px] text-teal-600/70 dark:text-teal-400/70">Siap diunggah</p>
+ </div>
+ </template>
+ <input type="file" id="dokumen_ba_aktivasi" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="const file = $event.target.files[0]; if (file) { if (file.size > 2 * 1024 * 1024) { showToastMsg('Ukuran file melebihi 2MB!', 'danger'); $event.target.value = ''; fileNameBaAktivasi = ''; } else { fileNameBaAktivasi = file.name; } } else { fileNameBaAktivasi = ''; }">
+ </div>
+ </div>
+ </div>
+ <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+ <button @click="showUploadBaAktivasiModal = false" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-textMain-light rounded-md text-xs font-medium transition-colors">Batal</button>
+ <button @click="submitUploadBaAktivasi()" class="px-4 py-2 bg-teal-light hover:bg-teal-600 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-between gap-2"> Unggah <i class="fa-solid fa-check"></i> </button>
+ </div>
+ </div>
+ </div>
+ </div>
+
  <!-- MODAL 4: Tampilkan Semua Data Detail (Eye Catching) -->
  <div x-show="showDetailDataModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
  <div class="flex items-center justify-center min-h-screen p-4 text-center">
@@ -509,34 +752,35 @@
  <div class="flex flex-row gap-6 mb-4">
  <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Luas & Dimensi Lahan</div>
- <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="\`\${activeDetail.pengajuan?.luas_lahan || 0} m² (\${activeDetail.pengajuan?.panjang_lahan || 0}m x \${activeDetail.pengajuan?.lebar_lahan || 0}m)\`"></div>
+ <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="`${activeDetail.pengajuan?.luas_lahan || 0} m² (${activeDetail.pengajuan?.panjang_lahan || 0}m x ${activeDetail.pengajuan?.lebar_lahan || 0}m)`"></div>
  </div>
  <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Kemiringan</div>
- <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="\`\${activeDetail.pengajuan?.kemiringan_lahan || 0}°\`"></div>
+ <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="`${activeDetail.pengajuan?.kemiringan_lahan || 0}°`"></div>
  </div>
  <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Tekstur & Salinitas</div>
- <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="\`\${activeDetail.pengajuan?.tekstur_tanah || '-'} | \${activeDetail.pengajuan?.salinitas_air || '-'}\`"></div>
+ <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="`${activeDetail.pengajuan?.tekstur_tanah || '-'} | ${activeDetail.pengajuan?.salinitas_air || '-'}`"></div>
  </div>
  </div>
  <div class="flex flex-row gap-6 mb-4">
  <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Jarak dari Pantai</div>
- <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.pengajuan?.jarak_pantai ? \`\${activeDetail.pengajuan?.jarak_pantai} m\` : '-'"></div>
+ <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.pengajuan?.jarak_pantai ? `${activeDetail.pengajuan?.jarak_pantai} m` : '-'"></div>
  </div>
  <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Jarak & Lebar Sungai (Area DAS)</div>
- <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="(activeDetail.pengajuan?.jarak_sungai || activeDetail.pengajuan?.lebar_sungai) ? \`\${activeDetail.pengajuan?.jarak_sungai || '-'} m | L: \${activeDetail.pengajuan?.lebar_sungai || '-'} m\` : '-'"></div>
+ <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="(activeDetail.pengajuan?.jarak_sungai || activeDetail.pengajuan?.lebar_sungai) ? `${activeDetail.pengajuan?.jarak_sungai || '-'} m | L: ${activeDetail.pengajuan?.lebar_sungai || '-'} m` : '-'"></div>
  </div>
  <div class="flex-1"></div>
  </div>
  <div class="flex flex-row gap-6">
  <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Titik Koordinat</div>
- <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.lat && activeDetail.lng ? \`\${activeDetail.lat}, \${activeDetail.lng}\` : '-'"></div>
+ <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.lat && activeDetail.lng ? `${activeDetail.lat}, ${activeDetail.lng}` : '-'"></div>
  </div>
- <div class="flex-[2]">
+ <div class="flex-1"></div>
+ <div class="flex-1">
  <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Akses Mobilitas Material</div>
  <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.is_pasang_surut || '-'"></div>
  </div>
@@ -597,10 +841,9 @@
  </div>
  </div>
  </div>
-    </div>
 
-    <!-- Toast Notification has been moved to a global layout component -->
-</div>
+</div><!-- close unclosed modal container -->
+</div><!-- close x-data -->
 
 <script>
  document.addEventListener('alpine:init', () => {
@@ -617,21 +860,22 @@
 
  // Verif Admin
  verifList: [], showChecklistModal: false, activeVerif: null,
+ showVerifAdminModal: false, formVerif: { skor: '', status: 'Lolos', catatan: '' },
 
  // BA Aktivasi
- baAktivasiList: [], showUploadBAModal: false, activeBa: null, uploadBaFile: '',
+ baAktivasiList: [], showUploadBaAktivasiModal: false, activeBaAktivasi: null, fileNameBaAktivasi: '',
 
  // Detail Data
  showDetailDataModal: false, activeDetail: null,
 
  // Verifikasi Teknis Lapangan
- verifTeknisList: [],
+ verifTeknisList: [], showVerifTeknisModal: false, activeVerifTeknis: null, formVerifTeknis: { skor: '', status: 'Lolos', catatan: '' }, fileNameLaporanTeknis: '',
 
  // BA Calon
- baCalonList: [],
+ baCalonList: [], showUploadBaCalonModal: false, activeBaCalon: null, fileNameBaCalon: '',
 
  // Penetapan Calon
- penetapanList: [],
+ penetapanList: [], showUploadSkPenetapanModal: false, activePenetapan: null, fileNameSkPenetapan: '',
 
  // Data Master Wilayah
  provinces: [], regencies: [], districts: [], villages: [],
@@ -705,6 +949,102 @@
 
  // --- Fungsi Tabel Verifikasi Administrasi ---
  openChecklistModal(item) { this.activeVerif = JSON.parse(JSON.stringify(item)); this.showChecklistModal = true; },
+ openVerifAdminModal(item) {
+ this.activeVerif = item;
+ this.formVerif = { skor: '', status: 'Lolos', catatan: '' };
+ this.showVerifAdminModal = true;
+ },
+ submitVerifAdmin() {
+ let formData = new FormData();
+ formData.append('status_verif', this.formVerif.status);
+ formData.append('catatan', this.formVerif.catatan || '');
+
+ fetch(`/master/knmp/calon-lokasi/${this.activeVerif.id}/verif-admin`, {
+ method: 'POST',
+ headers: {
+ 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+ },
+ body: formData
+ })
+ .then(res => res.json())
+ .then(data => {
+ if(data.success) {
+ this.showToastMsg(data.message, 'success');
+ this.showVerifAdminModal = false;
+ setTimeout(() => { window.location.reload(); }, 2500);
+ } else {
+ this.showToastMsg('Gagal: ' + (data.message || 'Terjadi kesalahan'), 'danger');
+ }
+ })
+ .catch(err => {
+ console.error(err);
+ this.showToastMsg('Gagal terhubung ke server', 'danger');
+ });
+ },
+
+ // --- Fungsi Tabel Verifikasi Teknis Lapangan ---
+ openVerifTeknisModal(item) {
+ this.activeVerifTeknis = item;
+ this.formVerifTeknis = { status: 'Lolos', catatan: '' };
+ this.showVerifTeknisModal = true;
+ },
+ submitVerifTeknis() {
+ let formData = new FormData();
+ formData.append('status_verif', this.formVerifTeknis.status);
+ formData.append('catatan', this.formVerifTeknis.catatan);
+ fetch(`/master/knmp/calon-lokasi/${this.activeVerifTeknis.id}/verif-teknis`, {
+ method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: formData
+ }).then(res => res.json()).then(data => {
+ if(data.success) {
+ this.showToastMsg(data.message, 'success');
+ this.showVerifTeknisModal = false;
+ setTimeout(() => { window.location.reload(); }, 2500); }
+ else { this.showToastMsg('Gagal: ' + data.message, 'danger'); }
+ }).catch(err => { console.error(err); this.showToastMsg('Gagal terhubung ke server', 'danger'); });
+ },
+
+ // --- Fungsi Tabel BA Calon Lokasi ---
+  openBaCalonModal(item) {
+  this.activeBaCalon = item;
+  let el = document.getElementById('dokumen_ba_calon');
+  if(el) el.value = '';
+  this.fileNameBaCalon = '';
+  this.showUploadBaCalonModal = true;
+  },
+ submitUploadBaCalon() {
+ let fileInput = document.getElementById('dokumen_ba_calon');
+ if (fileInput.files.length === 0) { this.showToastMsg('Pilih dokumen BA terlebih dahulu', 'warning'); return; }
+ let formData = new FormData();
+ formData.append('dokumen_ba', fileInput.files[0]);
+ fetch(`/master/knmp/calon-lokasi/${this.activeBaCalon.id}/ba-calon`, {
+ method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: formData
+ }).then(res => res.json()).then(data => {
+ if(data.success) { this.showToastMsg(data.message, 'success'); this.showUploadBaCalonModal = false; setTimeout(() => window.location.reload(), 2500); }
+ else { this.showToastMsg('Gagal: ' + data.message, 'danger'); }
+ }).catch(err => { console.error(err); this.showToastMsg('Gagal terhubung ke server', 'danger'); });
+ },
+
+ // --- Fungsi Tabel Penetapan SK ---
+ openPenetapanModal(item) {
+ this.activePenetapan = item;
+ let el = document.getElementById('dokumen_sk_penetapan');
+ if(el) el.value = '';
+ this.fileNameSkPenetapan = '';
+ this.showUploadSkPenetapanModal = true;
+ },
+ submitUploadSkPenetapan() {
+ let fileInput = document.getElementById('dokumen_sk_penetapan');
+ if (fileInput.files.length === 0) { this.showToastMsg('Pilih dokumen SK terlebih dahulu', 'warning'); return; }
+ let formData = new FormData();
+ formData.append('dokumen_sk', fileInput.files[0]);
+ fetch(`/master/knmp/calon-lokasi/${this.activePenetapan.id}/penetapan`, {
+ method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: formData
+ }).then(res => res.json()).then(data => {
+ if(data.success) { this.showToastMsg(data.message, 'success'); this.showUploadSkPenetapanModal = false; setTimeout(() => window.location.reload(), 2500); }
+ else { this.showToastMsg('Gagal: ' + data.message, 'danger'); }
+ }).catch(err => { console.error(err); this.showToastMsg('Gagal terhubung ke server', 'danger'); });
+ },
+
  updateChecklistProgress() { this.activeVerif.checkedDocs = this.activeVerif.documents.filter(d => d.isValid).length; },
  terbitkanBA() {
  if (this.activeVerif.checkedDocs !== this.activeVerif.totalDocs) return;
@@ -727,35 +1067,24 @@
  },
 
  // --- Fungsi Tabel BA Aktivasi ---
- generateDraftBA(item) {
- window.dispatchEvent(new CustomEvent('trigger-confirm', {
- detail: {
- title: 'Generate Draft BA', message: 'Sistem akan membuat PDF Draft BA Aktivasi dengan Nomor Surat otomatis. Lanjutkan?', type: 'info', confirmText: 'Ya, Generate',
- onConfirm: () => {
- item.status = 'Menunggu TTD Pemda';
- item.noBa = 'BA.' + Math.floor(Math.random() * 900 + 100) + '/KNMP/2026';
- item.tglBa = this.formatDate(new Date()).split(' ')[0]; // just date
- }
- }
- }));
+ openUploadBaAktivasiModal(item) {
+ this.activeBaAktivasi = item;
+ let el = document.getElementById('dokumen_ba_aktivasi');
+ if(el) el.value = '';
+ this.fileNameBaAktivasi = '';
+ this.showUploadBaAktivasiModal = true;
  },
- openUploadBAModal(item) {
- this.activeBa = item;
- this.uploadBaFile = '';
- this.showUploadBAModal = true;
- },
- submitUploadBA() {
- if(!this.uploadBaFile) return alert('Silakan pilih file PDF Berita Acara!');
- 
- window.dispatchEvent(new CustomEvent('trigger-confirm', {
- detail: {
- title: 'Selesaikan BA Aktivasi', message: 'Pastikan dokumen yang diunggah telah memiliki tanda tangan dan stempel resmi.', type: 'success', confirmText: 'Selesai & Simpan',
- onConfirm: () => {
- this.activeBa.status = 'BA Terbit (Selesai)';
- this.showUploadBAModal = false;
- }
- }
- }));
+ submitUploadBaAktivasi() {
+ let fileInput = document.getElementById('dokumen_ba_aktivasi');
+ if (fileInput.files.length === 0) { this.showToastMsg('Pilih dokumen BA Aktivasi terlebih dahulu', 'warning'); return; }
+ let formData = new FormData();
+ formData.append('dokumen_ba', fileInput.files[0]);
+ fetch(`/master/knmp/calon-lokasi/${this.activeBaAktivasi.id}/ba-aktivasi`, {
+ method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: formData
+ }).then(res => res.json()).then(data => {
+ if(data.success) { this.showToastMsg(data.message, 'success'); this.showUploadBaAktivasiModal = false; setTimeout(() => window.location.reload(), 2500); }
+ else { this.showToastMsg('Gagal: ' + data.message, 'danger'); }
+ }).catch(err => { console.error(err); this.showToastMsg('Gagal terhubung ke server', 'danger'); });
  },
 
  formatDate(date) {

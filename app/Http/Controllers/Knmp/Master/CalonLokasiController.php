@@ -76,9 +76,7 @@ class CalonLokasiController extends ProgramBaseController
                 ]);
             } else if ($calon->status_tahapan == 'verif_teknis') {
                 $verifTeknisList[] = array_merge($baseData, [
-                    'dokumen' => $calon->verifTeknis?->dokumen_laporan ? asset('storage/' . $calon->verifTeknis->dokumen_laporan) : null,
-                    'nilaiSkala' => ($calon->verifTeknis?->skor_teknis ?? 0) . '/100',
-                    'status' => $calon->verifTeknis?->status_verif ?? 'Proses Survey'
+                    'dokumen' => $calon->baAktivasi?->dokumen_ba ? asset('storage/' . $calon->baAktivasi->dokumen_ba) : null,
                 ]);
             } else if ($calon->status_tahapan == 'ba_calon') {
                 $baCalonList[] = array_merge($baseData, [
@@ -229,7 +227,7 @@ class CalonLokasiController extends ProgramBaseController
         }
     }
 
-    public function updateStatus(Request $request, $program, $id)
+    public function updateStatus(Request $request, $id)
     {
         $this->checkAuth();
         
@@ -256,6 +254,270 @@ class CalonLokasiController extends ProgramBaseController
             return response()->json([
                 'success' => true,
                 'message' => 'Status berhasil diupdate.'
+            ]);
+        } catch (\Exception $e) {
+            DB::connection('mysql_knmp')->rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function storeVerifAdmin(Request $request, $id)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'status_verif' => 'required|in:Lolos,Revisi,Ditolak'
+        ]);
+
+        $calon = CalonLokasi::findOrFail($id);
+        
+        try {
+            DB::connection('mysql_knmp')->beginTransaction();
+            
+            $verif = \App\Models\CalonLokasiVerifAdmin::firstOrCreate(
+                ['calon_lokasi_id' => $calon->id],
+                ['skor_nilai' => 0, 'status_verif' => 'Proses Review']
+            );
+
+            $verif->status_verif = $request->status_verif;
+            $verif->catatan = $request->catatan;
+            $verif->tanggal_verif = now();
+
+            $verif->save();
+
+            // Update main status based on verification result
+            if ($request->status_verif == 'Lolos') {
+                $calon->status_tahapan = 'ba_aktivasi';
+                // Initialize BA Aktivasi record
+                \App\Models\CalonLokasiBaAktivasi::firstOrCreate([
+                    'calon_lokasi_id' => $calon->id
+                ], [
+                    'status_ba' => 'Menunggu Draft'
+                ]);
+            } else if ($request->status_verif == 'Revisi' || $request->status_verif == 'Ditolak') {
+                $calon->status_tahapan = 'pengajuan';
+            }
+            
+            $calon->save();
+
+            DB::connection('mysql_knmp')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data verifikasi berhasil disimpan.'
+            ]);
+        } catch (\Exception $e) {
+            DB::connection('mysql_knmp')->rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function storeVerifTeknis(Request $request, $id)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'status_verif' => 'required|in:Lolos,Revisi,Ditolak'
+        ]);
+
+        $calon = CalonLokasi::findOrFail($id);
+        
+        try {
+            DB::connection('mysql_knmp')->beginTransaction();
+            
+            $verif = \App\Models\CalonLokasiVerifTeknis::firstOrCreate(
+                ['calon_lokasi_id' => $calon->id],
+                ['skor_teknis' => 0, 'status_verif' => 'Proses Survey']
+            );
+
+            $verif->status_verif = $request->status_verif;
+            $verif->catatan = $request->catatan;
+            $verif->tanggal_verif = now();
+
+            $verif->save();
+
+            // Update main status based on verification result
+            if ($request->status_verif == 'Lolos') {
+                $calon->status_tahapan = 'ba_calon';
+                // Initialize BA Calon record
+                \App\Models\CalonLokasiBaCalon::firstOrCreate([
+                    'calon_lokasi_id' => $calon->id
+                ], [
+                    'status_ba' => 'Menunggu Draft'
+                ]);
+            } else if ($request->status_verif == 'Revisi' || $request->status_verif == 'Ditolak') {
+                $calon->status_tahapan = 'pengajuan';
+            }
+            
+            $calon->save();
+
+            DB::connection('mysql_knmp')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data verifikasi teknis berhasil disimpan.'
+            ]);
+        } catch (\Exception $e) {
+            DB::connection('mysql_knmp')->rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadBaAktivasi(Request $request, $id)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'dokumen_ba' => 'required|file|mimes:pdf|max:2048'
+        ]);
+
+        $calon = CalonLokasi::findOrFail($id);
+        
+        try {
+            DB::connection('mysql_knmp')->beginTransaction();
+            
+            $ba = \App\Models\CalonLokasiBaAktivasi::firstOrCreate(
+                ['calon_lokasi_id' => $calon->id],
+                ['status_ba' => 'Menunggu Draft']
+            );
+
+            if ($request->hasFile('dokumen_ba')) {
+                $file = $request->file('dokumen_ba');
+                $filename = time() . '_ba_aktivasi_' . str_replace(' ', '_', $file->getClientOriginalName());
+                $path = $file->storeAs('dokumen_ba', $filename, 'public');
+                $ba->dokumen_ba = $path;
+            }
+
+            $ba->status_ba = 'Selesai';
+            $ba->tanggal_ba = now();
+            $ba->save();
+
+            // Automatically move to verif_teknis
+            $calon->status_tahapan = 'verif_teknis';
+            
+            // Initialize Verifikasi Teknis record
+            \App\Models\CalonLokasiVerifTeknis::firstOrCreate([
+                'calon_lokasi_id' => $calon->id
+            ], [
+                'status_verif' => 'Proses Survey'
+            ]);
+
+            $calon->save();
+
+            DB::connection('mysql_knmp')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Berita Acara Aktivasi berhasil diunggah.'
+            ]);
+        } catch (\Exception $e) {
+            DB::connection('mysql_knmp')->rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadBaCalon(Request $request, $id)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'dokumen_ba' => 'required|file|mimes:pdf|max:2048'
+        ]);
+
+        $calon = CalonLokasi::findOrFail($id);
+        
+        try {
+            DB::connection('mysql_knmp')->beginTransaction();
+            
+            $ba = \App\Models\CalonLokasiBaCalon::firstOrCreate(
+                ['calon_lokasi_id' => $calon->id],
+                ['status_ba' => 'Menunggu Draft']
+            );
+
+            if ($request->hasFile('dokumen_ba')) {
+                $file = $request->file('dokumen_ba');
+                $filename = time() . '_ba_calon_' . str_replace(' ', '_', $file->getClientOriginalName());
+                $path = $file->storeAs('dokumen_ba', $filename, 'public');
+                $ba->dokumen_ba = $path;
+            }
+
+            $ba->status_ba = 'Selesai';
+            $ba->tanggal_ba = now();
+            $ba->save();
+
+            // Automatically move to penetapan
+            $calon->status_tahapan = 'penetapan';
+            
+            // Initialize Penetapan (SK) record
+            \App\Models\CalonLokasiPenetapan::firstOrCreate([
+                'calon_lokasi_id' => $calon->id
+            ], [
+                'status_sk' => 'Menunggu Penerbitan'
+            ]);
+
+            $calon->save();
+
+            DB::connection('mysql_knmp')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Berita Acara Calon berhasil diunggah.'
+            ]);
+        } catch (\Exception $e) {
+            DB::connection('mysql_knmp')->rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadSkPenetapan(Request $request, $id)
+    {
+        $this->checkAuth();
+        
+        $request->validate([
+            'dokumen_sk' => 'required|file|mimes:pdf|max:10240'
+        ]);
+
+        $calon = CalonLokasi::findOrFail($id);
+        
+        try {
+            DB::connection('mysql_knmp')->beginTransaction();
+            
+            $sk = \App\Models\CalonLokasiPenetapan::firstOrCreate(
+                ['calon_lokasi_id' => $calon->id],
+                ['status_sk' => 'Menunggu Penerbitan']
+            );
+
+            if ($request->hasFile('dokumen_sk')) {
+                $file = $request->file('dokumen_sk');
+                $filename = time() . '_sk_penetapan_' . str_replace(' ', '_', $file->getClientOriginalName());
+                $path = $file->storeAs('dokumen_sk', $filename, 'public');
+                $sk->dokumen_sk = $path;
+            }
+
+            $sk->status_sk = 'Ditetapkan';
+            $sk->tanggal_sk = now();
+            $sk->save();
+
+            DB::connection('mysql_knmp')->commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'SK Penetapan berhasil diunggah.'
             ]);
         } catch (\Exception $e) {
             DB::connection('mysql_knmp')->rollBack();

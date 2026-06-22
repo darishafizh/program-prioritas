@@ -454,17 +454,19 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    this.isSubmitting = false;
                     if(data.success) {
-                        alert(data.message);
-                        window.location.href = "{{ route('program.master.calon-lokasi.index', ['program' => strtolower($activeProgram)]) }}";
+                        Alpine.store('toast').showToast({ message: data.message, type: 'success' });
+                        setTimeout(() => {
+                            window.location.href = "{{ route('program.master.calon-lokasi.index', ['program' => strtolower($activeProgram)]) }}";
+                        }, 1500);
                     } else {
-                        alert(data.message || 'Terjadi kesalahan.');
+                        this.isSubmitting = false;
+                        Alpine.store('toast').showToast({ message: data.message || 'Terjadi kesalahan.', type: 'danger' });
                     }
                 })
                 .catch(err => {
                     this.isSubmitting = false;
-                    alert('Gagal mengirim form. Periksa koneksi internet Anda.');
+                    Alpine.store('toast').showToast({ message: 'Gagal mengirim form. Periksa koneksi internet Anda.', type: 'danger' });
                     console.error(err);
                 });
             }

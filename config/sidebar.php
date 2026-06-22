@@ -56,9 +56,19 @@ return [
             'heading' => 'Pelaporan & Audit',
             'items' => [
                 [
-                    'label' => 'Evaluasi Kinerja',
-                    'icon' => 'fa-clipboard-check',
-                    'url' => '/evaluasi/knmp',
+                    'label' => 'Calon Lokasi',
+                    'icon' => 'fa-map-location-dot',
+                    'url' => '/evaluasi/knmp/calon-lokasi',
+                ],
+                [
+                    'label' => 'Operasional Proyek',
+                    'icon' => 'fa-helmet-safety',
+                    'url' => '/evaluasi/knmp/operasional',
+                ],
+                [
+                    'label' => 'Progres Fisik',
+                    'icon' => 'fa-person-digging',
+                    'url' => '/evaluasi/knmp/progres-fisik',
                 ]
             ]
         ]

@@ -51,6 +51,11 @@ Route::prefix('master/knmp')->name('program.')->group(function () {
     Route::get('/calon-lokasi/create', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'create'])->defaults('program', 'knmp')->name('master.calon-lokasi.create');
     Route::post('/calon-lokasi/store', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'store'])->defaults('program', 'knmp')->name('master.calon-lokasi.store');
     Route::post('/calon-lokasi/{id}/update-status', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'updateStatus'])->defaults('program', 'knmp')->name('master.calon-lokasi.update-status');
+    Route::post('/calon-lokasi/{id}/verif-admin', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'storeVerifAdmin'])->defaults('program', 'knmp')->name('master.calon-lokasi.store-verif-admin');
+    Route::post('/calon-lokasi/{id}/ba-aktivasi', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'uploadBaAktivasi'])->defaults('program', 'knmp')->name('master.calon-lokasi.upload-ba-aktivasi');
+    Route::post('/calon-lokasi/{id}/verif-teknis', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'storeVerifTeknis'])->defaults('program', 'knmp')->name('master.calon-lokasi.store-verif-teknis');
+    Route::post('/calon-lokasi/{id}/ba-calon', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'uploadBaCalon'])->defaults('program', 'knmp')->name('master.calon-lokasi.upload-ba-calon');
+    Route::post('/calon-lokasi/{id}/penetapan', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'uploadSkPenetapan'])->defaults('program', 'knmp')->name('master.calon-lokasi.upload-sk-penetapan');
 });
 Route::prefix('operasional/knmp')->name('program.')->group(function () {
     Route::post('/upload-foto', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'uploadFoto'])->defaults('program', 'knmp')->name('operasional.upload-foto');
@@ -65,7 +70,13 @@ Route::prefix('operasional/knmp')->name('program.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'index'])->defaults('program', 'knmp')->name('operasional');
 });
 Route::prefix('evaluasi/knmp')->name('program.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Knmp\Evaluasi\KinerjaController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi');
+    Route::get('/', function () { return redirect('/evaluasi/knmp/calon-lokasi'); });
+    Route::get('/calon-lokasi', [\App\Http\Controllers\Knmp\Evaluasi\CalonLokasiEvaluasiController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi.calon-lokasi');
+    Route::get('/calon-lokasi/pdf', [\App\Http\Controllers\Knmp\Evaluasi\CalonLokasiEvaluasiController::class, 'pdf'])->defaults('program', 'knmp')->name('evaluasi.calon-lokasi.pdf');
+    Route::get('/operasional', [\App\Http\Controllers\Knmp\Evaluasi\OperasionalEvaluasiController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi.operasional');
+    Route::get('/operasional/pdf', [\App\Http\Controllers\Knmp\Evaluasi\OperasionalEvaluasiController::class, 'pdf'])->defaults('program', 'knmp')->name('evaluasi.operasional.pdf');
+    Route::get('/progres-fisik', [\App\Http\Controllers\Knmp\Evaluasi\ProgresFisikEvaluasiController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi.progres-fisik');
+    Route::get('/progres-fisik/pdf', [\App\Http\Controllers\Knmp\Evaluasi\ProgresFisikEvaluasiController::class, 'pdf'])->defaults('program', 'knmp')->name('evaluasi.progres-fisik.pdf');
 });
 
 // BINS Routes
