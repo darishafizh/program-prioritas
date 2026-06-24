@@ -40,11 +40,6 @@ Route::prefix('master/knmp')->name('program.')->group(function () {
     Route::put('/batch/{id}', [\App\Http\Controllers\Knmp\Master\BatchController::class, 'update'])->defaults('program', 'knmp')->name('master.batch.update');
     Route::delete('/batch/{id}', [\App\Http\Controllers\Knmp\Master\BatchController::class, 'destroy'])->defaults('program', 'knmp')->name('master.batch.destroy');
 
-    // Kriteria Lokasi Routes
-    Route::get('/kriteria-lokasi', [\App\Http\Controllers\Knmp\Master\KriteriaLokasiController::class, 'index'])->defaults('program', 'knmp')->name('master.kriteria-lokasi.index');
-    Route::post('/kriteria-lokasi', [\App\Http\Controllers\Knmp\Master\KriteriaLokasiController::class, 'store'])->defaults('program', 'knmp')->name('master.kriteria-lokasi.store');
-    Route::put('/kriteria-lokasi/{id}', [\App\Http\Controllers\Knmp\Master\KriteriaLokasiController::class, 'update'])->defaults('program', 'knmp')->name('master.kriteria-lokasi.update');
-    Route::delete('/kriteria-lokasi/{id}', [\App\Http\Controllers\Knmp\Master\KriteriaLokasiController::class, 'destroy'])->defaults('program', 'knmp')->name('master.kriteria-lokasi.destroy');
     Route::get('/vendor', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'index'])->defaults('program', 'knmp')->name('master.vendor.index');
     Route::post('/vendor', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'store'])->defaults('program', 'knmp')->name('master.vendor.store');
     Route::put('/vendor/{id}', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'update'])->defaults('program', 'knmp')->name('master.vendor.update');

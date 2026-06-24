@@ -32,12 +32,12 @@
             <!-- Action Buttons -->
             <div class="flex flex-wrap items-center gap-3">
                 @if ($currentStage === 'pengajuan')
-                    @can('manage-data')
+                    @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah())
                         <a href="{{ route('program.master.calon-lokasi.create') }}"
                             class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2.5 text-xs font-semibold transition-all flex items-center justify-between gap-2 shadow-sm whitespace-nowrap">
                             Tambah Pengajuan <i class="fa-solid fa-plus bg-white/20 p-1.5 rounded-lg"></i>
                         </a>
-                    @endcan
+                    @endif
                 @endif
             </div>
         </div>
@@ -120,9 +120,14 @@
                                 </td>
                                 <td class="px-6 py-4 text-textMuted-light" x-text="item.tanggal"></td>
                                 <td class="px-6 py-4 text-center">
-                                    <a :href="item.dokumen || 'https://drive.google.com/drive'" target="_blank"
-                                        class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
-                                        title="Lihat Dokumen di Google Drive"><i class="fa-brands fa-google-drive"></i></a>
+                                    <template x-if="item.dokumen">
+                                        <a :href="item.dokumen" target="_blank"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            title="Lihat Dokumen Proposal"><i class="fa-solid fa-file-lines"></i></a>
+                                    </template>
+                                    <template x-if="!item.dokumen">
+                                        <span class="text-gray-400 dark:text-gray-600">-</span>
+                                    </template>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
@@ -171,9 +176,14 @@
                                         x-text="item.kabupaten"></div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <a :href="item.dokumen || 'https://drive.google.com/drive'" target="_blank"
-                                        class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
-                                        title="Lihat Dokumen di Google Drive"><i class="fa-brands fa-google-drive"></i></a>
+                                    <template x-if="item.dokumen">
+                                        <a :href="item.dokumen" target="_blank"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            title="Lihat Dokumen Proposal"><i class="fa-solid fa-file-lines"></i></a>
+                                    </template>
+                                    <template x-if="!item.dokumen">
+                                        <span class="text-gray-400 dark:text-gray-600">-</span>
+                                    </template>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
@@ -948,7 +958,7 @@
                         </button>
                     </div>
 
-                    <div class="overflow-y-auto pr-2">
+                    <div class="overflow-y-auto flex-1 pr-2">
                         <template x-if="activeDetail && activeDetail.detail">
                             <div class="space-y-6">
 
@@ -958,29 +968,20 @@
                                         <i class="fa-solid fa-user-tie text-blue-500"></i>
                                         <h4 class="font-medium text-sm text-textMain-light dark:text-textMain-dark">Informasi Pengisi</h4>
                                     </div>
-                                        <div class="flex flex-row gap-6">
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Nama</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.detail.nama_pengisi || '-'"></div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Jabatan</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.detail.jabatan_pengisi || '-'"></div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Kontak</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.detail.no_hp_pengisi || '-'"></div>
-                                            </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Nama</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.nama_pengisi || '-'"></div>
                                         </div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Jabatan</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.jabatan_pengisi || '-'"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Kontak</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.no_hp_pengisi || '-'"></div>
+                                        </div>
+                                    </div>
                                     </div>
 
                                     <!-- Karakteristik Fisik -->
@@ -989,68 +990,38 @@
                                             <i class="fa-solid fa-mountain text-amber-500"></i>
                                             <h4 class="font-medium text-sm text-textMain-light dark:text-textMain-dark">Karakteristik Fisik</h4>
                                         </div>
-                                        <div class="flex flex-row gap-6 mb-4">
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Luas & Dimensi Lahan</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="`${activeDetail.pengajuan?.luas_lahan || 0} m² (${activeDetail.pengajuan?.panjang_lahan || 0}m x ${activeDetail.pengajuan?.lebar_lahan || 0}m)`">
-                                                </div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Kemiringan</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="`${activeDetail.pengajuan?.kemiringan_lahan || 0}°`"></div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Tekstur & Salinitas</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="`${activeDetail.pengajuan?.tekstur_tanah || '-'} | ${activeDetail.pengajuan?.salinitas_air || '-'}`">
-                                                </div>
-                                            </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Luas & Dimensi Lahan</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="`${activeDetail.pengajuan?.luas_lahan || 0} m² (${activeDetail.pengajuan?.panjang_lahan || 0}m x ${activeDetail.pengajuan?.lebar_lahan || 0}m)`"></div>
                                         </div>
-                                        <div class="flex flex-row gap-6 mb-4">
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Jarak dari Pantai</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.pengajuan?.jarak_pantai ? `${activeDetail.pengajuan?.jarak_pantai} m` : '-'">
-                                                </div>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Jarak & Lebar Sungai (Area DAS)</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="(activeDetail.pengajuan?.jarak_sungai || activeDetail.pengajuan?.lebar_sungai) ? `${activeDetail.pengajuan?.jarak_sungai || '-'} m | L: ${activeDetail.pengajuan?.lebar_sungai || '-'} m` : '-'">
-                                                </div>
-                                            </div>
-                                            <div class="flex-1"></div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Kemiringan</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="`${activeDetail.pengajuan?.kemiringan_lahan || 0}°`"></div>
                                         </div>
-                                        <div class="flex flex-row gap-6">
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Titik Koordinat</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.lat && activeDetail.lng ? `${activeDetail.lat}, ${activeDetail.lng}` : '-'">
-                                                </div>
-                                            </div>
-                                            <div class="flex-1"></div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Akses Mobilitas Material</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.detail.is_pasang_surut || '-'"></div>
-                                            </div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Tekstur & Salinitas</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="`${activeDetail.pengajuan?.tekstur_tanah || '-'} | ${activeDetail.pengajuan?.salinitas_air || '-'}`"></div>
                                         </div>
+                                        
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Jarak dari Pantai</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.pengajuan?.jarak_pantai ? `${activeDetail.pengajuan?.jarak_pantai} m` : '-'"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Jarak & Lebar Sungai (Area DAS)</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="(activeDetail.pengajuan?.jarak_sungai || activeDetail.pengajuan?.lebar_sungai) ? `${activeDetail.pengajuan?.jarak_sungai || '-'} m | L: ${activeDetail.pengajuan?.lebar_sungai || '-'} m` : '-'"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Titik Koordinat</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.lat && activeDetail.lng ? `${activeDetail.lat}, ${activeDetail.lng}` : '-'"></div>
+                                        </div>
+
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Akses Mobilitas Material</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.is_pasang_surut || '-'"></div>
+                                        </div>
+                                    </div>
                                     </div>
 
                                     <!-- Status Kawasan -->
@@ -1059,23 +1030,16 @@
                                             <i class="fa-solid fa-shield-halved text-teal-600"></i>
                                             <h4 class="font-medium text-sm text-textMain-light dark:text-textMain-dark">Status Kawasan</h4>
                                         </div>
-                                        <div class="flex flex-row gap-6 mb-4">
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Kepemilikan</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.detail.status_kepemilikan || '-'"></div>
-                                            </div>
-                                            <div class="flex-1"></div>
-                                            <div class="flex-1">
-                                                <div
-                                                    class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">
-                                                    Kesesuaian RTRW</div>
-                                                <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200"
-                                                    x-text="activeDetail.detail.kesesuaian_rtrw || '-'"></div>
-                                            </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Kepemilikan</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.status_kepemilikan || '-'"></div>
                                         </div>
+                                        <div>
+                                            <div class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-1">Kesesuaian RTRW</div>
+                                            <div class="text-[13px] font-medium text-gray-800 dark:text-gray-200" x-text="activeDetail.detail.kesesuaian_rtrw || '-'"></div>
+                                        </div>
+                                    </div>
                                         <div>
                                             <div
                                                 class="text-[10px] text-gray-400 uppercase tracking-wider font-medium mb-2">

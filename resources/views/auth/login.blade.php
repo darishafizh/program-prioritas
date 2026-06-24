@@ -45,7 +45,7 @@
  <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-colors duration-300">
  
  <!-- Card Header -->
- <div class="pt-8 pb-5 px-6 text-center border-b border-gray-100 dark:border-gray-800">
+ <div class="pb-5 px-6 text-center border-b border-gray-100 dark:border-gray-800" style="padding-top: 3.5rem;">
  <div class="w-14 h-14 mx-auto mb-3">
  <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-full h-full object-contain dark:bg-white dark:rounded-full dark:p-1.5 transition-all">
  </div>
@@ -108,7 +108,7 @@
  </div>
  
  <!-- Footer -->
- <div class="pb-5 text-center">
+ <div class="text-center" style="padding-bottom: 2.5rem;">
  <p class="text-xs text-textMuted-light/60 dark:text-textMuted-dark/50">
  &copy; 2026 Kementerian Kelautan dan Perikanan
  </p>

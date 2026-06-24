@@ -25,11 +25,7 @@ return [
                     'icon' => 'fa-layer-group',
                     'url' => '/master/knmp/batch',
                 ],
-                [
-                    'label' => 'Kriteria Lokasi',
-                    'icon' => 'fa-list-check',
-                    'url' => '/master/knmp/kriteria-lokasi',
-                ],
+
                 [
                     'label' => 'Data Vendor/Penyedia',
                     'icon' => 'fa-building-user',
@@ -38,7 +34,8 @@ return [
                 [
                     'label' => 'Calon Lokasi',
                     'icon' => 'fa-map-location-dot',
-                    'url' => '/master/knmp',
+                    'url' => '/master/knmp/calon-lokasi',
+                    'active' => ['master/knmp/calon-lokasi*']
                 ]
             ]
         ],

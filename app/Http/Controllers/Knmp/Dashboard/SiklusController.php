@@ -17,7 +17,7 @@ class SiklusController extends ProgramBaseController
 
         $queryKnmp = \App\Models\Knmp::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $queryKnmp->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            $queryKnmp->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
         if ($requestedBatchId) {
             $queryKnmp->where('batch_id', $requestedBatchId);
@@ -39,7 +39,7 @@ class SiklusController extends ProgramBaseController
         // Pipeline Pengajuan from CalonLokasi
         $calonQuery = \App\Models\CalonLokasi::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $calonQuery->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            $calonQuery->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
         if ($requestedBatchId) {
             // Adjust this if CalonLokasi also filters by batch_id (assuming it doesn't strictly have batch_id or does)
@@ -107,7 +107,7 @@ class SiklusController extends ProgramBaseController
             ];
         })->keyBy('id');
 
-        $narasi = "Dashboard ini merangkum pergerakan siklus secara komprehensif. Pada Siklus Pengajuan Calon Lokasi, terdapat total <span class='font-bold text-blue-500'>{$totalPengajuan} usulan</span> yang sedang berproses. Sementara itu, untuk Siklus Konstruksi KNMP dari total <span class='font-bold text-teal-light dark:text-teal-400'>{$totalLokasi} lokasi</span> yang telah ditetapkan, <span class='font-bold text-warning dark:text-amber-500'>{$dalamPembangunan} lokasi</span> kini memasuki tahap konstruksi dan <span class='font-bold text-success'>{$totalSelesai} lokasi</span> telah selesai diserahterimakan. Pada fase operasional, dari {$totalOperasional} proyek aktif dengan rata-rata progres mencapai <span class='font-bold'>".number_format($avgProgresOperasional, 1)."%</span>.";
+        $narasi = "Pada <strong>Siklus Pengajuan Calon Lokasi</strong>, saat ini terdapat <span class='font-bold text-blue-500'>{$totalPengajuan} usulan</span> yang sedang dalam proses. Memasuki <strong>Siklus Usulan & Konstruksi KNMP</strong>, dari keseluruhan <span class='font-bold text-teal-light dark:text-teal-400'>{$totalLokasi} lokasi</span> yang telah ditetapkan, sebanyak <span class='font-bold text-warning dark:text-amber-500'>{$dalamPembangunan} lokasi</span> sedang aktif dalam tahap konstruksi, dan <span class='font-bold text-success'>{$totalSelesai} lokasi</span> telah berhasil diserahterimakan. Adapun khusus pada <strong>Fase Konstruksi</strong>, {$dalamPembangunan} proyek yang sedang berjalan saat ini mencatatkan rata-rata progres fisik sebesar <span class='font-bold'>".number_format($avgProgresOperasional, 1)."%</span>.";
 
         return view('programs.knmp.dashboard.siklus', [
             'activeModule' => 'Dashboard',

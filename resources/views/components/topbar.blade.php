@@ -42,20 +42,20 @@ $programs = [
  $slug = strtolower(str_replace(' ', '-', $activeProgram));
  @endphp
  
- <a href="/dashboard/{{ $slug }}" class="px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Dashboard' ? 'bg-teal-light/10 text-textMain-light dark:text-teal-400 font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-teal-400 font-normal' }}">
- <i class="fa-solid fa-chart-pie mr-1"></i> Dashboard
+ <a href="/dashboard/{{ $slug }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Dashboard' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+ <i class="fa-solid fa-chart-pie mr-1 {{ $activeModule === 'Dashboard' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Dashboard
  </a>
  
- <a href="/master/{{ $slug }}" class="px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Master Data' ? 'bg-navy-light/10 text-textMain-light dark:bg-blue-400/15 dark:text-teal-400 font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-teal-400 font-normal' }}">
- <i class="fa-solid fa-database mr-1"></i> Master Data
+ <a href="/master/{{ $slug }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Master Data' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+ <i class="fa-solid fa-database mr-1 {{ $activeModule === 'Master Data' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Master Data
  </a>
  
- <a href="/operasional/{{ $slug }}" class="px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Operasional' ? 'bg-teal-light/10 text-teal-light dark:text-teal-400 font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-teal-light dark:hover:text-teal-400 font-normal' }}">
- <i class="fa-solid fa-truck-fast mr-1"></i> Operasional
+ <a href="/operasional/{{ $slug }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Operasional' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+ <i class="fa-solid fa-truck-fast mr-1 {{ $activeModule === 'Operasional' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Operasional
  </a>
  
- <a href="/evaluasi/{{ $slug }}" class="px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Evaluasi' ? 'bg-success/10 text-success dark:text-green-400 font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-success dark:hover:text-green-400 font-normal' }}">
- <i class="fa-solid fa-clipboard-check mr-1"></i> Evaluasi
+ <a href="/evaluasi/{{ $slug }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Evaluasi' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+ <i class="fa-solid fa-clipboard-check mr-1 {{ $activeModule === 'Evaluasi' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Evaluasi
  </a>
  </nav>
  @else

@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class VendorController extends ProgramBaseController
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            abort_if(\Illuminate\Support\Facades\Auth::user()->isUserDaerah(), 403, 'Akses ditolak.');
+            return $next($request);
+        });
+    }
+
     public function index(Request $request, $program)
     {
         $this->checkAuth();

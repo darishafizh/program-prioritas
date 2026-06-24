@@ -22,7 +22,7 @@ class PelaksanaanController extends ProgramBaseController
         $baseQuery = function($stage) {
             $query = Knmp::where('tahap_saat_ini', $stage);
             if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-                $query->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+                $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
             }
             return $query;
         };

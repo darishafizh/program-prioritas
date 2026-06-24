@@ -31,6 +31,10 @@ class CalonLokasiEvaluasiController extends ProgramBaseController
             $query->whereDate('created_at', '<=', $requestedDate);
         }
 
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
+        }
+
         $allCalonLokasi = $query->orderBy('created_at', 'desc')->get();
 
         $stageOrder = ['pengajuan', 'verif_admin', 'ba_aktivasi', 'verif_teknis', 'ba_calon', 'penetapan'];
@@ -131,6 +135,9 @@ class CalonLokasiEvaluasiController extends ProgramBaseController
         }
         if ($requestedDate) {
             $query->whereDate('created_at', '<=', $requestedDate);
+        }
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
 
         $allCalonLokasi = $query->orderBy('created_at', 'desc')->get();

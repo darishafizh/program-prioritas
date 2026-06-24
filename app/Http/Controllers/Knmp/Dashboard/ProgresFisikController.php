@@ -33,7 +33,7 @@ class ProgresFisikController extends ProgramBaseController
 
         $queryKnmp = \App\Models\Knmp::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $queryKnmp->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            $queryKnmp->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
         if ($requestedBatchId) {
             $queryKnmp->where('batch_id', $requestedBatchId);
@@ -55,7 +55,8 @@ class ProgresFisikController extends ProgramBaseController
         })->keyBy('id');
 
         if ($totalLokasi > 0) {
-            $semuaKnmp = (clone $queryKnmp)->with('konstruksiKnmp.penyediaJasa', 'konstruksiKnmp.tahapKonstruksi')
+            $semuaKnmp = (clone $queryKnmp)->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima'])
+                ->with('konstruksiKnmp.penyediaJasa', 'konstruksiKnmp.tahapKonstruksi')
                 ->get();
             
             $totalProgres = 0;
@@ -157,7 +158,7 @@ class ProgresFisikController extends ProgramBaseController
 
         $sortedByProgres = collect($konstruksiDetails)->sortByDesc('progres')->values();
         $top10 = $sortedByProgres->take(10);
-        $bottom10 = collect($konstruksiDetails)->sortBy('progres')->values()->take(10);
+        $bottom10 = collect($konstruksiDetails)->where('progres', '<', 100)->sortBy('progres')->values()->take(10);
         
         $stagnantList = collect($konstruksiDetails)->where('is_stagnant', true)->sortByDesc('days_stagnant')->values()->all();
         
@@ -168,7 +169,7 @@ class ProgresFisikController extends ProgramBaseController
             ->whereNotNull('longitude');
             
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $mapQuery->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            $mapQuery->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
             
         if ($requestedBatchId) {

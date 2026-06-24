@@ -36,8 +36,8 @@
             <h2 class="text-xl font-semibold tracking-tight">Formulir Pengajuan KNMP</h2>
             <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Lengkapi data wilayah, spesifikasi lahan, dan unggah dokumen pendukung.</p>
         </div>
-        <a href="{{ route('program.master.calon-lokasi.index', ['program' => strtolower($activeProgram)]) }}" class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm flex items-center gap-2">
-            <i class="fa-solid fa-arrow-left"></i> Kembali
+        <a href="{{ route('program.master.calon-lokasi.index', ['program' => strtolower($activeProgram)]) }}" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i> Kembali
         </a>
     </div>
 
@@ -362,13 +362,15 @@
             </div>
 
             <!-- Submit Button -->
-            <div class="flex justify-end gap-4 mt-8">
-                <a href="{{ route('program.master.calon-lokasi.index', ['program' => strtolower($activeProgram)]) }}" class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors">Batal</a>
-                <button type="submit" :disabled="isSubmitting" class="px-8 py-3 bg-teal-light text-white rounded-xl text-sm font-semibold hover:-translate-y-0.5 hover:bg-teal-light/90 shadow-lg shadow-teal-light/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            <div class="flex justify-end gap-3 mt-8">
+                <a href="{{ route('program.master.calon-lokasi.index', ['program' => strtolower($activeProgram)]) }}" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-xmark text-[11px]"></i> Batal
+                </a>
+                <button type="submit" :disabled="isSubmitting" class="px-5 py-2 bg-teal-light text-white rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:bg-teal-light/90 shadow-lg shadow-teal-light/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                     <span x-show="!isSubmitting">Kirim Pengajuan</span>
                     <span x-show="isSubmitting">Memproses...</span>
-                    <i x-show="!isSubmitting" class="fa-solid fa-paper-plane ml-1"></i>
-                    <i x-show="isSubmitting" class="fa-solid fa-spinner fa-spin ml-1"></i>
+                    <i x-show="!isSubmitting" class="fa-solid fa-paper-plane text-[11px]"></i>
+                    <i x-show="isSubmitting" class="fa-solid fa-spinner fa-spin text-[11px]"></i>
                 </button>
             </div>
         </div>
@@ -392,8 +394,19 @@
                 das: 'Tidak'
             },
             
-            initForm() {
-                this.fetchProvinces();
+            async initForm() {
+                await this.fetchProvinces();
+                const userProvId = "{{ $userProvinsiId ?? '' }}";
+                const userKabId = "{{ $userKabupatenId ?? '' }}";
+
+                if (userProvId) {
+                    this.formData.provinsi = userProvId;
+                    await this.fetchRegencies();
+                    if (userKabId) {
+                        this.formData.kabupaten = userKabId;
+                        await this.fetchDistricts();
+                    }
+                }
             },
 
             async fetchProvinces() {

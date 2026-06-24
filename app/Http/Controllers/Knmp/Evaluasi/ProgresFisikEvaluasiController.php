@@ -46,6 +46,10 @@ class ProgresFisikEvaluasiController extends ProgramBaseController
         if ($requestedBatchId) {
             $query->where('batch_id', $requestedBatchId);
         }
+        
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
+        }
 
         $allKnmp = $query->get();
 
@@ -188,6 +192,10 @@ class ProgresFisikEvaluasiController extends ProgramBaseController
 
         if ($requestedBatchId) {
             $query->where('batch_id', $requestedBatchId);
+        }
+
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
 
         $allKnmp = $query->get();

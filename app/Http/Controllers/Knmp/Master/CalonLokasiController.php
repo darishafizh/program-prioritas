@@ -25,7 +25,7 @@ class CalonLokasiController extends ProgramBaseController
         $query = CalonLokasi::with(['user', 'knmp', 'detail', 'pengajuan', 'verifAdmin', 'baAktivasi', 'verifTeknis', 'baCalon', 'penetapan']);
         
         if (Auth::user()->isUserDaerah()) {
-            $query->where('kabupaten', Auth::user()->kabupaten);
+            $query->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
         }
 
         $allCalon = $query->get();
@@ -99,8 +99,6 @@ class CalonLokasiController extends ProgramBaseController
             }
         }
 
-        $kriteriaLokasiList = \App\Models\KriteriaLokasi::all();
-
         return view('programs.knmp.master.calon-lokasi.index', [
             'activeModule' => 'Master Data',
             'activeProgram' => $activeProgram,
@@ -110,29 +108,40 @@ class CalonLokasiController extends ProgramBaseController
             'baAktivasiList' => $baAktivasiList,
             'verifTeknisList' => $verifTeknisList,
             'baCalonList' => $baCalonList,
-            'penetapanList' => $penetapanList,
-            'kriteriaLokasiList' => $kriteriaLokasiList
+            'penetapanList' => $penetapanList
         ]);
     }
 
     public function create(Request $request, $program)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        abort_unless(\Illuminate\Support\Facades\Auth::user()->isUserDaerah(), 403, 'Hanya User Daerah yang dapat mengakses form pengajuan.');
         $activeProgram = $this->formatProgramName($program);
-        $kriteriaLokasiList = \App\Models\KriteriaLokasi::orderBy('id', 'asc')->get();
+
+        $userKabupaten = \Illuminate\Support\Facades\Auth::user()->kabupaten;
+        $userProvinsiId = null;
+        $userKabupatenId = null;
+        
+        if ($userKabupaten) {
+            $regency = \App\Models\Region\Regency::where('name', 'LIKE', '%' . $userKabupaten . '%')->first();
+            if ($regency) {
+                $userKabupatenId = $regency->id;
+                $userProvinsiId = $regency->province_id;
+            }
+        }
 
         return view('programs.knmp.master.calon-lokasi.create', [
             'activeModule' => 'Master Data',
             'activeProgram' => $activeProgram,
-            'kriteriaLokasiList' => $kriteriaLokasiList,
+            'userProvinsiId' => $userProvinsiId,
+            'userKabupatenId' => $userKabupatenId,
         ]);
     }
 
     public function store(Request $request)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        abort_unless(\Illuminate\Support\Facades\Auth::user()->isUserDaerah(), 403, 'Hanya User Daerah yang dapat mengirim pengajuan.');
 
         $request->validate([
             'provinsi' => 'required',

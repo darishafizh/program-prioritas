@@ -25,7 +25,7 @@ class OperasionalEvaluasiController extends ProgramBaseController
 
         $query = Knmp::with(['tahapUsulan', 'tahapSurvey', 'tahapDed', 'tahapLelang', 'konstruksiKnmp.penyediaJasa', 'tahapSerahTerima']);
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $query->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
 
         if ($requestedBatchId) {
@@ -116,7 +116,7 @@ class OperasionalEvaluasiController extends ProgramBaseController
 
         $query = Knmp::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $query->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            $query->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
         if ($requestedBatchId) {
             $query->where('batch_id', $requestedBatchId);
