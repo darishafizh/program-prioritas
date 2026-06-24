@@ -22,7 +22,13 @@ class CalonLokasiController extends ProgramBaseController
         
         $stage = $request->query('stage', 'pengajuan');
         
-        $allCalon = CalonLokasi::with(['user', 'knmp', 'detail', 'pengajuan', 'verifAdmin', 'baAktivasi', 'verifTeknis', 'baCalon', 'penetapan'])->get();
+        $query = CalonLokasi::with(['user', 'knmp', 'detail', 'pengajuan', 'verifAdmin', 'baAktivasi', 'verifTeknis', 'baCalon', 'penetapan']);
+        
+        if (Auth::user()->isUserDaerah()) {
+            $query->where('kabupaten', Auth::user()->kabupaten);
+        }
+
+        $allCalon = $query->get();
         
         $proposals = [];
         $verifList = [];
@@ -112,6 +118,7 @@ class CalonLokasiController extends ProgramBaseController
     public function create(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         $activeProgram = $this->formatProgramName($program);
         $kriteriaLokasiList = \App\Models\KriteriaLokasi::orderBy('id', 'asc')->get();
 
@@ -125,6 +132,7 @@ class CalonLokasiController extends ProgramBaseController
     public function store(Request $request)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
 
         $request->validate([
             'provinsi' => 'required',
@@ -230,6 +238,7 @@ class CalonLokasiController extends ProgramBaseController
     public function updateStatus(Request $request, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $calon = CalonLokasi::findOrFail($id);
         $status = $request->input('status_tahapan');
@@ -267,6 +276,7 @@ class CalonLokasiController extends ProgramBaseController
     public function storeVerifAdmin(Request $request, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'status_verif' => 'required|in:Lolos,Revisi,Ditolak'
@@ -321,6 +331,7 @@ class CalonLokasiController extends ProgramBaseController
     public function storeVerifTeknis(Request $request, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'status_verif' => 'required|in:Lolos,Revisi,Ditolak'
@@ -375,6 +386,7 @@ class CalonLokasiController extends ProgramBaseController
     public function uploadBaAktivasi(Request $request, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'dokumen_ba' => 'required|file|mimes:pdf|max:2048'
@@ -431,6 +443,7 @@ class CalonLokasiController extends ProgramBaseController
     public function uploadBaCalon(Request $request, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'dokumen_ba' => 'required|file|mimes:pdf|max:2048'
@@ -487,6 +500,7 @@ class CalonLokasiController extends ProgramBaseController
     public function uploadSkPenetapan(Request $request, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'dokumen_sk' => 'required|file|mimes:pdf|max:10240'

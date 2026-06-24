@@ -37,11 +37,11 @@
  </div>
 
  <div class="flex items-center gap-3">
- @if(Auth::user()->name === 'Super Admin')
+ @can('manage-users')
  <a href="/users" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-textMain-light dark:text-teal-400 text-xs font-medium transition-colors">
  <i class="fa-solid fa-users-gear"></i> Pengguna
  </a>
- @endif
+ @endcan
  
  <button @click="darkMode = !darkMode; if(darkMode) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }" 
  class="w-9 h-9 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800 text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-teal-dark transition-all">
@@ -75,9 +75,8 @@
 
  <!-- Subtle Background Decoration -->
  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
- <div class="absolute -top-[20%] -left-[10%] w-[40%] h-[40%] rounded-full bg-teal-400/8 dark:bg-teal-900/15 blur-[100px]"></div>
- <div class="absolute top-[20%] -right-[10%] w-[35%] h-[50%] rounded-full bg-teal-light/8 dark:bg-teal-900/10 blur-[100px]"></div>
- <div class="absolute -bottom-[20%] left-[20%] w-[50%] h-[40%] rounded-full bg-success/5 dark:bg-emerald-900/10 blur-[100px]"></div>
+ <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-teal-light/5 dark:bg-teal-900/10 blur-[120px]"></div>
+ <div class="absolute top-[40%] right-[10%] w-[40%] h-[40%] rounded-full bg-blue-500/5 dark:bg-blue-900/10 blur-[100px]"></div>
  </div>
 
  <!-- Main Content -->
@@ -94,45 +93,33 @@
  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 gap-6 lg:gap-8 max-w-6xl mx-auto pb-12">
  @foreach($programs as $index => $prog)
  <a href="/dashboard/{{ strtolower(str_replace(' ', '-', $prog['name'])) }}" 
- class="group bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden flex flex-col h-full hover:border-teal-light/30 dark:hover:border-teal-dark/30 transition-all duration-300">
+ class="group bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 sm:p-8 relative flex flex-col h-full hover:border-teal-light/50 dark:hover:border-teal-light/50 hover:shadow-lg hover:shadow-teal-light/5 transition-all duration-300">
  
- @php
- $themeMap = [
- 'bg-teal-light' => ['bg' => 'bg-teal-light/10 dark:bg-blue-400/15', 'text' => 'text-teal-light dark:text-teal-400', 'glow' => 'bg-teal-light'],
- 'bg-teal-light' => ['bg' => 'bg-teal-light/10 dark:bg-teal-400/15', 'text' => 'text-textMain-light dark:text-teal-400', 'glow' => 'bg-teal-400'],
- 'bg-success' => ['bg' => 'bg-success/10 dark:bg-emerald-400/15', 'text' => 'text-success dark:text-emerald-400', 'glow' => 'bg-success'],
- 'bg-warning' => ['bg' => 'bg-warning/10 dark:bg-amber-400/15', 'text' => 'text-warning dark:text-amber-400', 'glow' => 'bg-warning'],
- 'bg-navy-light' => ['bg' => 'bg-teal-600/10 dark:bg-teal-500/15', 'text' => 'text-teal-light dark:text-teal-400', 'glow' => 'bg-teal-600'],
- 'bg-teal-500' => ['bg' => 'bg-teal-500/10 dark:bg-blue-400/15', 'text' => 'text-blue-500 dark:text-teal-400', 'glow' => 'bg-teal-500'],
- 'bg-teal-500' => ['bg' => 'bg-teal-500/10 dark:bg-teal-400/15', 'text' => 'text-teal-500 dark:text-teal-400', 'glow' => 'bg-teal-500'],
- 'bg-teal-500' => ['bg' => 'bg-teal-500/10 dark:bg-teal-400/15', 'text' => 'text-teal-500 dark:text-teal-400', 'glow' => 'bg-teal-500'],
- 'bg-orange-500' => ['bg' => 'bg-orange-500/10 dark:bg-orange-400/15', 'text' => 'text-orange-500 dark:text-orange-400', 'glow' => 'bg-orange-500'],
- ];
- $colors = $themeMap[$prog['color']] ?? ['bg' => 'bg-gray-500/10 dark:bg-gray-400/15', 'text' => 'text-gray-500 dark:text-gray-400', 'glow' => 'bg-gray-500'];
- @endphp
- 
- <!-- Decoration Blob like in KNMP -->
- <div class="absolute top-0 right-0 w-32 h-32 {{ $colors['bg'] }} rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
+ <!-- Hover Accent Line -->
+ <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-light to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"></div>
 
- <div class="flex-1 flex flex-col relative z-10">
+ <div class="flex-1 flex flex-col relative z-10 mt-2">
  <div class="flex items-center gap-4 mb-6">
- <div class="w-14 h-14 rounded-2xl {{ $colors['bg'] }} flex items-center justify-center">
- <i class="fa-solid {{ $prog['icon'] }} text-xl {{ $colors['text'] }}"></i>
+ <div class="w-12 h-12 rounded-xl bg-gray-50 dark:bg-gray-800/50 group-hover:bg-teal-light/10 flex items-center justify-center border border-gray-100 dark:border-gray-800 group-hover:border-teal-light/20 transition-colors duration-300">
+ <i class="fa-solid {{ $prog['icon'] }} text-lg text-textMuted-light dark:text-textMuted-dark group-hover:text-teal-light transition-colors duration-300"></i>
  </div>
  <div>
- <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark tracking-tight">
+ <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark tracking-tight group-hover:text-teal-light transition-colors duration-300">
  {{ in_array(strtolower($prog['name']), ['knmp', 'bins']) ? strtoupper($prog['name']) : $prog['name'] }}
  </h3>
  <div class="text-[11px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider mt-0.5">Program Prioritas</div>
  </div>
  </div>
  
- <p class="text-[13px] text-textMuted-light dark:text-textMuted-dark leading-relaxed mb-6 flex-1">
+ <p class="text-[13px] text-textMuted-light dark:text-textMuted-dark leading-relaxed mb-8 flex-1">
  {{ $prog['narrative'] }}
  </p>
  
- <div class="mt-auto flex items-center gap-2 text-xs font-medium {{ $colors['text'] }} transition-transform group-hover:translate-x-1">
- Buka Modul Program <i class="fa-solid fa-arrow-right"></i>
+ <div class="mt-auto flex items-center justify-between border-t border-gray-50 dark:border-gray-800/50 pt-4">
+ <span class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark group-hover:text-teal-light transition-colors">Masuk ke Program</span>
+ <div class="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark group-hover:bg-teal-light group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1">
+ <i class="fa-solid fa-arrow-right text-[10px]"></i>
+ </div>
  </div>
  </div>
  </a>

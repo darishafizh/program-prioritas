@@ -19,7 +19,15 @@ class PelaksanaanController extends ProgramBaseController
         $this->checkAuth();
         $activeProgram = $this->formatProgramName($program);
         
-        $usulanData = Knmp::where('tahap_saat_ini', 'usulan')
+        $baseQuery = function($stage) {
+            $query = Knmp::where('tahap_saat_ini', $stage);
+            if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+                $query->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+            }
+            return $query;
+        };
+        
+        $usulanData = $baseQuery('usulan')
             ->select('id', 'nama', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'status', 'latitude', 'longitude')
             ->get()->map(fn($k) => [
                 'id' => $k->id,
@@ -28,7 +36,7 @@ class PelaksanaanController extends ProgramBaseController
                 'statusHub' => $k->status ?: 'Penyangga',
             ]);
 
-        $surveiData = Knmp::where('tahap_saat_ini', 'survey')
+        $surveiData = $baseQuery('survey')
             ->select('id', 'nama', 'provinsi', 'kabupaten', 'status', 'latitude', 'longitude')
             ->get()->map(fn($k) => [
                 'id' => $k->id,
@@ -37,7 +45,7 @@ class PelaksanaanController extends ProgramBaseController
                 'koordinat' => $k->latitude && $k->longitude ? $k->latitude . ', ' . $k->longitude : '-',
             ]);
 
-        $dedData = Knmp::where('tahap_saat_ini', 'ded')
+        $dedData = $baseQuery('ded')
             ->select('id', 'nama', 'status')
             ->get()->map(fn($k) => [
                 'id' => $k->id,
@@ -46,7 +54,7 @@ class PelaksanaanController extends ProgramBaseController
                 'nilaiSkala' => '-',
             ]);
 
-        $lelangData = Knmp::where('tahap_saat_ini', 'lelang')
+        $lelangData = $baseQuery('lelang')
             ->select('id', 'nama', 'status')
             ->get()->map(fn($k) => [
                 'id' => $k->id,
@@ -55,7 +63,7 @@ class PelaksanaanController extends ProgramBaseController
                 'namaKonstruksi' => '-',
             ]);
 
-        $konstruksiData = Knmp::where('tahap_saat_ini', 'konstruksi')
+        $konstruksiData = $baseQuery('konstruksi')
             ->select('id', 'nama', 'status')
             ->get()->map(function($k) {
                 $kons = KonstruksiKnmp::where('knmp_id', $k->id)->first();
@@ -79,7 +87,7 @@ class PelaksanaanController extends ProgramBaseController
                 ];
             });
 
-        $serahTerimaData = Knmp::where('tahap_saat_ini', 'serah_terima')
+        $serahTerimaData = $baseQuery('serah_terima')
             ->select('id', 'nama', 'status')
             ->get()->map(fn($k) => [
                 'id' => $k->id,
@@ -103,6 +111,7 @@ class PelaksanaanController extends ProgramBaseController
     public function uploadFoto(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
 
         $request->validate([
             'knmp_id' => 'required|exists:mysql_knmp.knmp,id',
@@ -161,6 +170,7 @@ class PelaksanaanController extends ProgramBaseController
     public function moveStage(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'ids' => 'required|array',
@@ -194,6 +204,7 @@ class PelaksanaanController extends ProgramBaseController
     public function importUsulan(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'file_excel' => 'required|file|mimes:xlsx,xls|max:5120'
@@ -212,6 +223,7 @@ class PelaksanaanController extends ProgramBaseController
     public function importProgres(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-data');
         
         $request->validate([
             'file_excel' => 'required|file|mimes:xlsx,xls|max:5120'

@@ -32,6 +32,9 @@ class ProgresFisikController extends ProgramBaseController
         }
 
         $queryKnmp = \App\Models\Knmp::query();
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $queryKnmp->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+        }
         if ($requestedBatchId) {
             $queryKnmp->where('batch_id', $requestedBatchId);
         }
@@ -163,6 +166,10 @@ class ProgresFisikController extends ProgramBaseController
         $mapQuery = \App\Models\Knmp::select('nama', 'latitude', 'longitude', 'status')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude');
+            
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $mapQuery->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+        }
             
         if ($requestedBatchId) {
             $mapQuery->where('batch_id', $requestedBatchId);

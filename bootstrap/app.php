@@ -14,5 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            return redirect()->back()->withInput($request->except('password', 'password_confirmation', '_token'))->with('error', 'Sesi Anda telah berakhir karena terlalu lama tidak ada aktivitas atau menggunakan pengisian otomatis. Silakan coba login kembali.');
+        });
     })->create();

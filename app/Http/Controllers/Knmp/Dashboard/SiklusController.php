@@ -16,6 +16,9 @@ class SiklusController extends ProgramBaseController
         $requestedBatchId = request('batch_id');
 
         $queryKnmp = \App\Models\Knmp::query();
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $queryKnmp->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+        }
         if ($requestedBatchId) {
             $queryKnmp->where('batch_id', $requestedBatchId);
         }
@@ -33,24 +36,68 @@ class SiklusController extends ProgramBaseController
             'serah_terima' => $totalSelesai,
         ];
 
-        // Operasional data from knmp_proyek
-        $operasionalQuery = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-            ->table('knmp_proyek');
-            
-        // Note: knmp_proyek does not have batch_id or knmp_id, so it cannot be filtered by batch
+        // Pipeline Pengajuan from CalonLokasi
+        $calonQuery = \App\Models\CalonLokasi::query();
+        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
+            $calonQuery->where('kabupaten', \Illuminate\Support\Facades\Auth::user()->kabupaten);
+        }
+        if ($requestedBatchId) {
+            // Adjust this if CalonLokasi also filters by batch_id (assuming it doesn't strictly have batch_id or does)
+            // But since CalonLokasi might not have batch_id directly, we might need to skip or handle gracefully.
+            // Let's check if batch_id exists, otherwise skip filtering for CalonLokasi.
+            if (\Illuminate\Support\Facades\Schema::connection('mysql_knmp')->hasColumn('calon_lokasi', 'batch_id')) {
+                $calonQuery->where('batch_id', $requestedBatchId);
+            }
+        }
+        
+        $totalPengajuan = (clone $calonQuery)->count();
+        $pipelinePengajuan = [
+            'pengajuan' => (clone $calonQuery)->where('status_tahapan', 'pengajuan')->count(),
+            'verif_admin' => (clone $calonQuery)->where('status_tahapan', 'verif_admin')->count(),
+            'ba_aktivasi' => (clone $calonQuery)->where('status_tahapan', 'ba_aktivasi')->count(),
+            'verif_teknis' => (clone $calonQuery)->where('status_tahapan', 'verif_teknis')->count(),
+            'ba_calon' => (clone $calonQuery)->where('status_tahapan', 'ba_calon')->count(),
+            'penetapan' => (clone $calonQuery)->where('status_tahapan', 'penetapan')->count(),
+        ];
+
+        $operasionalStages = ['survey', 'ded', 'lelang', 'konstruksi'];
+        $operasionalQuery = (clone $queryKnmp)->whereIn('tahap_saat_ini', $operasionalStages);
         
         $totalOperasional = (clone $operasionalQuery)->count();
-        $hubCount = (clone $operasionalQuery)->where('knmp_proyek.status_wilayah', 'Hub')->count();
-        $penyanggaCount = (clone $operasionalQuery)->where('knmp_proyek.status_wilayah', 'Penyangga')->count();
+        $hubCount = (clone $operasionalQuery)->where('status', 'Hub')->count();
+        $penyanggaCount = (clone $operasionalQuery)->where(function($q) {
+            $q->where('status', 'Penyangga')->orWhereNull('status')->orWhere('status', '');
+        })->count();
         
-        $avgProgresOperasional = $totalOperasional > 0 ? (clone $operasionalQuery)->avg('knmp_proyek.progres_fisik') : 0;
+        // Calculate average progress from konstruksi items
+        $konstruksiIds = (clone $queryKnmp)->where('tahap_saat_ini', 'konstruksi')
+            ->with('konstruksiKnmp')->get()->pluck('konstruksiKnmp.id')->filter();
+            
+        $avgProgresOperasional = 0;
+        if ($konstruksiIds->isNotEmpty()) {
+            $latestProgresSubquery = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
+                ->table('progres_harian')
+                ->select('knmp_konstruksi_id', \Illuminate\Support\Facades\DB::raw('MAX(tanggal) as max_tanggal'))
+                ->whereIn('knmp_konstruksi_id', $konstruksiIds)
+                ->groupBy('knmp_konstruksi_id');
+
+            $progresQuery = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
+                ->table('progres_harian as ph')
+                ->joinSub($latestProgresSubquery, 'latest', function ($join) {
+                    $join->on('ph.knmp_konstruksi_id', '=', 'latest.knmp_konstruksi_id')
+                         ->on('ph.tanggal', '=', 'latest.max_tanggal');
+                })
+                ->avg('ph.progres');
+
+            $avgProgresOperasional = $progresQuery ?? 0;
+        }
         
         // Count active stages in operasional
         $tahapAktifOps = (clone $operasionalQuery)
-            ->select('knmp_proyek.tahap_aktif', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
-            ->groupBy('knmp_proyek.tahap_aktif')
+            ->select('tahap_saat_ini', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+            ->groupBy('tahap_saat_ini')
             ->get()
-            ->pluck('count', 'tahap_aktif')
+            ->pluck('count', 'tahap_saat_ini')
             ->toArray();
 
         $batches = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('batch')->get()->map(function($b) {
@@ -60,7 +107,7 @@ class SiklusController extends ProgramBaseController
             ];
         })->keyBy('id');
 
-        $narasi = "Dashboard ini merangkum pergerakan siklus dari <span class='font-bold text-teal-light dark:text-teal-400'>{$totalLokasi} usulan lokasi</span> KNMP. Saat ini terdapat <span class='font-bold text-warning dark:text-amber-500'>{$dalamPembangunan} lokasi</span> yang telah memasuki tahap konstruksi dan <span class='font-bold text-success'>{$totalSelesai} lokasi</span> yang telah diserahterimakan. Pada fase operasional pasca-konstruksi, dari total {$totalOperasional} proyek aktif, {$hubCount} berstatus sebagai Hub dan {$penyanggaCount} sebagai Penyangga, dengan rata-rata progres operasional mencapai <span class='font-bold'>".number_format($avgProgresOperasional, 1)."%</span>.";
+        $narasi = "Dashboard ini merangkum pergerakan siklus secara komprehensif. Pada Siklus Pengajuan Calon Lokasi, terdapat total <span class='font-bold text-blue-500'>{$totalPengajuan} usulan</span> yang sedang berproses. Sementara itu, untuk Siklus Konstruksi KNMP dari total <span class='font-bold text-teal-light dark:text-teal-400'>{$totalLokasi} lokasi</span> yang telah ditetapkan, <span class='font-bold text-warning dark:text-amber-500'>{$dalamPembangunan} lokasi</span> kini memasuki tahap konstruksi dan <span class='font-bold text-success'>{$totalSelesai} lokasi</span> telah selesai diserahterimakan. Pada fase operasional, dari {$totalOperasional} proyek aktif dengan rata-rata progres mencapai <span class='font-bold'>".number_format($avgProgresOperasional, 1)."%</span>.";
 
         return view('programs.knmp.dashboard.siklus', [
             'activeModule' => 'Dashboard',
@@ -68,6 +115,7 @@ class SiklusController extends ProgramBaseController
             'stats' => [
                 'total_lokasi' => $totalLokasi,
                 'pipeline' => $pipeline,
+                'pipeline_pengajuan' => $pipelinePengajuan,
                 'operasional' => [
                     'total' => $totalOperasional,
                     'hub' => $hubCount,

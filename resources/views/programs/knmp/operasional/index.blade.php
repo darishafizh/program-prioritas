@@ -12,10 +12,14 @@
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <template x-if="currentStage === 'usulan'">
+                    @can('manage-data')
                     <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    @endcan
                 </template>
                 <template x-if="currentStage === 'konstruksi'">
+                    @can('manage-data')
                     <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    @endcan
                 </template>
             </div>
         </div>
@@ -51,6 +55,7 @@
         <div class="px-6 pt-5 pb-3 flex justify-between items-center">
             <h3 class="text-base font-medium text-textMuted-light dark:text-textMuted-dark" x-text="stages[currentStage].label"></h3>
             <template x-if="currentStage !== 'serah-terima'">
+                @can('manage-data')
                 <form action="{{ route('program.operasional.pindah-tahap', ['program' => strtolower($activeProgram)]) }}" method="POST" class="inline-block">
                     @csrf
                     <input type="hidden" name="target_stage" :value="
@@ -68,6 +73,7 @@
                         Pindah Tahap <i class="fa-solid fa-arrow-right"></i> 
                     </button>
                 </form>
+                @endcan
             </template>
         </div>
 
@@ -277,7 +283,9 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
+                                    @can('manage-data')
                                     <button type="button" @click="$dispatch('open-upload-modal', { item: item })" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center relative z-10 cursor-pointer" title="Upload Foto Progres"><i class="fa-solid fa-camera pointer-events-none"></i></button>
+                                    @endcan
                                     <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Detail"><i class="fa-solid fa-eye"></i></button>
                                 </div>
                             </td>
@@ -477,63 +485,62 @@
         </div>
     </template>
 
-    <!-- Modal Import Progres -->
+    <!-- Modal Import -->
     <template x-teleport="body">
-        <div x-data="{ isImportModalOpen: false }" @open-import-modal.window="isImportModalOpen = true" x-show="isImportModalOpen" class="fixed inset-0 overflow-y-auto" style="display: none; z-index: 99999;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <!-- Background overlay -->
-                <div x-show="isImportModalOpen" @click="isImportModalOpen = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" aria-hidden="true"></div>
+        <div x-data="{ isImportModalOpen: false }" @open-import-modal.window="isImportModalOpen = true" x-show="isImportModalOpen" style="display: none; z-index: 99999;" class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
 
-                <!-- Modal panel -->
-                <div x-show="isImportModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-bgSurface-dark shadow-2xl rounded-3xl border border-gray-100 dark:border-gray-800">
+            <div @click.away="isImportModalOpen = false"
+                 x-show="isImportModalOpen"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-8 scale-95"
+                 class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border border-gray-100 dark:border-gray-800 relative mx-4 max-h-[90vh] overflow-y-auto">
+                
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Import Progres Fisik</h3>
+                    <button type="button" @click="isImportModalOpen = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Unggah file Excel (Template) untuk memperbarui data progres harian lokasi tahap konstruksi sekaligus.</p>
+
+                    <a href="{{ route('program.operasional.template-progres', ['program' => strtolower($activeProgram)]) }}" class="w-full justify-center rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10 flex items-center gap-2">
+                        <i class="fa-solid fa-download text-teal-light text-sm"></i> Download Template Excel
+                    </a>
                     
-                    <!-- Header Icon & Close -->
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center justify-center w-12 h-12 bg-teal-light/10 text-teal-light rounded-full mb-4">
-                            <i class="fa-solid fa-file-excel text-xl"></i>
+                    <form action="{{ route('program.operasional.import-progres', ['program' => strtolower($activeProgram)]) }}" method="POST" enctype="multipart/form-data" class="w-full">
+                        @csrf
+                        <div x-data="{ fileName: '' }" class="w-full mb-6">
+                            <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Upload File Excel <span class="text-danger">*</span></label>
+                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer relative z-10">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                    <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
+                                    <p class="text-xs text-gray-500">Excel (Maks. 5MB)</p>
+                                </div>
+                                <input type="file" name="file_excel" class="hidden" required accept=".xlsx, .xls" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />
+                            </label>
+                            <p x-show="fileName" class="text-sm text-success mt-2 font-medium text-center" x-text="`File terpilih: ${fileName}`"></p>
                         </div>
-                        <button type="button" @click="isImportModalOpen = false" class="text-gray-400 hover:text-gray-500 focus:outline-none transition-colors relative z-10">
-                            <i class="fa-solid fa-xmark text-lg"></i>
-                        </button>
-                    </div>
-
-                    <div>
-                        <div class="mt-2 text-left">
-                            <h3 class="text-xl font-bold leading-6 text-textMain-light dark:text-textMain-dark" id="modal-title">
-                                Import Progres Fisik
-                            </h3>
-                            <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-2 leading-relaxed">Unggah file Excel (Template) untuk memperbarui data progres harian lokasi tahap konstruksi sekaligus.</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 space-y-5">
-                        <a href="{{ route('program.operasional.template-progres', ['program' => strtolower($activeProgram)]) }}" class="w-full justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10 flex items-center gap-2">
-                            <i class="fa-solid fa-download text-teal-light text-sm"></i> Download Template Excel
-                        </a>
                         
-                        <form action="{{ route('program.operasional.import-progres', ['program' => strtolower($activeProgram)]) }}" method="POST" enctype="multipart/form-data" class="w-full">
-                            @csrf
-                            <div x-data="{ fileName: '' }" class="w-full">
-                                <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Upload File Excel <span class="text-danger">*</span></label>
-                                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer relative z-10">
-                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
-                                        <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
-                                        <p class="text-xs text-gray-500">Excel (Maks. 5MB)</p>
-                                    </div>
-                                    <input type="file" name="file_excel" class="hidden" required accept=".xlsx, .xls" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />
-                                </label>
-                                <p x-show="fileName" class="text-sm text-success mt-2 font-medium text-center" x-text="`File terpilih: ${fileName}`"></p>
-                            </div>
-                            
-                            <div class="flex gap-3 mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
-                                <button type="button" @click="isImportModalOpen = false" class="flex-1 justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-white dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10">Batal</button>
-                                <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-teal-light/30 px-4 py-2.5 bg-gradient-to-r from-teal-light to-emerald-500 text-sm font-semibold text-white hover:from-teal-light/90 hover:to-emerald-500/90 focus:outline-none hover:-translate-y-0.5 transition-all duration-200 relative z-10">
-                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Import Data
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="mt-8 flex justify-end gap-3">
+                            <button type="button" @click="isImportModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                            <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Import Data
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -541,61 +548,60 @@
 
     <!-- Modal Import Usulan -->
     <template x-teleport="body">
-        <div x-data="{ isImportUsulanModalOpen: false }" @open-import-usulan-modal.window="isImportUsulanModalOpen = true" x-show="isImportUsulanModalOpen" class="fixed inset-0 overflow-y-auto" style="display: none; z-index: 99999;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <!-- Background overlay -->
-                <div x-show="isImportUsulanModalOpen" @click="isImportUsulanModalOpen = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-gray-900/60 backdrop-blur-sm" aria-hidden="true"></div>
+        <div x-data="{ isImportUsulanModalOpen: false }" @open-import-usulan-modal.window="isImportUsulanModalOpen = true" x-show="isImportUsulanModalOpen" style="display: none; z-index: 99999;" class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
 
-                <!-- Modal panel -->
-                <div x-show="isImportUsulanModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-bgSurface-dark shadow-2xl rounded-3xl border border-gray-100 dark:border-gray-800">
+            <div @click.away="isImportUsulanModalOpen = false"
+                 x-show="isImportUsulanModalOpen"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-8 scale-95"
+                 class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border border-gray-100 dark:border-gray-800 relative mx-4 max-h-[90vh] overflow-y-auto">
+                
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Import Data Usulan</h3>
+                    <button type="button" @click="isImportUsulanModalOpen = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Unggah file Excel (Template) untuk menambahkan data lokasi usulan baru ke dalam sistem.</p>
+
+                    <a href="{{ route('program.operasional.template-usulan', ['program' => strtolower($activeProgram)]) }}" class="w-full justify-center rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10 flex items-center gap-2">
+                        <i class="fa-solid fa-download text-teal-light text-sm"></i> Download Template Excel
+                    </a>
                     
-                    <!-- Header Icon & Close -->
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center justify-center w-12 h-12 bg-teal-light/10 text-teal-light rounded-full mb-4">
-                            <i class="fa-solid fa-file-excel text-xl"></i>
+                    <form action="{{ route('program.operasional.import-usulan', ['program' => strtolower($activeProgram)]) }}" method="POST" enctype="multipart/form-data" class="w-full">
+                        @csrf
+                        <div x-data="{ fileName: '' }" class="w-full mb-6">
+                            <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Upload File Excel <span class="text-danger">*</span></label>
+                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer relative z-10">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                    <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
+                                    <p class="text-xs text-gray-500">Excel (Maks. 5MB)</p>
+                                </div>
+                                <input type="file" name="file_excel" class="hidden" required accept=".xlsx, .xls" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />
+                            </label>
+                            <p x-show="fileName" class="text-sm text-success mt-2 font-medium text-center" x-text="`File terpilih: ${fileName}`"></p>
                         </div>
-                        <button type="button" @click="isImportUsulanModalOpen = false" class="text-gray-400 hover:text-gray-500 focus:outline-none transition-colors relative z-10">
-                            <i class="fa-solid fa-xmark text-lg"></i>
-                        </button>
-                    </div>
-
-                    <div>
-                        <div class="mt-2 text-left">
-                            <h3 class="text-xl font-bold leading-6 text-textMain-light dark:text-textMain-dark" id="modal-title">
-                                Import Data Usulan
-                            </h3>
-                            <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-2 leading-relaxed">Unggah file Excel (Template) untuk menambahkan data lokasi usulan baru ke dalam sistem.</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 space-y-5">
-                        <a href="{{ route('program.operasional.template-usulan', ['program' => strtolower($activeProgram)]) }}" class="w-full justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10 flex items-center gap-2">
-                            <i class="fa-solid fa-download text-teal-light text-sm"></i> Download Template Excel
-                        </a>
                         
-                        <form action="{{ route('program.operasional.import-usulan', ['program' => strtolower($activeProgram)]) }}" method="POST" enctype="multipart/form-data" class="w-full">
-                            @csrf
-                            <div x-data="{ fileName: '' }" class="w-full">
-                                <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark mb-2">Upload File Excel <span class="text-danger">*</span></label>
-                                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-teal-light/5 hover:border-teal-light transition-colors cursor-pointer relative z-10">
-                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
-                                        <p class="mb-1 text-sm text-textMuted-light dark:text-textMuted-dark"><span class="font-medium text-teal-light">Klik untuk upload</span> atau drag and drop</p>
-                                        <p class="text-xs text-gray-500">Excel (Maks. 5MB)</p>
-                                    </div>
-                                    <input type="file" name="file_excel" class="hidden" required accept=".xlsx, .xls" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''" />
-                                </label>
-                                <p x-show="fileName" class="text-sm text-success mt-2 font-medium text-center" x-text="`File terpilih: ${fileName}`"></p>
-                            </div>
-                            
-                            <div class="flex gap-3 mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
-                                <button type="button" @click="isImportUsulanModalOpen = false" class="flex-1 justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-white dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10">Batal</button>
-                                <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-teal-light/30 px-4 py-2.5 bg-gradient-to-r from-teal-light to-emerald-500 text-sm font-semibold text-white hover:from-teal-light/90 hover:to-emerald-500/90 focus:outline-none hover:-translate-y-0.5 transition-all duration-200 relative z-10">
-                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Import Data
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="mt-8 flex justify-end gap-3">
+                            <button type="button" @click="isImportUsulanModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                            <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Import Data
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -16,6 +16,9 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 // Portal Routes
 Route::get('/greetings', [PortalController::class, 'greetings'])->name('greetings');
 Route::get('/users', [PortalController::class, 'users'])->name('users');
+Route::post('/users', [PortalController::class, 'storeUser'])->name('users.store');
+Route::put('/users/{id}', [PortalController::class, 'updateUser'])->name('users.update');
+Route::delete('/users/{id}', [PortalController::class, 'destroyUser'])->name('users.destroy');
 
 // API Internal Routes
 Route::prefix('api/internal')->group(function () {

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::define('manage-users', function (User $user) {
+            return $user->isSuperAdmin();
+        });
+
+        Gate::define('manage-data', function (User $user) {
+            return $user->isSuperAdmin() || $user->isVerifikator();
+        });
+        
+        Gate::define('view-data', function (User $user) {
+            return true; // All authenticated users can view, but filtering is applied in controllers
+        });
     }
 }

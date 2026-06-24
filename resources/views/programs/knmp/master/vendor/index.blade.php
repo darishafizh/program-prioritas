@@ -165,95 +165,100 @@
     </div>
 
     <!-- Modal Form -->
-    <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showModal = false">
-                <div class="absolute inset-0 bg-gray-900/75 backdrop-blur-sm"></div>
-            </div>
-            
-            <!-- Modal panel -->
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative z-50 inline-block align-bottom bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100 dark:border-gray-800">
-                <form :action="isEdit ? '{{ url('master/knmp/vendor') }}/' + formData.id : '{{ route('program.master.vendor.store') }}'" method="POST">
-                    @csrf
-                    <input type="hidden" name="_method" value="PUT" x-bind:disabled="!isEdit">
-                    
-                    <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
-                        <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark flex items-center gap-2">
-                            <i class="fa-solid" :class="isEdit ? 'fa-pen-to-square text-blue-500' : 'fa-plus text-teal-light'"></i>
-                            <span x-text="modalTitle"></span>
-                        </h3>
-                        <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                            <i class="fa-solid fa-xmark text-lg"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="p-6 space-y-5 bg-white dark:bg-bgSurface-dark">
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark">Nama Perusahaan <span class="text-danger">*</span></label>
-                            <div class="relative">
-                                <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <input type="text" name="nama" x-model="formData.nama" required placeholder="Contoh: PT Samudera Konstruksi" class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark">NPWP</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <input type="text" name="npwp" x-model="formData.npwp" placeholder="01.234.567.8-901.000" class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark">Direktur Utama</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-user-tie absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <input type="text" name="direktur_utama" x-model="formData.direktur_utama" placeholder="Nama Pimpinan" class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
-                            </div>
-                        </div>
+    <!-- Modal Form -->
+    <div x-show="showModal" style="display: none; z-index: 99999;" class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
 
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark">Kontak / Email</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-address-book absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <input type="text" name="kontak" x-model="formData.kontak" placeholder="0812... / email@..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark">Kualifikasi SBU</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-certificate absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <input type="text" name="kualifikasi_sbu" x-model="formData.kualifikasi_sbu" placeholder="Menengah (M1)" class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-semibold text-textMuted-light dark:text-textMuted-dark">Status <span class="text-danger">*</span></label>
-                            <div class="relative">
-                                <i class="fa-solid fa-heart-pulse absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <select name="status" x-model="formData.status" required class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark appearance-none">
-                                    <option value="Aktif">Aktif</option>
-                                    <option value="Blacklist">Blacklist</option>
-                                    <option value="Suspend">Suspend</option>
-                                    <option value="Tidak Aktif">Tidak Aktif</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                            </div>
+        <div @click.away="showModal = false"
+             x-show="showModal"
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-8 scale-95"
+             class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border border-gray-100 dark:border-gray-800 relative mx-4 max-h-[90vh] overflow-y-auto">
+            <form :action="isEdit ? '{{ url('master/knmp/vendor') }}/' + formData.id : '{{ route('program.master.vendor.store') }}'" method="POST">
+                @csrf
+                <input type="hidden" name="_method" value="PUT" x-bind:disabled="!isEdit">
+                
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark" x-text="modalTitle"></h3>
+                    <button type="button" @click="showModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Nama Perusahaan <span class="text-danger">*</span></label>
+                        <div class="relative">
+                            <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" name="nama" x-model="formData.nama" required placeholder="Contoh: PT Samudera Konstruksi" class="w-full pl-11 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
                         </div>
                     </div>
                     
-                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-3 rounded-b-2xl border-t border-gray-100 dark:border-gray-800">
-                        <button type="button" @click="showModal = false" class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-textMain-light dark:text-textMain-dark rounded-md text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-teal-light hover:bg-teal-600 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-between gap-2 shadow-sm">
-                            <i class="fa-solid fa-save"></i> Simpan
-                        </button>
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">NPWP</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" name="npwp" x-model="formData.npwp" placeholder="01.234.567.8-901.000" class="w-full pl-11 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
+                        </div>
                     </div>
-                </form>
-            </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Direktur Utama</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user-tie absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" name="direktur_utama" x-model="formData.direktur_utama" placeholder="Nama Pimpinan" class="w-full pl-11 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Kontak / Email</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-address-book absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" name="kontak" x-model="formData.kontak" placeholder="0812... / email@..." class="w-full pl-11 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Kualifikasi SBU</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-certificate absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" name="kualifikasi_sbu" x-model="formData.kualifikasi_sbu" placeholder="Menengah (M1)" class="w-full pl-11 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Status <span class="text-danger">*</span></label>
+                        <div class="relative">
+                            <i class="fa-solid fa-heart-pulse absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <select name="status" x-model="formData.status" required class="w-full pl-11 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm outline-none focus:border-teal-light focus:ring-1 focus:ring-teal-light transition-all text-textMain-light dark:text-textMain-dark appearance-none">
+                                <option value="Aktif">Aktif</option>
+                                <option value="Blacklist">Blacklist</option>
+                                <option value="Suspend">Suspend</option>
+                                <option value="Tidak Aktif">Tidak Aktif</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" @click="showModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-save"></i> Simpan
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
     </div>
 </div>
 @endsection
