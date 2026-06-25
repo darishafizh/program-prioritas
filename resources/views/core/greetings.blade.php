@@ -65,7 +65,7 @@
  <p class="text-xs text-textMuted-light dark:text-textMuted-dark">Login sebagai:</p>
  <p class="text-sm font-medium truncate">{{ Auth::user()->name }}</p>
  </div>
- <a href="{{ url('logout') }}" class="block px-4 py-2 text-sm text-danger hover:bg-red-50 dark:hover:bg-red-900/10 font-medium transition-colors">
+ <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm text-danger hover:bg-red-50 dark:hover:bg-red-900/10 font-medium transition-colors">
  <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Keluar
  </a>
  </div>

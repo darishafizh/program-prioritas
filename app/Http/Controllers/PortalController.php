@@ -13,7 +13,7 @@ class PortalController extends Controller
     public function greetings()
     {
         if (!Auth::check()) {
-            return redirect(url('login'));
+            return redirect()->route('login');
         }
         
         $programs = [
@@ -88,7 +88,7 @@ class PortalController extends Controller
     public function users()
     {
         if (!\Illuminate\Support\Facades\Gate::allows('manage-users')) {
-            return redirect(url('login'));
+            return redirect()->route('login');
         }
         
         $users = User::orderBy('created_at', 'desc')->get();
