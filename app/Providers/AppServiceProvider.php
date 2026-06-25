@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         if (isset($_SERVER['HTTP_HOST']) && !str_contains($_SERVER['HTTP_HOST'], 'localhost') && !str_contains($_SERVER['HTTP_HOST'], '127.0.0.1')) {
             $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
                        (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
-                       str_starts_with(config('app.url', ''), 'https://');
+                       str_starts_with((string) config('app.url', ''), 'https://');
             $scheme = $isHttps ? 'https' : 'http';
             
             $basePath = '';
