@@ -6,7 +6,7 @@ use App\Http\Controllers\PortalController;
 
 // Auth Routes
 Route::get('/', function () {
-    return redirect(url('login'));
+    return redirect()->route('login');
 });
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -68,7 +68,7 @@ Route::prefix('operasional/knmp')->name('program.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'index'])->defaults('program', 'knmp')->name('operasional');
 });
 Route::prefix('evaluasi/knmp')->name('program.')->group(function () {
-    Route::get('/', function () { return redirect(url('evaluasi/knmp/calon-lokasi')); });
+    Route::get('/', function () { return redirect()->route('program.evaluasi.calon-lokasi'); });
     Route::get('/calon-lokasi', [\App\Http\Controllers\Knmp\Evaluasi\CalonLokasiEvaluasiController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi.calon-lokasi');
     Route::get('/calon-lokasi/pdf', [\App\Http\Controllers\Knmp\Evaluasi\CalonLokasiEvaluasiController::class, 'pdf'])->defaults('program', 'knmp')->name('evaluasi.calon-lokasi.pdf');
     Route::get('/operasional', [\App\Http\Controllers\Knmp\Evaluasi\OperasionalEvaluasiController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi.operasional');

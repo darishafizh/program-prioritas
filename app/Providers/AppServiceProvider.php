@@ -22,9 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        URL::forceRootUrl(config('app.url'));
-        if (str_contains(config('app.url'), 'https://')) {
-            URL::forceScheme('https');
+        if (!$this->app->environment('local')) {
+            URL::forceRootUrl(config('app.url'));
+            if (str_contains(config('app.url'), 'https://')) {
+                URL::forceScheme('https');
+            }
         }
 
         Gate::define('manage-users', function (User $user) {
