@@ -22,10 +22,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $appUrl = config('app.url');
-        if (!empty($appUrl) && !str_contains($appUrl, 'localhost') && !str_contains($appUrl, '127.0.0.1')) {
-            URL::forceRootUrl($appUrl);
-            if (str_contains($appUrl, 'https://')) {
+        if (isset($_SERVER['HTTP_HOST']) && !str_contains($_SERVER['HTTP_HOST'], 'localhost') && !str_contains($_SERVER['HTTP_HOST'], '127.0.0.1')) {
+            $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+                       (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+                       str_starts_with(config('app.url', ''), 'https://');
+            $scheme = $isHttps ? 'https' : 'http';
+            
+            $basePath = '';
+            if (isset($_SERVER['SCRIPT_NAME'])) {
+                $basePath = str_replace(['/public/index.php', '/index.php'], '', $_SERVER['SCRIPT_NAME']);
+            }
+            
+            URL::forceRootUrl($scheme . '://' . $_SERVER['HTTP_HOST'] . $basePath);
+            if ($isHttps) {
                 URL::forceScheme('https');
             }
         }
