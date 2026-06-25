@@ -11,7 +11,7 @@ class ProgramBaseController extends Controller
     protected function checkAuth()
     {
         if (!Auth::check()) {
-            abort(redirect('/login'));
+            abort(redirect(url('login')));
         }
     }
 

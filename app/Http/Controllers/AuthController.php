@@ -11,7 +11,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect('/greetings');
+            return redirect(url('greetings'));
         }
         
         $num1 = rand(1, 10);
@@ -30,7 +30,7 @@ class AuthController extends Controller
         // Database Auth logic
         if (Auth::attempt(['name' => $request->username, 'password' => $request->password])) {
             $request->session()->regenerate();
-            return redirect('/greetings');
+            return redirect(url('greetings'));
         }
         
         return back()->with('error', 'Username atau password salah.');
@@ -42,6 +42,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect('/login');
+        return redirect(url('login'));
     }
 }

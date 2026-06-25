@@ -38,7 +38,7 @@
 
  <div class="flex items-center gap-3">
  @can('manage-users')
- <a href="/users" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-textMain-light dark:text-teal-400 text-xs font-medium transition-colors">
+ <a href="{{ url('users') }}" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-textMain-light dark:text-teal-400 text-xs font-medium transition-colors">
  <i class="fa-solid fa-users-gear"></i> Pengguna
  </a>
  @endcan
@@ -65,7 +65,7 @@
  <p class="text-xs text-textMuted-light dark:text-textMuted-dark">Login sebagai:</p>
  <p class="text-sm font-medium truncate">{{ Auth::user()->name }}</p>
  </div>
- <a href="/logout" class="block px-4 py-2 text-sm text-danger hover:bg-red-50 dark:hover:bg-red-900/10 font-medium transition-colors">
+ <a href="{{ url('logout') }}" class="block px-4 py-2 text-sm text-danger hover:bg-red-50 dark:hover:bg-red-900/10 font-medium transition-colors">
  <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Keluar
  </a>
  </div>
@@ -92,7 +92,7 @@
 
  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 gap-6 lg:gap-8 max-w-6xl mx-auto pb-12">
  @foreach($programs as $index => $prog)
- <a href="/dashboard/{{ strtolower(str_replace(' ', '-', $prog['name'])) }}" 
+ <a href="{{ url('dashboard/' . strtolower(str_replace(' ', '-', $prog['name']))) }}" 
  class="group bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 sm:p-8 relative flex flex-col h-full hover:border-teal-light/50 dark:hover:border-teal-light/50 hover:shadow-lg hover:shadow-teal-light/5 transition-all duration-300">
  
  <!-- Hover Accent Line -->
