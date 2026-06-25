@@ -11,7 +11,12 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 }
 
 // Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
+$autoloadPath = __DIR__.'/../vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    http_response_code(500);
+    die('Error: Folder "vendor" tidak ditemukan. Pastikan Anda telah meng-upload seluruh folder "vendor" ke server hosting.');
+}
+require $autoloadPath;
 
 // Bootstrap Laravel and handle the request...
 /** @var Application $app */
