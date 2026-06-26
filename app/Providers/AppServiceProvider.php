@@ -23,9 +23,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $forceRootUrl = env('FORCE_ROOT_URL');
-        if ($forceRootUrl) {
+        if (!empty($forceRootUrl)) {
             URL::forceRootUrl($forceRootUrl);
-            if (str_starts_with($forceRootUrl, 'https://')) {
+            if (strpos($forceRootUrl, 'https://') === 0) {
                 URL::forceScheme('https');
             }
         }
