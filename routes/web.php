@@ -129,6 +129,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
             Route::get('/produksi', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
         });
+        Route::prefix('operasional/bioflok')->name('program.bioflok.operasional.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('index');
+            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
+            Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
+        });
     });
 
     // ==========================================

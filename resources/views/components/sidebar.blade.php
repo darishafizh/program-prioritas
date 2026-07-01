@@ -54,7 +54,7 @@
      }
  }
  @endphp
- <a href="{{ $item['url'] }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-textMain-light dark:hover:text-white' }}">
+ <a href="{{ $item['url'] !== '#' ? url($item['url']) : '#' }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-textMain-light dark:hover:text-white' }}">
  <i class="fa-solid {{ $item['icon'] }} w-5 text-center text-xs {{ $isActive ? 'text-teal-light dark:text-teal-400' : '' }}"></i>
  <span class="text-xs {{ $isActive ? 'font-semibold' : 'font-normal' }}">{{ $item['label'] }}</span>
  </a>
