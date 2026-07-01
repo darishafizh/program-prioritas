@@ -109,6 +109,7 @@ class OperasionalEvaluasiController extends ProgramBaseController
     public function pdf(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('generate-pdf');
         $activeProgram = $this->formatProgramName($program);
 
         $requestedBatchId = $request->query('batch_id');

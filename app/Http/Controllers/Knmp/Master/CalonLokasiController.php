@@ -58,8 +58,14 @@ class CalonLokasiController extends ProgramBaseController
                 'provinsi' => $provinsi,
                 'lat' => $calon->latitude,
                 'lng' => $calon->longitude,
+                'created_at' => $calon->created_at ? $calon->created_at->format('d M Y, H:i') : '-',
                 'detail' => $calon->detail,
                 'pengajuan' => $calon->pengajuan,
+                'verifAdmin' => $calon->verifAdmin,
+                'baAktivasi' => $calon->baAktivasi,
+                'verifTeknis' => $calon->verifTeknis,
+                'baCalon' => $calon->baCalon,
+                'penetapan' => $calon->penetapan,
                 'keterangan' => json_decode($calon->keterangan ?? '{}', true),
             ];
 
@@ -67,7 +73,8 @@ class CalonLokasiController extends ProgramBaseController
                 $proposals[] = array_merge($baseData, [
                     'tanggal' => $calon->pengajuan?->tanggal_pengajuan ?? '-',
                     'dokumen' => $dokumenLink,
-                    'kriteria' => '0/6'
+                    'kriteria' => '0/6',
+                    'status' => 'Menunggu Review'
                 ]);
             } else if ($calon->status_tahapan == 'verif_admin') {
                 $verifList[] = array_merge($baseData, [
@@ -83,6 +90,7 @@ class CalonLokasiController extends ProgramBaseController
             } else if ($calon->status_tahapan == 'verif_teknis') {
                 $verifTeknisList[] = array_merge($baseData, [
                     'dokumen' => $calon->baAktivasi?->dokumen_ba ? asset('storage/' . $calon->baAktivasi->dokumen_ba) : null,
+                    'status' => $calon->verifTeknis?->status_verif ?? 'Proses Review'
                 ]);
             } else if ($calon->status_tahapan == 'ba_calon') {
                 $baCalonList[] = array_merge($baseData, [
@@ -247,7 +255,7 @@ class CalonLokasiController extends ProgramBaseController
     public function updateStatus(Request $request, $id)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-calon-lokasi');
         
         $calon = CalonLokasi::findOrFail($id);
         $status = $request->input('status_tahapan');
@@ -285,7 +293,7 @@ class CalonLokasiController extends ProgramBaseController
     public function storeVerifAdmin(Request $request, $id)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('verify-calon-lokasi');
         
         $request->validate([
             'status_verif' => 'required|in:Lolos,Revisi,Ditolak'
@@ -340,7 +348,7 @@ class CalonLokasiController extends ProgramBaseController
     public function storeVerifTeknis(Request $request, $id)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('verify-calon-lokasi');
         
         $request->validate([
             'status_verif' => 'required|in:Lolos,Revisi,Ditolak'
@@ -395,7 +403,7 @@ class CalonLokasiController extends ProgramBaseController
     public function uploadBaAktivasi(Request $request, $id)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-calon-lokasi');
         
         $request->validate([
             'dokumen_ba' => 'required|file|mimes:pdf|max:2048'
@@ -452,7 +460,7 @@ class CalonLokasiController extends ProgramBaseController
     public function uploadBaCalon(Request $request, $id)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-calon-lokasi');
         
         $request->validate([
             'dokumen_ba' => 'required|file|mimes:pdf|max:2048'
@@ -509,7 +517,7 @@ class CalonLokasiController extends ProgramBaseController
     public function uploadSkPenetapan(Request $request, $id)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-calon-lokasi');
         
         $request->validate([
             'dokumen_sk' => 'required|file|mimes:pdf|max:10240'

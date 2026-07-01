@@ -11,7 +11,7 @@ class VendorController extends ProgramBaseController
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            abort_if(\Illuminate\Support\Facades\Auth::user()->isUserDaerah(), 403, 'Akses ditolak.');
+            \Illuminate\Support\Facades\Gate::authorize('manage-master');
             return $next($request);
         });
     }

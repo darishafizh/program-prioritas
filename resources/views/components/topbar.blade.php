@@ -37,27 +37,36 @@ $programs = [
  
  <!-- Desktop Module Navigation (Right Aligned) -->
  @if($activeModule !== 'Pengguna')
- <nav class="hidden lg:flex items-center gap-1">
- @php
- $slug = strtolower(str_replace(' ', '-', $activeProgram));
- @endphp
- 
- <a href="{{ url('dashboard/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Dashboard' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
- <i class="fa-solid fa-chart-pie mr-1 {{ $activeModule === 'Dashboard' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Dashboard
- </a>
- 
- <a href="{{ url('master/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Master Data' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
- <i class="fa-solid fa-database mr-1 {{ $activeModule === 'Master Data' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Master Data
- </a>
- 
- <a href="{{ url('operasional/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Operasional' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
- <i class="fa-solid fa-truck-fast mr-1 {{ $activeModule === 'Operasional' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Operasional
- </a>
- 
- <a href="{{ url('evaluasi/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Evaluasi' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
- <i class="fa-solid fa-clipboard-check mr-1 {{ $activeModule === 'Evaluasi' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Evaluasi
- </a>
- </nav>
+    @if(Auth::user()->isUserDaerah())
+      {{-- User Daerah: hanya tampilkan tombol kembali --}}
+      <div class="hidden lg:flex items-center">
+        <a href="{{ url('greetings') }}" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-textMain-light dark:text-textMain-dark text-xs font-medium transition-colors">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </a>
+      </div>
+    @else
+      <nav class="hidden lg:flex items-center gap-1">
+        @php
+          $slug = strtolower(str_replace(' ', '-', $activeProgram));
+        @endphp
+        
+        <a href="{{ url('dashboard/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Dashboard' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+          <i class="fa-solid fa-chart-pie mr-1 {{ $activeModule === 'Dashboard' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Dashboard
+        </a>
+        
+        <a href="{{ url('master/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Master Data' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+          <i class="fa-solid fa-database mr-1 {{ $activeModule === 'Master Data' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Master Data
+        </a>
+        
+        <a href="{{ url('operasional/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Operasional' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+          <i class="fa-solid fa-truck-fast mr-1 {{ $activeModule === 'Operasional' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Operasional
+        </a>
+        
+        <a href="{{ url('evaluasi/' . $slug) }}" class="flex items-center px-3 py-2 rounded-lg text-xs transition-colors {{ $activeModule === 'Evaluasi' ? 'bg-gray-100 dark:bg-gray-800/80 text-textMain-light dark:text-white font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-textMain-light dark:hover:text-white font-normal' }}">
+          <i class="fa-solid fa-clipboard-check mr-1 {{ $activeModule === 'Evaluasi' ? 'text-teal-light dark:text-teal-400' : '' }}"></i> Evaluasi
+        </a>
+      </nav>
+    @endif
  @else
  <div class="hidden lg:flex items-center">
  <a href="{{ url('greetings') }}" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-textMain-light dark:text-textMain-dark text-xs font-medium transition-colors">

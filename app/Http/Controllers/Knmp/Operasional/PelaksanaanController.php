@@ -111,7 +111,7 @@ class PelaksanaanController extends ProgramBaseController
     public function uploadFoto(Request $request, $program)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-operasional');
 
         $request->validate([
             'knmp_id' => 'required|exists:mysql_knmp.knmp,id',
@@ -170,7 +170,7 @@ class PelaksanaanController extends ProgramBaseController
     public function moveStage(Request $request, $program)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-operasional');
         
         $request->validate([
             'ids' => 'required|array',
@@ -204,7 +204,7 @@ class PelaksanaanController extends ProgramBaseController
     public function importUsulan(Request $request, $program)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('manage-operasional');
         
         $request->validate([
             'file_excel' => 'required|file|mimes:xlsx,xls|max:5120'
@@ -223,7 +223,7 @@ class PelaksanaanController extends ProgramBaseController
     public function importProgres(Request $request, $program)
     {
         $this->checkAuth();
-        \Illuminate\Support\Facades\Gate::authorize('manage-data');
+        \Illuminate\Support\Facades\Gate::authorize('import-progres');
         
         $request->validate([
             'file_excel' => 'required|file|mimes:xlsx,xls|max:5120'

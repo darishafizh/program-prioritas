@@ -15,7 +15,8 @@ class PortalController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-        
+
+
         $programs = [
             [
                 'name' => 'KNMP', 
@@ -82,6 +83,12 @@ class PortalController extends Controller
             ]
         ];
         
+        if (Auth::user()->isUserDaerah()) {
+            $programs = array_filter($programs, function ($prog) {
+                return in_array(strtolower($prog['name']), ['knmp', 'bioflok', 'minapadi']);
+            });
+        }
+
         return view('core.greetings', compact('programs'));
     }
 

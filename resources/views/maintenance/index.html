@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sistem Dialihkan - Program Prioritas KKP</title>
+    
+    <link rel="icon" type="image/png" href="https://samudra.kkp.go.id/program-prioritas/assets/images/logo-kkp.png">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Biasa (Vanilla CSS) -->
+    <style>
+        :root {
+            /* Tema Terang (Light Mode) berdasarkan app.css */
+            --bg-body: #F8FAFC;
+            --bg-surface: rgba(255, 255, 255, 0.95);
+            --bg-card: #FFFFFF;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --teal-main: #0891B2;
+            --teal-hover: #0e7490;
+            --teal-light-bg: rgba(8, 145, 178, 0.1);
+            --info-box-bg: #F8FAFC;
+            --toggle-bg: #F8FAFC;
+            --toggle-hover: #f1f5f9;
+            --toggle-icon: #64748b;
+
+            /* Tipografi dari app.css */
+            --font-size-xs: 12px;
+            --font-size-sm: 13px;
+            --font-size-base: 14px;
+            --font-size-lg: 15px;
+            --font-size-xl: 20px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 32px;
+        }
+
+        /* Tema Gelap (Dark Mode) berdasarkan app.css */
+        body.dark {
+            --bg-body: #0b0f19;
+            --bg-surface: rgba(17, 24, 39, 0.95);
+            --bg-card: #111827;
+            --text-main: #F9FAFB;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --teal-main: #06b6d4;
+            --teal-hover: #22d3ee;
+            --teal-light-bg: rgba(6, 182, 212, 0.15);
+            --info-box-bg: rgba(11, 15, 25, 0.5);
+            --toggle-bg: #111827;
+            --toggle-hover: #1e293b;
+            --toggle-icon: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            letter-spacing: -0.025em;
+            line-height: 1.3;
+        }
+
+        /* --- Topbar Styles --- */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4rem;
+            background-color: var(--bg-surface);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .topbar-left img {
+            width: 2rem;
+            height: 2rem;
+            object-fit: contain;
+        }
+        
+        body.dark .topbar-left img {
+            background-color: white;
+            border-radius: 50%;
+            padding: 2px;
+        }
+
+        .topbar-left h1 {
+            font-size: var(--font-size-lg);
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 1px solid var(--border-color);
+            padding-left: 1rem;
+        }
+
+        .theme-toggle {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--toggle-bg);
+            color: var(--toggle-icon);
+            border: none;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--toggle-hover);
+            color: var(--text-main);
+        }
+
+        /* --- Main Content Styles --- */
+        .main-content {
+            flex: 1;
+            padding-top: 4rem; /* Offset for fixed topbar */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 80rem; /* max-w-7xl */
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        /* Empty State Layout */
+        .empty-state {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 4rem 2rem;
+            width: 100%;
+            max-width: 48rem; /* max-w-3xl */
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-wrapper {
+            width: 5rem;
+            height: 5rem;
+            margin: 0 auto 1.5rem auto;
+            background-color: var(--teal-light-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(8, 145, 178, 0.1);
+        }
+
+        .icon-wrapper i {
+            font-size: var(--font-size-3xl);
+            color: var(--teal-main);
+        }
+
+        .title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            font-size: var(--font-size-base);
+            color: var(--text-muted);
+            max-width: 36rem;
+            margin: 0 auto 2rem auto;
+        }
+
+        .description strong {
+            color: var(--teal-main);
+            font-weight: 600;
+        }
+
+        .info-box {
+            padding: 1.25rem;
+            background-color: var(--info-box-bg);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            margin: 0 auto 2rem auto;
+            max-width: 28rem;
+        }
+
+        .info-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .new-link {
+            display: block;
+            font-size: var(--font-size-lg);
+            font-weight: 500;
+            color: var(--teal-main);
+            text-decoration: underline;
+            text-decoration-color: rgba(8, 145, 178, 0.3);
+            text-underline-offset: 4px;
+            word-break: break-all;
+        }
+        
+        .new-link:hover {
+            color: var(--teal-hover);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background-color: var(--teal-main);
+            color: white;
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            border-radius: 0.75rem;
+            text-decoration: none;
+            box-shadow: 0 10px 15px -3px rgba(8, 145, 178, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--teal-hover);
+        }
+
+        .btn i {
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover i {
+            transform: translateX(4px);
+        }
+
+        .countdown {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            margin-top: 2rem;
+        }
+
+        .countdown span {
+            font-weight: 700;
+            color: var(--teal-main);
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 640px) {
+            .topbar-left h1 {
+                display: none;
+            }
+            .empty-state {
+                padding: 3rem 1.5rem;
+            }
+            .title {
+                font-size: var(--font-size-xl);
+            }
+        }
+    </style>
+
+    <!-- Vanilla JavaScript -->
+    <script>
+        // Init tema dari LocalStorage saat dimuat
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+            updateIcon();
+        }
+
+        // Fungsi klik tombol toggle matahari/bulan
+        function toggleTheme() {
+            if (document.body.classList.contains('dark')) {
+                document.body.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateIcon();
+        }
+
+        function updateIcon() {
+            const icon = document.getElementById('theme-icon');
+            if (document.body.classList.contains('dark')) {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        // Timer redirect otomatis 10 detik
+        window.onload = () => {
+            initTheme();
+            
+            let countdown = 10;
+            setInterval(() => {
+                countdown--;
+                let timerElement = document.getElementById('timer');
+                if (timerElement) {
+                    timerElement.innerText = countdown;
+                }
+                if(countdown <= 0) {
+                    window.location.href = 'https://samudra.kkp.go.id/program-prioritas/';
+                }
+            }, 1000);
+        };
+    </script>
+</head>
+<body>
+<button onclick="toggleTheme()" class="theme-toggle" title="Ganti Tema Warna">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+
+    <!-- Main Content mirip dengan area putih dashboard -->
+    <main class="main-content">
+        <div class="container">
+            <div class="empty-state">
+                <div class="icon-wrapper">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <h2 class="title">Pemindahan Alamat Sistem</h2>
+                <p class="description">
+                    Mohon maaf, tautan untuk mengakses sistem saat ini telah dialihkan dari domain utama 
+                    <strong>samudra.kkp.go.id</strong> ke tautan subfolder baru yang lebih spesifik.
+                </p>
+
+                <div class="info-box">
+                    <p class="info-label">Tautan Sistem Yang Baru:</p>
+                    <a href="https://samudra.kkp.go.id/program-prioritas/" class="new-link">
+                        https://samudra.kkp.go.id/program-prioritas/
+                    </a>
+                </div>
+
+                <a href="https://samudra.kkp.go.id/program-prioritas/" class="btn">
+                    Menuju Halaman Baru
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+                <p class="countdown">
+                    Anda akan dialihkan secara otomatis dalam <span id="timer">10</span> detik...
+                </p>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

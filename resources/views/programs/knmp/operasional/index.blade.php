@@ -12,12 +12,12 @@
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <template x-if="currentStage === 'usulan'">
-                    @can('manage-data')
+                    @can('manage-operasional')
                     <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
                     @endcan
                 </template>
                 <template x-if="currentStage === 'konstruksi'">
-                    @can('manage-data')
+                    @can('import-progres')
                     <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
                     @endcan
                 </template>
@@ -55,7 +55,7 @@
         <div class="px-6 pt-5 pb-3 flex justify-between items-center">
             <h3 class="text-base font-medium text-textMuted-light dark:text-textMuted-dark" x-text="stages[currentStage].label"></h3>
             <template x-if="currentStage !== 'serah-terima'">
-                @can('manage-data')
+                @can('manage-operasional')
                 <form action="{{ route('program.operasional.pindah-tahap', ['program' => strtolower($activeProgram)]) }}" method="POST" class="inline-block">
                     @csrf
                     <input type="hidden" name="target_stage" :value="
@@ -283,7 +283,7 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    @can('manage-data')
+                                    @can('manage-operasional')
                                     <button type="button" @click="$dispatch('open-upload-modal', { item: item })" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center relative z-10 cursor-pointer" title="Upload Foto Progres"><i class="fa-solid fa-camera pointer-events-none"></i></button>
                                     @endcan
                                     <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Detail"><i class="fa-solid fa-eye"></i></button>

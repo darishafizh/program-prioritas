@@ -11,6 +11,7 @@ class ExportController extends ProgramBaseController
     public function pdf($program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('generate-pdf');
         $activeProgram = $this->formatProgramName($program);
 
         $requestedDate = request('date');

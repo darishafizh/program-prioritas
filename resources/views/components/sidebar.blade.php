@@ -36,7 +36,7 @@
  @foreach($moduleMenu['items'] as $item)
  @php
  // Role filtering
- if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah() && in_array($item['label'], ['Tahap (Batch)', 'Data Vendor/Penyedia'])) {
+ if (!\Illuminate\Support\Facades\Auth::user()->isSuperAdmin() && in_array($item['label'], ['Tahap (Batch)', 'Data Vendor/Penyedia'])) {
      continue;
  }
 

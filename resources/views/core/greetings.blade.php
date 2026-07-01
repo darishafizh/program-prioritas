@@ -92,7 +92,11 @@
 
  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 gap-6 lg:gap-8 max-w-6xl mx-auto pb-12">
  @foreach($programs as $index => $prog)
- <a href="{{ url('dashboard/' . strtolower(str_replace(' ', '-', $prog['name']))) }}" 
+ @php
+     $slug = strtolower(str_replace(' ', '-', $prog['name']));
+     $targetUrl = \Illuminate\Support\Facades\Auth::user()->isUserDaerah() ? url('master/' . $slug . '/calon-lokasi') : url('dashboard/' . $slug);
+ @endphp
+ <a href="{{ $targetUrl }}" 
  class="group bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 sm:p-8 relative flex flex-col h-full hover:border-teal-light/50 dark:hover:border-teal-light/50 hover:shadow-lg hover:shadow-teal-light/5 transition-all duration-300">
  
  <!-- Hover Accent Line -->

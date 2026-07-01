@@ -37,10 +37,12 @@
                         class="bg-transparent border-none outline-none text-textMain-light dark:text-textMain-dark w-32">
                 </div>
 
+                @can('generate-pdf')
                 <button type="button" @click="isPdfModalOpen = true"
                     class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-file-pdf"></i> Generate PDF
                 </button>
+                @endcan
             </form>
         </div>
 

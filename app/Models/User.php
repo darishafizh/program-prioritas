@@ -28,22 +28,22 @@ class User extends Authenticatable
 
     public function isSuperAdmin()
     {
-        return $this->role === 'Super Admin' || $this->role === 'super_admin';
+        return in_array(strtolower($this->role), ['super admin', 'super_admin']);
     }
 
     public function isAdminRoren()
     {
-        return $this->role === 'Admin Roren' || $this->role === 'admin_roren';
+        return in_array(strtolower($this->role), ['admin', 'admin roren', 'admin_roren']);
     }
 
     public function isVerifikator()
     {
-        return $this->role === 'Verifikator' || $this->role === 'verifikator';
+        return in_array(strtolower($this->role), ['verifikator']);
     }
 
     public function isUserDaerah()
     {
-        return $this->role === 'User Daerah' || $this->role === 'user_daerah';
+        return in_array(strtolower($this->role), ['user daerah', 'user_daerah']);
     }
 
     /**
