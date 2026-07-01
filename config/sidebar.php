@@ -74,8 +74,8 @@ return [
         'Dashboard' => [
             'heading' => 'Ringkasan Eksekutif',
             'items' => [
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok'],
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '#']
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok/progres-fisik'],
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/bioflok/produksi']
             ]
         ],
         'Master Data' => [
@@ -89,14 +89,14 @@ return [
             'heading' => 'Manajemen Data',
             'items' => [
                 ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/bioflok'],
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '#']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/bioflok/produksi']
             ]
         ],
         'Evaluasi' => [
             'heading' => 'Pelaporan & Audit',
             'items' => [
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok'],
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '#']
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok/progres-fisik'],
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/bioflok/produksi']
             ]
         ]
     ],

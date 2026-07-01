@@ -89,7 +89,7 @@ return [
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE_BIOFLOK', 'db_prioritas_bioflok'),
+            'database' => env('DB_DATABASE_BIOFLOK', 'program-prioritas-budidaya-tematik-bioflok'),
             'username' => env('DB_USERNAME_BIOFLOK', 'root'),
             'password' => env('DB_PASSWORD_BIOFLOK', ''),
             'unix_socket' => env('DB_SOCKET', ''),
