@@ -32,44 +32,35 @@
 
 <!-- KPI Cards -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
- <div class="absolute top-0 right-0 w-24 h-24 bg-success/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
- <div class="flex items-center gap-4 mb-4 relative z-10">
- <div class="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center text-success text-sm">
- <i class="fa-solid fa-draw-polygon"></i>
- </div>
- <div>
- <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Petak</h3>
- <div class="text-sm font-medium">45</div>
- </div>
- </div>
- </div>
+    <x-stat-card
+        title="Total Petak"
+        icon="fa-solid fa-draw-polygon"
+        icon-color="text-success dark:text-emerald-400"
+        icon-bg="bg-success/10 dark:bg-success/20"
+        value="45"
+        unit="Petak"
+        description="Terdaftar aktif di sistem"
+    />
 
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
- <div class="absolute top-0 right-0 w-24 h-24 bg-teal-light/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
- <div class="flex items-center gap-4 mb-4 relative z-10">
- <div class="w-12 h-12 rounded-xl bg-teal-light/10 flex items-center justify-center text-teal-light text-sm">
- <i class="fa-solid fa-water"></i>
- </div>
- <div>
- <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Kolam</h3>
- <div class="text-sm font-medium">120</div>
- </div>
- </div>
- </div>
+    <x-stat-card
+        title="Total Kolam"
+        icon="fa-solid fa-water"
+        icon-color="text-teal-light dark:text-teal-400"
+        icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+        value="120"
+        unit="Kolam"
+        description="Tersebar pada 45 Petak"
+    />
 
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
- <div class="absolute top-0 right-0 w-24 h-24 bg-warning/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
- <div class="flex items-center gap-4 mb-4 relative z-10">
- <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center text-warning text-sm">
- <i class="fa-solid fa-boxes-stacked"></i>
- </div>
- <div>
- <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Produksi</h3>
- <div class="text-sm font-medium">8,450 <span class="text-xs text-textMuted-light font-medium">Ton</span></div>
- </div>
- </div>
- </div>
+    <x-stat-card
+        title="Total Produksi"
+        icon="fa-solid fa-boxes-stacked"
+        icon-color="text-warning dark:text-amber-500"
+        icon-bg="bg-warning/10 dark:bg-amber-400/20"
+        value="8,450"
+        unit="Ton"
+        description="Akumulasi produksi kuartal ini"
+    />
 </div>
 
 <!-- Chart Section -->

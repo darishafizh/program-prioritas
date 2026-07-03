@@ -55,71 +55,48 @@
 
         <!-- KPI Cards (Responsive Grid 1 -> 2 -> 4) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 dark:bg-teal-light/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-teal-light/10 dark:bg-teal-light/20 flex items-center justify-center text-teal-light dark:text-teal-400 text-sm shrink-0">
-                        <i class="fa-solid fa-water"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Sentra / KDMP</h3>
-                        <div class="text-sm font-medium">{{ $stats['total_lokasi'] ?? 0 }} <span class="text-sm font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-medium text-success relative z-10">
-                    <i class="fa-solid fa-arrow-trend-up shrink-0"></i> Tersebar di 12 Provinsi
-                </div>
-            </div>
+            <x-stat-card
+                title="Total Sentra / KDMP"
+                icon="fa-solid fa-water"
+                icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+                value="{{ $stats['total_lokasi'] ?? 0 }}"
+                unit="Lokasi"
+                description="<span class='text-success font-medium inline-flex items-center gap-1.5'><i class='fa-solid fa-arrow-trend-up shrink-0'></i> Tersebar di 12 Provinsi</span>"
+            />
 
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 dark:bg-teal-400/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-teal-light/10 dark:bg-teal-400/20 flex items-center justify-center text-textMain-light dark:text-teal-400 text-sm shrink-0">
-                        <i class="fa-solid fa-chart-pie"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Rata-Rata Progres</h3>
-                        <div class="text-sm font-medium text-textMain-light dark:text-teal-400">{{ $stats['rata_progres'] ?? 0 }}%</div>
-                    </div>
-                </div>
-                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 relative z-10 mt-2">
+            <x-stat-card
+                title="Rata-Rata Progres"
+                icon="fa-solid fa-chart-pie"
+                icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
+                value="{{ $stats['rata_progres'] ?? 0 }}"
+                unit="%"
+            >
+                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">
                     <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full" style="width: {{ $stats['rata_progres'] ?? 0 }}%"></div>
                 </div>
-            </div>
+            </x-stat-card>
 
-            <!-- Total Selesai -->
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-success/10 dark:bg-success/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-success/10 dark:bg-success/20 flex items-center justify-center text-success dark:text-emerald-400 text-sm shrink-0">
-                        <i class="fa-solid fa-check-double"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Siap Tebar / Panen</h3>
-                        <div class="text-sm font-medium text-success dark:text-emerald-400">{{ $stats['total_selesai'] ?? 0 }} <span class="text-sm font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-medium text-success relative z-10">
-                    <i class="fa-solid fa-arrow-trend-up shrink-0"></i> Konstruksi rampung 100%
-                </div>
-            </div>
+            <x-stat-card
+                title="Siap Tebar / Panen"
+                icon="fa-solid fa-check-double"
+                icon-color="text-success dark:text-emerald-400"
+                icon-bg="bg-success/10 dark:bg-success/20"
+                value="{{ $stats['total_selesai'] ?? 0 }}"
+                unit="Lokasi"
+                description="<span class='text-success font-medium inline-flex items-center gap-1.5'><i class='fa-solid fa-arrow-trend-up shrink-0'></i> Konstruksi rampung 100%</span>"
+            />
 
-            <!-- Dalam Pembangunan -->
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-warning/10 dark:bg-amber-400/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-warning/10 dark:bg-amber-400/20 flex items-center justify-center text-warning dark:text-amber-500 text-sm shrink-0">
-                        <i class="fa-solid fa-person-digging"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Dalam Konstruksi</h3>
-                        <div class="text-sm font-medium text-warning dark:text-amber-500">{{ $stats['dalam_pembangunan'] ?? 0 }} <span class="text-sm font-medium text-textMuted-light dark:text-textMuted-dark">Lokasi</span></div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-medium text-warning relative z-10">
-                    <i class="fa-solid fa-clock shrink-0"></i> Akselerasi fondasi & bak
-                </div>
-            </div>
+            <x-stat-card
+                title="Dalam Konstruksi"
+                icon="fa-solid fa-person-digging"
+                icon-color="text-warning dark:text-amber-500"
+                icon-bg="bg-warning/10 dark:bg-amber-400/20"
+                value="{{ $stats['dalam_pembangunan'] ?? 0 }}"
+                unit="Lokasi"
+                description="<span class='text-warning font-medium inline-flex items-center gap-1.5'><i class='fa-solid fa-clock shrink-0'></i> Akselerasi fondasi & bak</span>"
+            />
         </div>
 
         <!-- Analisis Kesenjangan & Faktor Penghambat -->

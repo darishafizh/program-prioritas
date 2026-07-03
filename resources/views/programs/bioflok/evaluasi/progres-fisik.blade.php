@@ -41,55 +41,48 @@
         {{-- KPI Cards (Responsive Grid 1 -> 2 -> 4) --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             {{-- Konstruksi Aktif --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center text-warning text-sm shrink-0"><i class="fa-solid fa-person-digging"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Konstruksi Aktif</h3>
-                        <div class="text-sm font-medium text-warning mt-0.5">{{ $stats['konstruksi_aktif'] ?? 17 }} <span class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Konstruksi Aktif"
+                icon="fa-solid fa-person-digging"
+                icon-color="text-warning dark:text-amber-500"
+                icon-bg="bg-warning/10 dark:bg-amber-400/20"
+                value="{{ $stats['konstruksi_aktif'] ?? 17 }}"
+                unit="Lokasi"
+            />
 
             {{-- Rata-Rata Progres --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-2 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-teal-light/10 flex items-center justify-center text-teal-light text-sm shrink-0"><i class="fa-solid fa-chart-pie"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Rata-Rata Progres</h3>
-                        <div class="text-sm font-medium text-teal-light mt-0.5">{{ $stats['rata_progres'] ?? 78.4 }}%</div>
-                    </div>
+            <x-stat-card
+                title="Rata-Rata Progres"
+                icon="fa-solid fa-chart-pie"
+                icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
+                value="{{ $stats['rata_progres'] ?? 78.4 }}"
+                unit="%"
+            >
+                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">
+                    <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full transition-all" style="width: {{ $stats['rata_progres'] ?? 78.4 }}%"></div>
                 </div>
-                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 relative z-10 mt-2">
-                    <div class="bg-teal-light h-2 rounded-full transition-all" style="width: {{ $stats['rata_progres'] ?? 78.4 }}%"></div>
-                </div>
-            </div>
+            </x-stat-card>
 
             {{-- Total Selesai --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-success/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center text-success text-sm shrink-0"><i class="fa-solid fa-check-double"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Total Selesai</h3>
-                        <div class="text-sm font-medium text-success mt-0.5">{{ $stats['total_selesai'] ?? 28 }} <span class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Total Selesai"
+                icon="fa-solid fa-check-double"
+                icon-color="text-success dark:text-emerald-400"
+                icon-bg="bg-success/10 dark:bg-success/20"
+                value="{{ $stats['total_selesai'] ?? 28 }}"
+                unit="Lokasi"
+            />
 
             {{-- Kritis / Terlambat --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-danger/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-danger/10 flex items-center justify-center text-danger text-sm shrink-0"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Deviasi Kritis</h3>
-                        <div class="text-sm font-medium text-danger mt-0.5">{{ $stats['kritis_terlambat'] ?? 4 }} <span class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Deviasi Kritis"
+                icon="fa-solid fa-triangle-exclamation"
+                icon-color="text-danger dark:text-red-400"
+                icon-bg="bg-danger/10 dark:bg-danger/20"
+                value="{{ $stats['kritis_terlambat'] ?? 4 }}"
+                unit="Lokasi"
+            />
         </div>
 
         {{-- Daftar Audit & Deviasi Lokasi --}}

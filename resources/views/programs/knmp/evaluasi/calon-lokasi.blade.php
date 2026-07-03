@@ -48,82 +48,44 @@
         {{-- KPI Cards --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             {{-- Total Calon Lokasi --}}
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
-                </div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div
-                        class="w-12 h-12 rounded-xl bg-teal-light/10 flex items-center justify-center text-teal-light text-sm">
-                        <i class="fa-solid fa-map-location-dot"></i></div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Total Calon Lokasi</h3>
-                        <div class="text-sm font-medium">{{ $stats['total'] }} <span
-                                class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Total Calon Lokasi"
+                icon="fa-solid fa-map-location-dot"
+                icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+                value="{{ $stats['total'] }}"
+                unit="Lokasi"
+            />
 
             {{-- Tahap Pengajuan --}}
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div style="background-color: rgba(59, 130, 246, 0.1);"
-                    class="absolute top-0 right-0 w-32 h-32 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
-                </div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6;"
-                        class="w-12 h-12 rounded-xl flex items-center justify-center text-sm"><i
-                            class="fa-solid fa-file-circle-plus"></i></div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Tahap Pengajuan</h3>
-                        <div style="color: #3b82f6;" class="text-sm font-medium">{{ $stats['pengajuan'] }} <span
-                                class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Tahap Pengajuan"
+                icon="fa-solid fa-file-circle-plus"
+                icon-color="text-blue-500 dark:text-blue-400"
+                icon-bg="bg-blue-500/10 dark:bg-blue-500/20"
+                value="{{ $stats['pengajuan'] }}"
+                unit="Lokasi"
+            />
 
             {{-- Dalam Verifikasi --}}
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
-                </div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center text-warning text-sm"><i
-                            class="fa-solid fa-magnifying-glass-chart"></i></div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Dalam Verifikasi</h3>
-                        <div class="text-sm font-medium text-warning">{{ $stats['verifikasi'] }} <span
-                                class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Dalam Verifikasi"
+                icon="fa-solid fa-magnifying-glass-chart"
+                icon-color="text-warning dark:text-amber-500"
+                icon-bg="bg-warning/10 dark:bg-amber-400/20"
+                value="{{ $stats['verifikasi'] }}"
+                unit="Lokasi"
+            />
 
             {{-- Sudah Ditetapkan --}}
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-success/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
-                </div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center text-success text-sm"><i
-                            class="fa-solid fa-circle-check"></i></div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Sudah Ditetapkan</h3>
-                        <div class="text-sm font-medium text-success">{{ $stats['ditetapkan'] }} <span
-                                class="text-sm font-medium text-textMuted-light">Lokasi</span></div>
-                    </div>
-                </div>
-            </div>
+            <x-stat-card
+                title="Sudah Ditetapkan"
+                icon="fa-solid fa-circle-check"
+                icon-color="text-success dark:text-emerald-400"
+                icon-bg="bg-success/10 dark:bg-success/20"
+                value="{{ $stats['ditetapkan'] }}"
+                unit="Lokasi"
+            />
         </div>
 
         {{-- Table Card --}}

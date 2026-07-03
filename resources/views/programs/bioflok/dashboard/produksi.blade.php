@@ -35,89 +35,75 @@
                         class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                 </div>
 
-                <button type="button" onclick="window.print()"
+                <a href="{{ route('program.bioflok.dashboard.produksi.export-pdf', ['bulan' => request('bulan')]) }}" target="_blank"
                     class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-file-pdf"></i> PDF
-                </button>
+                </a>
             </form>
         </div>
 
         <!-- 3 KPI Cards: Total KDMP, Sudah Panen, Belum Panen -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
             <!-- Card 1: Total KDMP -->
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 dark:bg-teal-light/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
-                </div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div
-                        class="w-12 h-12 rounded-xl bg-teal-light/10 dark:bg-teal-light/20 flex items-center justify-center text-teal-light dark:text-teal-400 text-sm shrink-0">
-                        <i class="fa-solid fa-water"></i>
-                    </div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Total KDKMP</h3>
-                        <div class="text-sm font-medium text-textMain-light dark:text-textMain-dark">
-                            {{ $kpi['total_kdmp'] ?? 45 }} </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-medium text-teal-light relative z-10">
-                    <i class="fa-solid fa-check-circle shrink-0"></i> Terdaftar aktif budidaya bioflok
-                </div>
-            </div>
+            <x-stat-card title="Total KDKMP" icon="fa-solid fa-water" icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-light/20" value="{{ $kpi['total_kdmp'] ?? 45 }}" unit="Lokasi"
+                description="<span class='text-teal-light font-medium inline-flex items-center gap-1.5'><i class='fa-solid fa-check-circle shrink-0'></i> Terdaftar aktif budidaya bioflok</span>" />
 
             <!-- Card 2: Sudah Panen -->
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-success/10 dark:bg-success/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
-                </div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div
-                        class="w-12 h-12 rounded-xl bg-success/10 dark:bg-success/20 flex items-center justify-center text-success dark:text-emerald-400 text-sm shrink-0">
-                        <i class="fa-solid fa-fish-fins"></i>
-                    </div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Sudah Panen</h3>
-                        <div class="text-sm font-medium text-success dark:text-emerald-400">{{ $kpi['sudah_panen'] ?? 28 }}
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between text-xs font-medium text-textMuted-light relative z-10">
+            <x-stat-card title="Sudah Panen" icon="fa-solid fa-fish-fins" icon-color="text-success dark:text-emerald-400"
+                icon-bg="bg-success/10 dark:bg-success/20" value="{{ $kpi['sudah_panen'] ?? 28 }}" unit="Sentra">
+                <div class="flex items-center justify-between text-xs font-medium text-textMuted-light mt-1">
                     <span>Vol: <strong
                             class="text-textMain-light dark:text-white">{{ $kpi['total_volume_panen'] ?? 142.8 }}
                             Ton</strong></span>
                     <span>Nilai: <strong class="text-success">Rp {{ $kpi['total_nilai_panen'] ?? 3.57 }} M</strong></span>
                 </div>
-            </div>
+            </x-stat-card>
 
             <!-- Card 3: Belum Panen -->
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group sm:col-span-2 lg:col-span-1">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-warning/10 dark:bg-amber-400/20 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110">
+            <x-stat-card title="Belum Panen" icon="fa-solid fa-spinner fa-spin"
+                icon-color="text-warning dark:text-amber-500" icon-bg="bg-warning/10 dark:bg-amber-400/20"
+                value="{{ $kpi['belum_panen'] ?? 17 }}" unit="Sentra"
+                description="<span class='text-warning font-medium inline-flex items-center gap-1.5'><i class='fa-regular fa-calendar-check shrink-0'></i> {{ $kpi['persen_belum'] ?? 37.8 }}% menunggu panen</span>"
+                class="sm:col-span-2 lg:col-span-1" />
+        </div>
+
+        <!-- Grafik Dual-Axis Area: Tren Nilai & Volume Produksi per Periode -->
+        <div x-data="periodeBarChart()"
+            class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                    <h3 class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2">
+                        <i class="fa-solid fa-chart-area text-teal-light"></i> Tren Kenaikan & Penurunan Produksi per Periode
+                    </h3>
+                    <p class="text-xs text-textMuted-light mt-1">
+                        Menampilkan tren fluktuasi volume panen (Ton - Sumbu Kiri) dan nilai ekonomis (Juta Rp - Sumbu Kanan).
+                    </p>
                 </div>
-                <div class="flex items-center gap-4 mb-4 relative z-10">
-                    <div
-                        class="w-12 h-12 rounded-xl bg-warning/10 dark:bg-amber-400/20 flex items-center justify-center text-warning dark:text-amber-500 text-sm shrink-0">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                    </div>
-                    <div>
-                        <h3
-                            class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">
-                            Belum Panen</h3>
-                        <div class="text-sm font-medium text-warning dark:text-amber-500">{{ $kpi['belum_panen'] ?? 17 }}
-                        </div>
-                    </div>
+                
+                <!-- Filter Periode: Bulanan, Mingguan, Tahunan -->
+                <div class="flex items-center bg-gray-100 dark:bg-gray-800/80 p-1 rounded-xl shrink-0">
+                    <button @click="setPeriode('bulanan')"
+                        :class="activePeriode === 'bulanan' ? 'bg-teal-light text-white font-semibold shadow-sm' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-white'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition-all duration-200">
+                        Bulanan
+                    </button>
+                    <button @click="setPeriode('mingguan')"
+                        :class="activePeriode === 'mingguan' ? 'bg-teal-light text-white font-semibold shadow-sm' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-white'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition-all duration-200">
+                        Mingguan
+                    </button>
+                    <button @click="setPeriode('tahunan')"
+                        :class="activePeriode === 'tahunan' ? 'bg-teal-light text-white font-semibold shadow-sm' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-white'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition-all duration-200">
+                        Tahunan
+                    </button>
                 </div>
-                <div class="flex items-center gap-1.5 text-xs font-medium text-warning relative z-10">
-                    <i class="fa-regular fa-calendar-check shrink-0"></i> {{ $kpi['persen_belum'] ?? 37.8 }}% dalam tahap
-                    pemeliharaan
-                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="relative w-full min-h-[340px]">
+                <div id="periodeBarChartContainer" class="w-full h-full"></div>
             </div>
         </div>
 
@@ -155,6 +141,12 @@
                     </h3>
                     <p class="text-xs text-textMuted-light mt-1">Daftar lengkap capaian panen, volume produksi, dan status
                         siklus kelompok budidaya.</p>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto self-end sm:self-auto">
+                    <a href="{{ route('program.bioflok.dashboard.produksi.export-pdf', ['bulan' => request('bulan')]) }}" target="_blank"
+                        class="px-4 py-2 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF
+                    </a>
                 </div>
             </div>
 
@@ -214,7 +206,8 @@
                                 <td class="px-6 py-4 text-center text-textMuted-light border-r border-gray-100 dark:border-gray-800"
                                     x-text="row.no"></td>
                                 <td class="px-6 py-4 border-r border-gray-100 dark:border-gray-800">
-                                    <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="row.kdkmp">
+                                    <div class="font-medium text-textMain-light dark:text-textMain-dark"
+                                        x-text="row.kdkmp">
                                     </div>
                                     <div class="text-[11px] text-textMuted-light mt-0.5 truncate"><i
                                             class="fa-solid fa-location-dot mr-1"></i><span x-text="row.lokasi"></span>
@@ -232,8 +225,7 @@
                                 <td
                                     class="px-6 py-4 text-right font-medium text-success whitespace-nowrap border-r border-gray-100 dark:border-gray-800">
                                     <template x-if="row.nilai > 0">
-                                        <span
-                                            x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(row.nilai)"></span>
+                                        <span x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(row.nilai)"></span>
                                     </template>
                                     <template x-if="row.nilai <= 0">
                                         <span class="text-textMuted-light font-normal italic">-</span>
@@ -369,6 +361,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const rawScatterData = @json($scatterData ?? []);
+            const isDark = document.documentElement.classList.contains('dark');
 
             const formattedSeries = rawScatterData.map(item => ({
                 x: item.volume,
@@ -395,7 +388,10 @@
                     },
                     fontFamily: 'inherit'
                 },
-                colors: ['#0d9488'],
+                theme: {
+                    mode: isDark ? 'dark' : 'light'
+                },
+                colors: ['#0891B2'],
                 xaxis: {
                     title: {
                         text: 'Volume Hasil Panen (Ton)',
@@ -447,25 +443,254 @@
                         w
                     }) {
                         const data = w.config.series[seriesIndex].data[dataPointIndex];
-                        return `<div class="p-3.5 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-xl text-xs">
-                            <div class="font-bold text-teal-light text-sm mb-0.5">${data.name}</div>
-                            <div class="text-textMuted-light text-[11px] mb-2.5"><i class="fa-solid fa-location-dot mr-1"></i>${data.provinsi}</div>
-                            <div class="space-y-1.5 pt-2 border-t border-gray-100 dark:border-gray-800">
-                                <div class="flex justify-between gap-4"><span class="text-textMuted-light">Volume Panen:</span> <span class="font-bold text-textMain-light dark:text-white">${data.x} Ton (${new Intl.NumberFormat('id-ID').format(data.x * 1000)} kg)</span></div>
-                                <div class="flex justify-between gap-4"><span class="text-textMuted-light">Nilai Total:</span> <span class="font-bold text-success">Rp ${data.y} Juta</span></div>
-                                <div class="flex justify-between gap-4"><span class="text-textMuted-light">Harga Jual:</span> <span class="font-bold text-textMain-light dark:text-white">Rp ${new Intl.NumberFormat('id-ID').format(data.harga)} / kg</span></div>
+                        const volumeKg = Math.round(data.x * 1000);
+                        const formattedKg = new Intl.NumberFormat('id-ID').format(volumeKg);
+                        const formattedTon = new Intl.NumberFormat('id-ID').format(data.x);
+                        const formattedNilai = new Intl.NumberFormat('id-ID').format(data.y);
+                        const formattedHarga = new Intl.NumberFormat('id-ID').format(data.harga);
+
+                        return `<div class="custom-chart-tooltip p-4 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border border-gray-100 dark:border-gray-800 rounded-2xl shadow-2xl text-xs min-w-[240px] transition-all">
+                            <div class="flex items-center justify-between gap-3 mb-1">
+                                <span class="font-bold text-teal-light dark:text-teal-400 text-sm tracking-tight">${data.name}</span>
+                                <span class="px-2 py-0.5 rounded-md bg-teal-light/10 text-teal-light dark:text-teal-400 font-semibold text-[10px]">Panen</span>
+                            </div>
+                            <div class="text-textMuted-light text-[11px] mb-3 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-teal-light"></i>
+                                <span>${data.provinsi}</span>
+                            </div>
+                            <div class="space-y-2 pt-2.5 border-t border-gray-100 dark:border-gray-800 pl-0.5">
+                                <div class="flex justify-between items-center gap-4">
+                                    <span class="text-textMuted-light font-medium flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-teal-light w-3 text-center"></i> Volume Panen</span>
+                                    <span class="font-bold text-textMain-light dark:text-white text-right">${formattedTon} Ton <span class="block text-[10px] font-normal text-textMuted-light">(${formattedKg} kg)</span></span>
+                                </div>
+                                <div class="flex justify-between items-center gap-4">
+                                    <span class="text-textMuted-light font-medium flex items-center gap-2"><i class="fa-solid fa-money-bill-trend-up text-success w-3 text-center"></i> Nilai Total</span>
+                                    <span class="font-bold text-success text-right">Rp ${formattedNilai} Juta</span>
+                                </div>
+                                <div class="flex justify-between items-center gap-4">
+                                    <span class="text-textMuted-light font-medium flex items-center gap-2"><i class="fa-solid fa-tag text-amber-500 w-3 text-center"></i> Harga Jual</span>
+                                    <span class="font-bold text-textMain-light dark:text-white text-right">Rp ${formattedHarga} / kg</span>
+                                </div>
                             </div>
                         </div>`;
                     }
                 },
                 grid: {
-                    borderColor: '#f1f5f9',
+                    borderColor: isDark ? '#374151' : '#f1f5f9',
                     strokeDashArray: 4
                 }
             };
 
             const chart = new ApexCharts(document.querySelector("#scatterPlotBioflok"), options);
             chart.render();
+
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const newIsDark = document.documentElement.classList.contains('dark');
+                        chart.updateOptions({
+                            theme: {
+                                mode: newIsDark ? 'dark' : 'light'
+                            },
+                            grid: {
+                                borderColor: newIsDark ? '#374151' : '#f1f5f9'
+                            }
+                        });
+                    }
+                });
+            });
+            observer.observe(document.documentElement, {
+                attributes: true
+            });
         });
+
+        function periodeBarChart() {
+            return {
+                activePeriode: 'bulanan',
+                chart: null,
+                chartData: @json($barChartPeriods ?? []),
+                init() {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const data = this.chartData[this.activePeriode] || { categories: [], volume: [], nilai: [] };
+
+                    const options = {
+                        series: [
+                            {
+                                name: 'Volume Produksi (Ton)',
+                                data: data.volume
+                            },
+                            {
+                                name: 'Nilai Produksi (Juta Rp)',
+                                data: data.nilai
+                            }
+                        ],
+                        chart: {
+                            type: 'area',
+                            height: 360,
+                            toolbar: { show: false },
+                            fontFamily: 'inherit',
+                            animations: {
+                                enabled: true,
+                                speed: 400
+                            }
+                        },
+                        colors: ['#0891B2', '#10B981'],
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 3
+                        },
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.45,
+                                opacityTo: 0.05,
+                                stops: [20, 100]
+                            }
+                        },
+                        markers: {
+                            size: 4,
+                            colors: ['#0891B2', '#10B981'],
+                            strokeColors: '#ffffff',
+                            strokeWidth: 2,
+                            hover: { size: 6 }
+                        },
+                        xaxis: {
+                            categories: data.categories,
+                            labels: {
+                                style: {
+                                    colors: '#94a3b8',
+                                    fontSize: '11px'
+                                }
+                            }
+                        },
+                        yaxis: [
+                            {
+                                seriesName: 'Volume Produksi (Ton)',
+                                title: {
+                                    text: 'Volume (Ton)',
+                                    style: { color: '#0891B2', fontSize: '11px', fontWeight: 600 }
+                                },
+                                labels: {
+                                    style: {
+                                        colors: isDark ? '#cbd5e1' : '#475569',
+                                        fontSize: '11px',
+                                        fontWeight: 500
+                                    },
+                                    formatter: function (val) {
+                                        return val + ' Ton';
+                                    }
+                                }
+                            },
+                            {
+                                opposite: true,
+                                seriesName: 'Nilai Produksi (Juta Rp)',
+                                title: {
+                                    text: 'Nilai (Juta Rp)',
+                                    style: { color: '#10b981', fontSize: '11px', fontWeight: 600 }
+                                },
+                                labels: {
+                                    style: {
+                                        colors: isDark ? '#cbd5e1' : '#475569',
+                                        fontSize: '11px',
+                                        fontWeight: 500
+                                    },
+                                    formatter: function (val) {
+                                        return 'Rp ' + val + ' Jt';
+                                    }
+                                }
+                            }
+                        ],
+                        legend: {
+                            position: 'top',
+                            horizontalAlign: 'right',
+                            labels: {
+                                colors: isDark ? '#cbd5e1' : '#475569'
+                            }
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                                const cat = w.globals.labels[dataPointIndex];
+                                const vol = series[0][dataPointIndex];
+                                const nil = series[1][dataPointIndex];
+                                const volKg = Math.round(vol * 1000);
+                                return `<div class="custom-chart-tooltip p-3.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border border-gray-100 dark:border-gray-800 rounded-xl shadow-xl text-xs min-w-[210px]">
+                                    <div class="font-bold text-teal-light dark:text-teal-400 text-sm mb-2 pb-1.5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                                        <span>${cat}</span>
+                                        <i class="fa-regular fa-calendar text-[11px] text-textMuted-light"></i>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <div class="flex justify-between items-center gap-3">
+                                            <span class="text-textMuted-light flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-light shrink-0"></span> Volume:</span>
+                                            <span class="font-bold text-textMain-light dark:text-white">${new Intl.NumberFormat('id-ID').format(vol)} Ton <span class="text-[10px] text-textMuted-light">(${new Intl.NumberFormat('id-ID').format(volKg)} kg)</span></span>
+                                        </div>
+                                        <div class="flex justify-between items-center gap-3">
+                                            <span class="text-textMuted-light flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-success shrink-0"></span> Nilai Total:</span>
+                                            <span class="font-bold text-success">Rp ${new Intl.NumberFormat('id-ID').format(nil)} Juta</span>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }
+                        },
+                        grid: {
+                            borderColor: isDark ? '#374151' : '#f1f5f9',
+                            strokeDashArray: 4
+                        }
+                    };
+
+                    this.chart = new ApexCharts(document.querySelector("#periodeBarChartContainer"), options);
+                    this.chart.render();
+
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.attributeName === 'class') {
+                                const newIsDark = document.documentElement.classList.contains('dark');
+                                if (this.chart) {
+                                    this.chart.updateOptions({
+                                        yaxis: [
+                                            { labels: { style: { colors: newIsDark ? '#cbd5e1' : '#475569' } } },
+                                            { labels: { style: { colors: newIsDark ? '#cbd5e1' : '#475569' } } }
+                                        ],
+                                        legend: {
+                                            labels: { colors: newIsDark ? '#cbd5e1' : '#475569' }
+                                        },
+                                        grid: {
+                                            borderColor: newIsDark ? '#374151' : '#f1f5f9'
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    });
+                    observer.observe(document.documentElement, { attributes: true });
+                },
+                setPeriode(periode) {
+                    this.activePeriode = periode;
+                    const data = this.chartData[periode] || { categories: [], volume: [], nilai: [] };
+                    if (this.chart) {
+                        this.chart.updateOptions({
+                            xaxis: {
+                                categories: data.categories
+                            },
+                            series: [
+                                {
+                                    name: 'Volume Produksi (Ton)',
+                                    data: data.volume
+                                },
+                                {
+                                    name: 'Nilai Produksi (Juta Rp)',
+                                    data: data.nilai
+                                }
+                            ]
+                        }, true, true);
+                    }
+                }
+            };
+        }
     </script>
 @endsection

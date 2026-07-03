@@ -74,8 +74,8 @@ return [
         'Dashboard' => [
             'heading' => 'Ringkasan Eksekutif',
             'items' => [
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok/progres-fisik'],
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/bioflok/produksi']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/bioflok/produksi', 'active' => ['dashboard/bioflok', 'dashboard/bioflok/produksi']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok/progres-fisik']
             ]
         ],
         'Master Data' => [
@@ -88,15 +88,15 @@ return [
         'Operasional' => [
             'heading' => 'Manajemen Data',
             'items' => [
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/bioflok'],
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/bioflok/produksi']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/bioflok/produksi', 'active' => ['operasional/bioflok', 'operasional/bioflok/produksi']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/bioflok/progres-fisik']
             ]
         ],
         'Evaluasi' => [
             'heading' => 'Pelaporan & Audit',
             'items' => [
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok/progres-fisik'],
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/bioflok/produksi']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/bioflok/produksi', 'active' => ['evaluasi/bioflok', 'evaluasi/bioflok/produksi']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok/progres-fisik']
             ]
         ]
     ],

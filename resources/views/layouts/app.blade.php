@@ -13,19 +13,28 @@
  <!-- Styles / Scripts -->
  @vite(['resources/css/app.css', 'resources/js/app.js'])
 
- <!-- Alpine.js -->
- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js Plugins & Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
- <script>
- // Theme initialization
- if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
- document.documentElement.classList.add('dark');
- } else {
- document.documentElement.classList.remove('dark');
- }
- </script>
+    <script>
+        // Theme initialization
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Sidebar pre-initialization check to prevent flicker when collapsed
+        if (localStorage.getItem('_x_sidebarOpen') === 'false' && window.innerWidth >= 1024) {
+            document.documentElement.classList.add('sidebar-init-closed');
+        }
+    </script>
 </head>
-<body x-data="{ sidebarOpen: window.innerWidth >= 1024, darkMode: document.documentElement.classList.contains('dark') }" @resize.window="sidebarOpen = window.innerWidth >= 1024" class="antialiased bg-bgBody-light dark:bg-bgBody-dark text-textMain-light dark:text-textMain-dark transition-colors duration-300">
+<body x-data="{ sidebarOpen: $persist(window.innerWidth >= 1024), darkMode: document.documentElement.classList.contains('dark') }"
+    x-init="document.documentElement.classList.remove('sidebar-init-closed')"
+    @resize.window="if (window.innerWidth < 1024) sidebarOpen = false"
+    class="antialiased bg-bgBody-light dark:bg-bgBody-dark text-textMain-light dark:text-textMain-dark transition-colors duration-300">
 
  <!-- Top Navigation (Module Nav) -->
  <x-topbar :activeProgram="$activeProgram ?? 'Bioflok'" :activeModule="$activeModule ?? 'Dashboard'" />

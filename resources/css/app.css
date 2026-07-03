@@ -80,3 +80,33 @@
 .dark ::-webkit-scrollbar-thumb {
   background-color: #334155;
 }
+
+/* ApexCharts Tooltip Clean Styling */
+.apexcharts-canvas .apexcharts-tooltip:has(.custom-chart-tooltip),
+.apexcharts-tooltip:has(.custom-chart-tooltip) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.dark .apexcharts-tooltip {
+  background-color: var(--color-bgSurface-dark) !important;
+  border-color: #1f2937 !important;
+  color: var(--color-textMain-dark) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .apexcharts-tooltip .apexcharts-tooltip-title {
+  background-color: #111827 !important;
+  border-bottom-color: #1f2937 !important;
+}
+
+/* Sidebar Flicker Prevention on Page Load */
+@media (min-width: 1024px) {
+  html.sidebar-init-closed aside {
+    width: 0 !important;
+    transform: translateX(0) !important;
+    transition: none !important;
+  }
+}

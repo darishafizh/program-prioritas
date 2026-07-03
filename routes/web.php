@@ -120,17 +120,19 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::prefix('dashboard/bioflok')->name('program.bioflok.dashboard.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('index');
+            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('index');
             Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
             Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
+            Route::get('/export-pdf', [\App\Http\Controllers\Bioflok\DashboardController::class, 'exportProduksiPdf'])->defaults('program', 'bioflok')->name('export-pdf');
+            Route::get('/produksi/export-pdf', [\App\Http\Controllers\Bioflok\DashboardController::class, 'exportProduksiPdf'])->defaults('program', 'bioflok')->name('produksi.export-pdf');
         });
         Route::prefix('evaluasi/bioflok')->name('program.bioflok.evaluasi.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('index');
+            Route::get('/', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'bioflok')->name('index');
             Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
             Route::get('/produksi', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
         });
         Route::prefix('operasional/bioflok')->name('program.bioflok.operasional.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('index');
+            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('index');
             Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
             Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
         });

@@ -42,58 +42,50 @@
         {{-- 4 KPI Cards (Responsive Grid 1 -> 2 -> 4) --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             {{-- Capaian Volume Panen --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-teal-light/10 flex items-center justify-center text-teal-light text-sm shrink-0"><i class="fa-solid fa-boxes-stacked"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Capaian Panen</h3>
-                        <div class="text-sm font-medium text-teal-light mt-0.5">{{ $stats['total_realisasi_panen'] ?? 142.8 }} <span class="text-sm font-medium text-textMuted-light">/ {{ $stats['total_target_panen'] ?? 150 }} Ton</span></div>
-                    </div>
+            <x-stat-card
+                title="Capaian Panen"
+                icon="fa-solid fa-boxes-stacked"
+                icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+                value="{{ $stats['total_realisasi_panen'] ?? 142.8 }}"
+                unit="/ {{ $stats['total_target_panen'] ?? 150 }} Ton"
+            >
+                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">
+                    <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full" style="width: {{ $stats['persentase_capaian'] ?? 95.2 }}%"></div>
                 </div>
-                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 relative z-10 mt-2">
-                    <div class="bg-teal-light h-2 rounded-full" style="width: {{ $stats['persentase_capaian'] ?? 95.2 }}%"></div>
-                </div>
-            </div>
+            </x-stat-card>
 
             {{-- Survival Rate (SR) --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-success/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center text-success text-sm shrink-0"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Survival Rate (SR)</h3>
-                        <div class="text-sm font-medium text-success mt-0.5">{{ $stats['survival_rate_rata'] ?? 86.5 }}%</div>
-                    </div>
-                </div>
-                <div class="text-xs text-textMuted-light relative z-10"><i class="fa-solid fa-check text-success mr-1"></i> Di atas standar baku (>80%)</div>
-            </div>
+            <x-stat-card
+                title="Survival Rate (SR)"
+                icon="fa-solid fa-heart-pulse"
+                icon-color="text-success dark:text-emerald-400"
+                icon-bg="bg-success/10 dark:bg-success/20"
+                value="{{ $stats['survival_rate_rata'] ?? 86.5 }}"
+                unit="%"
+                description="<span class='text-textMuted-light inline-flex items-center gap-1'><i class='fa-solid fa-check text-success'></i> Di atas standar baku (&gt;80%)</span>"
+            />
 
             {{-- Feed Conversion Ratio (FCR) --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center text-warning text-sm shrink-0"><i class="fa-solid fa-scale-balanced"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Rata-Rata FCR</h3>
-                        <div class="text-sm font-medium text-warning mt-0.5">{{ $stats['fcr_rata'] ?? 1.25 }}</div>
-                    </div>
-                </div>
-                <div class="text-xs text-textMuted-light relative z-10">Efisiensi pakan optimal (Standar: 1.1 - 1.4)</div>
-            </div>
+            <x-stat-card
+                title="Rata-Rata FCR"
+                icon="fa-solid fa-scale-balanced"
+                icon-color="text-warning dark:text-amber-500"
+                icon-bg="bg-warning/10 dark:bg-amber-400/20"
+                value="{{ $stats['fcr_rata'] ?? 1.25 }}"
+                description="Efisiensi pakan optimal (Standar: 1.1 - 1.4)"
+            />
 
             {{-- Status Capaian Lokasi --}}
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-light/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-                <div class="flex items-center gap-4 mb-3 relative z-10">
-                    <div class="w-12 h-12 rounded-xl bg-teal-light/10 flex items-center justify-center text-teal-light text-sm shrink-0"><i class="fa-solid fa-award"></i></div>
-                    <div>
-                        <h3 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider">Performa Lokasi</h3>
-                        <div class="text-sm font-medium mt-0.5">{{ $stats['lokasi_diatas_target'] ?? 24 }} <span class="text-sm font-medium text-textMuted-light">Sesuai / Melampaui</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-danger relative z-10"><i class="fa-solid fa-circle-exclamation mr-1"></i> {{ $stats['lokasi_dibawah_target'] ?? 4 }} Lokasi under-performing</div>
-            </div>
+            <x-stat-card
+                title="Performa Lokasi"
+                icon="fa-solid fa-award"
+                icon-color="text-teal-light dark:text-teal-400"
+                icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+                value="{{ $stats['lokasi_diatas_target'] ?? 24 }}"
+                unit="Sesuai / Melampaui"
+                description="<span class='text-danger inline-flex items-center gap-1'><i class='fa-solid fa-circle-exclamation'></i> {{ $stats['lokasi_dibawah_target'] ?? 4 }} Lokasi under-performing</span>"
+            />
         </div>
 
         {{-- Grafik Komparasi Target vs Realisasi Produksi --}}

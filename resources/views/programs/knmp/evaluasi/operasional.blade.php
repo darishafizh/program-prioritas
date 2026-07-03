@@ -58,22 +58,13 @@
                 ];
             @endphp
             @foreach ($tahapConfig as $key => $config)
-                <div
-                    class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-4 relative overflow-hidden group hover:shadow-md transition-all">
-                    <div class="flex items-center gap-3 relative z-10">
-                        <div
-                            class="w-10 h-10 rounded-lg bg-{{ $config['color'] }}/10 flex items-center justify-center text-{{ $config['color'] }} text-xs shrink-0">
-                            <i class="fa-solid {{ $config['icon'] }}"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <div
-                                class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider truncate">
-                                {{ $config['label'] }}</div>
-                            <div class="text-base font-bold text-textMain-light dark:text-textMain-dark">
-                                {{ $stats['per_tahap'][$key] ?? 0 }}</div>
-                        </div>
-                    </div>
-                </div>
+                <x-stat-card
+                    title="{{ $config['label'] }}"
+                    icon="fa-solid {{ $config['icon'] }}"
+                    icon-color="text-{{ $config['color'] }}"
+                    icon-bg="bg-{{ $config['color'] }}/10"
+                    value="{{ $stats['per_tahap'][$key] ?? 0 }}"
+                />
             @endforeach
         </div>
 

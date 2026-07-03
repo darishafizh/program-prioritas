@@ -34,77 +34,70 @@
  Indikator Kinerja Utama
  </h3>
  
- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
- <!-- KPI Card 1 -->
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-5 relative overflow-hidden group">
- <div class="flex justify-between items-start mb-2">
- <h4 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest">Total Lokasi Aktif</h4>
- <div class="w-8 h-8 rounded-lg flex items-center justify-center text-teal-light bg-teal-light/10">
- <i class="fa-solid fa-map-location-dot"></i>
- </div>
- </div>
- <div class="text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">3.412</div>
- <div class="flex items-center text-xs mb-3">
- <span class="text-success font-medium flex items-center"><i class="fa-solid fa-arrow-up text-[0.6rem] mr-1"></i> 12%</span>
- <span class="text-textMuted-light ml-1">dari bulan lalu</span>
- </div>
- <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-teal-light">
- <strong>Insight:</strong> Ekspansi tertinggi terjadi di wilayah pesisir utara Jawa.
- </div>
- </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- KPI Card 1 -->
+        <x-stat-card
+            title="Total Lokasi Aktif"
+            icon="fa-solid fa-map-location-dot"
+            icon-color="text-teal-light dark:text-teal-400"
+            icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+            value="3.412"
+            description="<span class='text-success font-medium inline-flex items-center'><i class='fa-solid fa-arrow-up text-[0.6rem] mr-1"></i> 12%</span> <span class='text-textMuted-light ml-1'>dari bulan lalu</span>"
+        >
+            <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-teal-light mt-1">
+                <strong>Insight:</strong> Ekspansi tertinggi terjadi di wilayah pesisir utara Jawa.
+            </div>
+        </x-stat-card>
 
- <!-- KPI Card 2 -->
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-5 relative overflow-hidden group">
- <div class="flex justify-between items-start mb-2">
- <h4 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest">Akumulasi Produksi</h4>
- <div class="w-8 h-8 rounded-lg flex items-center justify-center text-success bg-success/10">
- <i class="fa-solid fa-boxes-stacked"></i>
- </div>
- </div>
- <div class="text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">85.4 <span class="text-xs font-medium">Ribu Ton</span></div>
- <div class="flex items-center text-xs mb-3">
- <span class="text-success font-medium flex items-center"><i class="fa-solid fa-arrow-up text-[0.6rem] mr-1"></i> 8.4%</span>
- <span class="text-textMuted-light ml-1">dari bulan lalu</span>
- </div>
- <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-success">
- <strong>Insight:</strong> Melebihi target Q3 sebesar 5%. Puncak panen terjadi minggu ini.
- </div>
- </div>
+        <!-- KPI Card 2 -->
+        <x-stat-card
+            title="Akumulasi Produksi"
+            icon="fa-solid fa-boxes-stacked"
+            icon-color="text-success dark:text-emerald-400"
+            icon-bg="bg-success/10 dark:bg-success/20"
+            value="85.4"
+            unit="Ribu Ton"
+            description="<span class='text-success font-medium inline-flex items-center'><i class='fa-solid fa-arrow-up text-[0.6rem] mr-1"></i> 8.4%</span> <span class='text-textMuted-light ml-1'>dari bulan lalu</span>"
+        >
+            <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-success mt-1">
+                <strong>Insight:</strong> Melebihi target Q3 sebesar 5%. Puncak panen terjadi minggu ini.
+            </div>
+        </x-stat-card>
 
- <!-- KPI Card 3 -->
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-5 relative overflow-hidden group">
- <div class="flex justify-between items-start mb-2">
- <h4 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest">Progres Fisik</h4>
- <div class="w-8 h-8 rounded-lg flex items-center justify-center text-warning bg-warning/10">
- <i class="fa-solid fa-person-digging"></i>
- </div>
- </div>
- <div class="text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">64.8%</div>
- <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 mb-3">
- <div class="bg-warning h-full rounded-full" style="width: 64.8%"></div>
- </div>
- <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-warning">
- <strong>Deviasi:</strong> <span class="text-danger font-medium">-2.1%</span> dari Kurva S target rencana.
- </div>
- </div>
+        <!-- KPI Card 3 -->
+        <x-stat-card
+            title="Progres Fisik"
+            icon="fa-solid fa-person-digging"
+            icon-color="text-warning dark:text-amber-500"
+            icon-bg="bg-warning/10 dark:bg-amber-400/20"
+            value="64.8"
+            unit="%"
+        >
+            <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 my-2">
+                <div class="bg-warning h-full rounded-full" style="width: 64.8%"></div>
+            </div>
+            <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-warning">
+                <strong>Deviasi:</strong> <span class="text-danger font-medium">-2.1%</span> dari Kurva S target rencana.
+            </div>
+        </x-stat-card>
 
- <!-- KPI Card 4 -->
- <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-5 relative overflow-hidden group">
- <div class="flex justify-between items-start mb-2">
- <h4 class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-widest">Serapan Anggaran</h4>
- <div class="w-8 h-8 rounded-lg flex items-center justify-center text-textMain-light bg-teal-light/10">
- <i class="fa-solid fa-money-bill-trend-up"></i>
- </div>
- </div>
- <div class="text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">4.2 <span class="text-xs font-medium">Triliun</span></div>
- <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 mb-3">
- <div class="bg-teal-light h-full rounded-full" style="width: 72%"></div>
- </div>
- <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-teal-light">
- <strong>Kesehatan:</strong> Serapan berjalan sinkron dengan progres fisik (selisih <10%).
- </div>
- </div>
- </div>
+        <!-- KPI Card 4 -->
+        <x-stat-card
+            title="Serapan Anggaran"
+            icon="fa-solid fa-money-bill-trend-up"
+            icon-color="text-teal-light dark:text-teal-400"
+            icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
+            value="4.2"
+            unit="Triliun"
+        >
+            <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 my-2">
+                <div class="bg-teal-light h-full rounded-full" style="width: 72%"></div>
+            </div>
+            <div class="text-[0.65rem] text-textMuted-light bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg border-l-2 border-teal-light">
+                <strong>Kesehatan:</strong> Serapan berjalan sinkron dengan progres fisik (selisih &lt;10%).
+            </div>
+        </x-stat-card>
+    </div>
 </div>
 
 <!-- Story Part 2: Analisis Akar Masalah & Tren (The "Why") -->
