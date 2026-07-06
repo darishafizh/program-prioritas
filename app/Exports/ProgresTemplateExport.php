@@ -24,7 +24,7 @@ class ProgresTemplateExport implements FromCollection, WithHeadings, WithMapping
             $knmp->nama,
             date('Y-m-d'),
             '', // Leave progres empty
-            ''  // Leave catatan empty
+            ''  // Leave keterangan empty
         ];
     }
 
@@ -35,7 +35,7 @@ class ProgresTemplateExport implements FromCollection, WithHeadings, WithMapping
             'Nama Lokasi (JANGAN DIUBAH)',
             'Tanggal (YYYY-MM-DD)',
             'Progres Harian (%)',
-            'Catatan'
+            'Keterangan'
         ];
     }
 }

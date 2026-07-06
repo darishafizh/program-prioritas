@@ -81,7 +81,7 @@ return [
         'Master Data' => [
             'heading' => 'Referensi Program',
             'items' => [
-                ['label' => 'KDMP', 'icon' => 'fa-water', 'url' => '/master/bioflok'],
+                ['label' => 'KDKMP', 'icon' => 'fa-water', 'url' => '/master/bioflok/kdkmp', 'active' => ['master/bioflok', 'master/bioflok/kdkmp*']],
                 ['label' => 'SPPG', 'icon' => 'fa-fish', 'url' => '#']
             ]
         ],

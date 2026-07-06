@@ -139,6 +139,19 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==========================================
+    // Bioflok Master Routes
+    // ==========================================
+    Route::middleware('role:super_admin,admin_roren,verifikator,user_daerah')->group(function () {
+        Route::prefix('master/bioflok')->name('program.bioflok.master.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'bioflok')->name('index');
+            Route::get('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'bioflok')->name('kdkmp.index');
+            Route::post('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'store'])->defaults('program', 'bioflok')->name('kdkmp.store');
+            Route::put('/kdkmp/{id}', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'update'])->defaults('program', 'bioflok')->name('kdkmp.update');
+            Route::delete('/kdkmp/{id}', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'destroy'])->defaults('program', 'bioflok')->name('kdkmp.destroy');
+        });
+    });
+
+    // ==========================================
     // Default Program Routes
     // ==========================================
     Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {

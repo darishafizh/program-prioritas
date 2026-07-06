@@ -19,7 +19,7 @@ class ProgresImport implements ToCollection, WithHeadingRow
             $id = $row['id_konstruksi_jangan_diubah'] ?? null;
             $tanggal = $row['tanggal_yyyy_mm_dd'] ?? null;
             $progres = $row['progres_harian'] ?? null;
-            $catatan = $row['catatan'] ?? '';
+            $keterangan = $row['keterangan'] ?? ($row['catatan'] ?? null);
 
             if (!$id || !$tanggal || $progres === null || $progres === '') {
                 continue;
@@ -29,7 +29,7 @@ class ProgresImport implements ToCollection, WithHeadingRow
                 'knmp_konstruksi_id' => $id,
                 'tanggal' => date('Y-m-d', strtotime($tanggal)),
                 'progres' => (float) $progres,
-                'catatan' => $catatan,
+                'keterangan' => $keterangan,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];

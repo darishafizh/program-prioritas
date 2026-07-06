@@ -8,17 +8,11 @@ use Illuminate\Http\Request;
 
 class VendorController extends ProgramBaseController
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            \Illuminate\Support\Facades\Gate::authorize('manage-master');
-            return $next($request);
-        });
-    }
 
     public function index(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-master');
         $activeProgram = $this->formatProgramName($program);
         
         $vendors = PenyediaJasaKonstruksi::orderBy('id', 'desc')->get();
@@ -33,6 +27,7 @@ class VendorController extends ProgramBaseController
     public function store(Request $request, $program)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-master');
         
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
@@ -51,6 +46,7 @@ class VendorController extends ProgramBaseController
     public function update(Request $request, $program, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-master');
         
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
@@ -70,6 +66,7 @@ class VendorController extends ProgramBaseController
     public function destroy($program, $id)
     {
         $this->checkAuth();
+        \Illuminate\Support\Facades\Gate::authorize('manage-master');
 
         try {
             $vendor = PenyediaJasaKonstruksi::findOrFail($id);

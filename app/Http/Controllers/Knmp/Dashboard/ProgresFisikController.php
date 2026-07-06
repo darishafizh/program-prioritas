@@ -164,7 +164,7 @@ class ProgresFisikController extends ProgramBaseController
         
         $allTableData = $sortedByProgres->all();
 
-        $mapQuery = \App\Models\Knmp::select('nama', 'latitude', 'longitude', 'status')
+        $mapQuery = \App\Models\Knmp::select('nama', 'provinsi', 'latitude', 'longitude', 'status')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude');
             
@@ -182,6 +182,15 @@ class ProgresFisikController extends ProgramBaseController
         $regionTengah = 0;
         $regionTimur = 0;
         
+        $islands = [
+            'sumatera' => 0,
+            'jawa' => 0,
+            'kalimantan' => 0,
+            'sulawesi' => 0,
+            'bali_nusra' => 0,
+            'maluku_papua' => 0,
+        ];
+        
         foreach ($mapLocations as $loc) {
             if ($loc->longitude < 116) {
                 $regionBarat++;
@@ -189,6 +198,37 @@ class ProgresFisikController extends ProgramBaseController
                 $regionTengah++;
             } else {
                 $regionTimur++;
+            }
+
+            $prov = strtolower($loc->provinsi ?? '');
+            if (preg_match('/(aceh|sumatera|riau|jambi|bengkulu|bangka|belitung|lampung)/i', $prov)) {
+                $islands['sumatera']++;
+            } elseif (preg_match('/(jawa|jakarta|dki|banten|yogyakarta|diy)/i', $prov)) {
+                $islands['jawa']++;
+            } elseif (preg_match('/(kalimantan)/i', $prov)) {
+                $islands['kalimantan']++;
+            } elseif (preg_match('/(sulawesi|gorontalo)/i', $prov)) {
+                $islands['sulawesi']++;
+            } elseif (preg_match('/(bali|nusa tenggara|ntb|ntt)/i', $prov)) {
+                $islands['bali_nusra']++;
+            } elseif (preg_match('/(maluku|papua)/i', $prov)) {
+                $islands['maluku_papua']++;
+            } else {
+                $lat = $loc->latitude;
+                $lng = $loc->longitude;
+                if ($lng < 106) {
+                    $islands['sumatera']++;
+                } elseif ($lng >= 106 && $lng < 115 && $lat < -5) {
+                    $islands['jawa']++;
+                } elseif ($lng >= 108 && $lng < 119 && $lat >= -5) {
+                    $islands['kalimantan']++;
+                } elseif ($lng >= 118 && $lng < 126 && $lat >= -6) {
+                    $islands['sulawesi']++;
+                } elseif ($lng >= 114 && $lng < 125 && $lat < -6) {
+                    $islands['bali_nusra']++;
+                } else {
+                    $islands['maluku_papua']++;
+                }
             }
         }
 
@@ -214,6 +254,7 @@ class ProgresFisikController extends ProgramBaseController
                     'tengah' => $regionTengah,
                     'timur' => $regionTimur,
                 ],
+                'islands' => $islands,
                 'narasi' => $narasi
             ]
         ]);

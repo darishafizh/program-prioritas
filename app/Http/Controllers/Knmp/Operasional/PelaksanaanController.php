@@ -68,6 +68,7 @@ class PelaksanaanController extends ProgramBaseController
             ->get()->map(function($k) {
                 $kons = KonstruksiKnmp::where('knmp_id', $k->id)->first();
                 $progres = 0;
+                $rencana = 0;
                 $konstruktor = '-';
                 if ($kons) {
                     $konstruktor = $kons->penyediaJasa ? $kons->penyediaJasa->nama : '-';
@@ -77,15 +78,40 @@ class PelaksanaanController extends ProgramBaseController
                         ->orderBy('tanggal', 'desc')
                         ->first();
                     $progres = $lastProgres ? round($lastProgres->progres, 1) : 0;
+
+                    if ($kons->tanggal_mulai) {
+                        $tanggalMulai = \Carbon\Carbon::parse($kons->tanggal_mulai);
+                        $targetDate = \Carbon\Carbon::now();
+                        $daysDiff = $tanggalMulai->diffInDays($targetDate, false);
+                        $currentWeek = $daysDiff < 0 ? 1 : floor($daysDiff / 7) + 1;
+                        
+                        $tahapKonstruksi = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('tahap_konstruksi')
+                            ->where('knmp_konstruksi_id', $kons->id)
+                            ->where('periode_mingguan', '<=', $currentWeek)
+                            ->orderBy('periode_mingguan', 'desc')
+                            ->first();
+                            
+                        if ($tahapKonstruksi) {
+                            $val = (float)$tahapKonstruksi->bobot_rencana_kumulatif;
+                            if ($val > 100) {
+                                $val = $val / 1000;
+                            }
+                            $rencana = round($val, 1);
+                        }
+                    }
                 }
+                $deviasi = round($progres - $rencana, 1);
+
                 return [
                     'id' => $k->id,
                     'lokasi' => $k->nama,
                     'statusHub' => $k->status ?: 'Penyangga',
                     'konstruktor' => $konstruktor,
+                    'rencana' => $rencana,
                     'progres' => $progres,
+                    'deviasi' => $deviasi,
                 ];
-            });
+            })->sortByDesc('progres')->values();
 
         $serahTerimaData = $baseQuery('serah_terima')
             ->select('id', 'nama', 'status')

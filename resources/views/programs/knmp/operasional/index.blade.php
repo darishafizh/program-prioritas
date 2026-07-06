@@ -255,8 +255,9 @@
                         </th>
                         <th class="px-6 py-4">Lokasi KNMP</th>
                         <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4">Konstruktor</th>
-                        <th class="px-6 py-4">Progres</th>
+                        <th class="px-6 py-4">Konstruktor (Vendor)</th>
+                        <th class="px-6 py-4">Rencana</th>
+                        <th class="px-6 py-4">Progres & Deviasi</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -272,13 +273,39 @@
                             <td class="px-6 py-4">
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
                             </td>
-                            <td class="px-6 py-4 text-textMuted-light" x-text="item.konstruktor"></td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-24 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-success" :style="'width: ' + item.progres + '%'"></div>
+                                    <div class="w-6 h-6 rounded-full bg-teal-100 text-teal-light flex items-center justify-center text-[10px] font-bold"
+                                        x-text="(item.konstruktor || '-').substring(0, 2)"></div>
+                                    <span class="font-medium" x-text="item.konstruktor"></span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-textMain-light dark:text-textMain-dark"
+                                    x-text="item.rencana + '%'"></div>
+                                <div class="text-[0.65rem] text-textMuted-light mt-0.5">Kumulatif Minggu Ini</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-1.5 w-48">
+                                    <div class="flex justify-between items-end">
+                                        <span class="font-medium text-xs" x-text="item.progres + '%'"></span>
+                                        <template x-if="item.deviasi >= 0">
+                                            <span
+                                                class="text-success font-medium text-[0.65rem] flex items-center gap-1 bg-success/10 px-1.5 py-0.5 rounded"><i
+                                                    class="fa-solid fa-arrow-up"></i> +<span
+                                                    x-text="item.deviasi"></span>%</span>
+                                        </template>
+                                        <template x-if="item.deviasi < 0">
+                                            <span
+                                                class="text-danger font-medium text-[0.65rem] flex items-center gap-1 bg-danger/10 px-1.5 py-0.5 rounded"><i
+                                                    class="fa-solid fa-arrow-down"></i> <span
+                                                    x-text="item.deviasi"></span>%</span>
+                                        </template>
                                     </div>
-                                    <span class="text-[11px] font-medium" x-text="item.progres + '%'"></span>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                        <div class="bg-teal-light h-1.5 rounded-full"
+                                            :style="'width: ' + item.progres + '%'"></div>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-center">
@@ -671,6 +698,10 @@
                 this.currentPage = 1;
                 this.searchQuery = '';
                 this.selectedIds = [];
+                
+                const url = new URL(window.location.href);
+                url.searchParams.set('stage', key);
+                window.history.replaceState({}, '', url);
             },
 
             // Get current stage's raw data
