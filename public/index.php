@@ -8,7 +8,9 @@ define('LARAVEL_START', microtime(true));
 // Fix untuk hosting Laravel di subdirektori cPanel agar tidak perlu /public/ di URL
 if (isset($_SERVER['SCRIPT_NAME']) && strpos($_SERVER['SCRIPT_NAME'], '/public/index.php') !== false) {
     $_SERVER['SCRIPT_NAME'] = str_replace('/public/index.php', '/index.php', $_SERVER['SCRIPT_NAME']);
-    $_SERVER['PHP_SELF'] = str_replace('/public/index.php', '/index.php', $_SERVER['PHP_SELF']);
+    if (isset($_SERVER['PHP_SELF'])) {
+        $_SERVER['PHP_SELF'] = str_replace('/public/index.php', '/index.php', $_SERVER['PHP_SELF']);
+    }
 }
 
 // Determine if the application is in maintenance mode...
