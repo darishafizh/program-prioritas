@@ -152,6 +152,14 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==========================================
+    // Redirect Budidaya Tematik -> Bioflok
+    // ==========================================
+    Route::redirect('/dashboard/budidaya-tematik', '/dashboard/bioflok');
+    Route::redirect('/master/budidaya-tematik', '/master/bioflok/kdkmp');
+    Route::redirect('/operasional/budidaya-tematik', '/operasional/bioflok');
+    Route::redirect('/evaluasi/budidaya-tematik', '/evaluasi/bioflok');
+
+    // ==========================================
     // Default Program Routes
     // ==========================================
     Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {

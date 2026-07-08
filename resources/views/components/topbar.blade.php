@@ -3,14 +3,12 @@
 @php
 $programs = [
  'KNMP',
- 'Bioflok',
- 'Minapadi',
+ 'Budidaya Tematik',
  'BINS',
  'Swasembada Garam',
  'Revitalisasi Pantura',
  'Modernisasi Kapal',
- 'ISF Waingapu',
- 'Sarpras Pendidikan KP'
+ 'ISF Waingapu'
 ];
 @endphp
 

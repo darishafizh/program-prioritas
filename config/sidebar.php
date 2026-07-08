@@ -70,6 +70,36 @@ return [
             ]
         ]
     ],
+    'budidaya-tematik' => [
+        'Dashboard' => [
+            'heading' => 'Ringkasan Eksekutif',
+            'items' => [
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/bioflok/produksi', 'active' => ['dashboard/bioflok*', 'dashboard/budidaya-tematik*']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok/progres-fisik']
+            ]
+        ],
+        'Master Data' => [
+            'heading' => 'Referensi Program',
+            'items' => [
+                ['label' => 'KDKMP', 'icon' => 'fa-water', 'url' => '/master/bioflok/kdkmp', 'active' => ['master/bioflok*', 'master/budidaya-tematik*']],
+                ['label' => 'SPPG', 'icon' => 'fa-fish', 'url' => '#']
+            ]
+        ],
+        'Operasional' => [
+            'heading' => 'Manajemen Data',
+            'items' => [
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/bioflok/produksi', 'active' => ['operasional/bioflok*', 'operasional/budidaya-tematik*']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/bioflok/progres-fisik']
+            ]
+        ],
+        'Evaluasi' => [
+            'heading' => 'Pelaporan & Audit',
+            'items' => [
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/bioflok/produksi', 'active' => ['evaluasi/bioflok*', 'evaluasi/budidaya-tematik*']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok/progres-fisik']
+            ]
+        ]
+    ],
     'bioflok' => [
         'Dashboard' => [
             'heading' => 'Ringkasan Eksekutif',
