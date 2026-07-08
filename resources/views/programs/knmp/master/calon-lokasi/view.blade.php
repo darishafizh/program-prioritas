@@ -9,13 +9,13 @@
     </div>
 
     <!-- Panel Offcanvas (Full Screen bergeser dari Kanan) -->
-    <div class="fixed inset-0 w-full flex">
+    <div class="fixed inset-0 w-full flex justify-end">
         <div x-show="showDetailDataModal" @click.away="showDetailDataModal = false"
             x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
             x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
             x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
             x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-            class="w-full bg-white dark:bg-gray-900 shadow-2xl flex flex-col text-left">
+            class="w-full max-w-full md:max-w-2xl lg:max-w-4xl xl:max-w-5xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col text-left">
 
             <!-- Fixed Header -->
             <div
@@ -91,7 +91,7 @@
                                 </div>
 
                                 <!-- SECTION 1 & SECTION 2: 2-COLUMN LAYOUT -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
                                     <!-- SECTION 1: INFORMASI WILAYAH & GEOGRAFIS -->
                                     <div>
                                         <h4
@@ -234,7 +234,7 @@
                                 </div>
 
                                 <!-- SECTION 3 & SECTION 4: 2-COLUMN LAYOUT -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
                                     <!-- SECTION 3: KRITERIA KHUSUS KAWASAN -->
                                     <div>
                                         <h4
@@ -317,7 +317,7 @@
                                 </div>
 
                                 <!-- SECTION 5 & SECTION 6: 2-COLUMN LAYOUT -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
                                     <!-- SECTION 5: LAMPIRAN DOKUMEN RESMI -->
                                     <div>
                                         <h4
