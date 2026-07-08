@@ -1,4 +1,6 @@
 *.log
+error_log
+/config/database.php
 .DS_Store
 .env
 .env.backup
