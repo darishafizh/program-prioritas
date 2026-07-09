@@ -9,13 +9,13 @@
     </div>
 
     <!-- Panel Offcanvas (Full Screen bergeser dari Kanan) -->
-    <div class="fixed inset-0 w-full flex justify-end">
+    <div class="fixed inset-0 w-full flex">
         <div x-show="showDetailDataModal" @click.away="showDetailDataModal = false"
             x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
             x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
             x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
             x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-            class="w-full max-w-full md:max-w-2xl lg:max-w-4xl xl:max-w-5xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col text-left">
+            class="w-full bg-white dark:bg-gray-900 shadow-2xl flex flex-col text-left">
 
             <!-- Fixed Header -->
             <div
@@ -91,7 +91,7 @@
                                 </div>
 
                                 <!-- SECTION 1 & SECTION 2: 2-COLUMN LAYOUT -->
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
                                     <!-- SECTION 1: INFORMASI WILAYAH & GEOGRAFIS -->
                                     <div>
                                         <h4
@@ -234,7 +234,7 @@
                                 </div>
 
                                 <!-- SECTION 3 & SECTION 4: 2-COLUMN LAYOUT -->
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
                                     <!-- SECTION 3: KRITERIA KHUSUS KAWASAN -->
                                     <div>
                                         <h4
@@ -317,7 +317,7 @@
                                 </div>
 
                                 <!-- SECTION 5 & SECTION 6: 2-COLUMN LAYOUT -->
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 py-1 mt-6">
                                     <!-- SECTION 5: LAMPIRAN DOKUMEN RESMI -->
                                     <div>
                                         <h4
@@ -354,7 +354,10 @@
 
                                             <!-- BA Aktivasi -->
                                             <template x-if="activeDetail?.baAktivasi?.dokumen_ba">
-                                                <a :href="activeDetail?.baAktivasi?.dokumen_ba ? (activeDetail.baAktivasi.dokumen_ba.startsWith('http') ? activeDetail.baAktivasi.dokumen_ba : '/storage/' + activeDetail.baAktivasi.dokumen_ba) : '#'"
+                                                <a :href="activeDetail?.baAktivasi?.dokumen_ba ? (activeDetail.baAktivasi
+                                                        .dokumen_ba.startsWith('http') ? activeDetail.baAktivasi
+                                                        .dokumen_ba : '/storage/' + activeDetail.baAktivasi.dokumen_ba
+                                                        ) : '#'"
                                                     target="_blank"
                                                     class="flex items-center justify-between p-4 rounded-xl bg-teal-light dark:bg-teal-dark hover:bg-teal-light/90 dark:hover:bg-teal-dark/90 text-white dark:text-white shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group font-sans"
                                                     style="font-family: 'Inter', sans-serif;">
@@ -382,7 +385,9 @@
 
                                             <!-- BA Calon -->
                                             <template x-if="activeDetail?.baCalon?.dokumen_ba">
-                                                <a :href="activeDetail?.baCalon?.dokumen_ba ? (activeDetail.baCalon.dokumen_ba.startsWith('http') ? activeDetail.baCalon.dokumen_ba : '/storage/' + activeDetail.baCalon.dokumen_ba) : '#'"
+                                                <a :href="activeDetail?.baCalon?.dokumen_ba ? (activeDetail.baCalon.dokumen_ba
+                                                    .startsWith('http') ? activeDetail.baCalon.dokumen_ba :
+                                                    '/storage/' + activeDetail.baCalon.dokumen_ba) : '#'"
                                                     target="_blank"
                                                     class="flex items-center justify-between p-4 rounded-xl bg-teal-light dark:bg-teal-dark hover:bg-teal-light/90 dark:hover:bg-teal-dark/90 text-white dark:text-white shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group font-sans"
                                                     style="font-family: 'Inter', sans-serif;">
@@ -410,7 +415,9 @@
 
                                             <!-- SK Penetapan -->
                                             <template x-if="activeDetail?.penetapan?.dokumen_sk">
-                                                <a :href="activeDetail?.penetapan?.dokumen_sk ? (activeDetail.penetapan.dokumen_sk.startsWith('http') ? activeDetail.penetapan.dokumen_sk : '/storage/' + activeDetail.penetapan.dokumen_sk) : '#'"
+                                                <a :href="activeDetail?.penetapan?.dokumen_sk ? (activeDetail.penetapan.dokumen_sk
+                                                    .startsWith('http') ? activeDetail.penetapan.dokumen_sk :
+                                                    '/storage/' + activeDetail.penetapan.dokumen_sk) : '#'"
                                                     target="_blank"
                                                     class="flex items-center justify-between p-4 rounded-xl bg-teal-light dark:bg-teal-dark hover:bg-teal-light/90 dark:hover:bg-teal-dark/90 text-white dark:text-white shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group font-sans"
                                                     style="font-family: 'Inter', sans-serif;">
@@ -488,7 +495,8 @@
                                                         <div class="flex items-center gap-2 flex-wrap">
                                                             <span
                                                                 x-text="activeDetail?.verifAdmin?.updated_at || activeDetail?.created_at || '-'"></span>
-                                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold"
+                                                            <span
+                                                                class="px-2 py-0.5 rounded-md text-[10px] font-semibold"
                                                                 :class="activeDetail?.verifAdmin?.status === 'Ditolak' ?
                                                                     'bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300' :
                                                                     'bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300'"
@@ -514,7 +522,8 @@
                                                         <div class="flex items-center gap-2 flex-wrap">
                                                             <span
                                                                 x-text="activeDetail?.verifTeknis?.updated_at || activeDetail?.created_at || '-'"></span>
-                                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold"
+                                                            <span
+                                                                class="px-2 py-0.5 rounded-md text-[10px] font-semibold"
                                                                 :class="activeDetail?.verifTeknis?.status === 'Ditolak' ?
                                                                     'bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300' :
                                                                     'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'"

@@ -43,7 +43,7 @@
             <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 pointer-events-none hidden sm:block">
                 <i class="fa-solid fa-quote-right text-8xl sm:text-9xl text-teal-light"></i>
             </div>
-            <div class="relative z-10 max-w-4xl">
+            <div class="relative z-10">
                 <div class="flex items-center gap-2 text-teal-light dark:text-teal-400 font-medium text-xs tracking-widest uppercase mb-3">
                     <span class="w-2 h-2 rounded-full bg-teal-light animate-pulse shrink-0"></span>Analisis Kinerja Konstruksi Bulan Ini
                 </div>

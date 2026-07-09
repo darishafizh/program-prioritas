@@ -39,7 +39,7 @@
  <!-- Top Navigation (Module Nav) -->
  <x-topbar :activeProgram="$activeProgram ?? 'Bioflok'" :activeModule="$activeModule ?? 'Dashboard'" />
 
- <div class="flex h-screen overflow-hidden pt-16">
+ <div class="flex h-screen overflow-hidden pt-[var(--topbar-height)]">
  
  @if(($activeModule ?? '') !== 'Pengguna')
  <!-- Sidebar Overlay (Mobile) -->
@@ -56,7 +56,7 @@
  <!-- Main Content -->
  <div class="flex-1 flex flex-col overflow-hidden relative">
  <main class="flex-1 overflow-y-auto p-6 lg:p-8 scroll-smooth">
- <div class="max-w-7xl mx-auto">
+ <div class="w-full">
  @yield('content')
  </div>
  </main>

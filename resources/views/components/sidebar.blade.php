@@ -11,10 +11,10 @@
  $moduleMenu = $programSidebar[$activeModule] ?? [];
 @endphp
 
-<aside :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0 w-64 lg:w-0'" 
+<aside :class="sidebarOpen ? 'translate-x-0 w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 w-[var(--sidebar-width)] lg:w-0'" 
  class="fixed lg:relative z-40 h-full bg-bgSurface-light dark:bg-bgSurface-dark border-r border-gray-100 dark:border-gray-800 transition-all duration-300 shrink-0 overflow-hidden">
  
- <div class="w-64 h-full flex flex-col">
+ <div class="w-[var(--sidebar-width)] h-full flex flex-col">
  <!-- Context Header -->
  <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
  <div class="text-xs text-textMuted-light dark:text-textMuted-dark mb-1 font-medium">

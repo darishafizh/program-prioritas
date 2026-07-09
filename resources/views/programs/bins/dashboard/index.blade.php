@@ -20,7 +20,7 @@
  <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 pointer-events-none">
  <i class="fa-solid fa-fish text-9xl text-warning"></i>
  </div>
- <div class="relative z-10 max-w-4xl">
+ <div class="relative z-10">
  <div class="flex items-center gap-2 text-warning dark:text-amber-500 font-medium text-xs tracking-widest uppercase mb-3">
  <span class="w-2 h-2 rounded-full bg-warning animate-pulse"></span> Narasi Produksi BINS
  </div>

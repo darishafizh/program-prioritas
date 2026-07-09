@@ -24,16 +24,24 @@
   
   --font-sans: "Inter", system-ui, sans-serif;
 
-  --font-size-xs: 12px;
-  --font-size-sm: 13px;
-  --font-size-base: 14px;
-  --font-size-lg: 15px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 32px;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 0.9375rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
 }
 
 @custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   Structural Layout Variables (fixed px — immune to font scaling)
+   ============================================================ */
+:root {
+  --sidebar-width: 256px;
+  --topbar-height: 56px;
+}
 
 @layer base {
   body {
