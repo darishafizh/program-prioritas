@@ -40,8 +40,17 @@
         <!-- Header & Global Filters -->
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Dashboard Siklus & Operasional</h2>
-                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Pantauan Siklus Calon
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h2 class="text-xl font-semibold tracking-tight">Dashboard Siklus & Operasional</h2>
+                    @if(isset($stats['last_updated']))
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-light/10 dark:bg-teal-400/10 border border-teal-light/20 dark:border-teal-400/20 text-teal-light dark:text-teal-300 text-xs font-medium shadow-xs">
+                        <span class="w-2 h-2 rounded-full bg-teal-light dark:bg-teal-400 animate-pulse shrink-0"></span>
+                        <i class="fa-regular fa-clock text-[11px]"></i>
+                        <span>Update Data Terakhir: <strong class="font-semibold text-textMain-light dark:text-white">{{ $stats['last_updated'] }}</strong></span>
+                    </div>
+                    @endif
+                </div>
+                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1.5">Pantauan Siklus Calon
                     Lokasi dan Status Operasional Proyek KNMP</p>
             </div>
 

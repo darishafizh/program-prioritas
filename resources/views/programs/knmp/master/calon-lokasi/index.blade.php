@@ -21,27 +21,6 @@
     @endphp
 
     <div x-data="calonLokasiManager('{{ $currentStage }}')" x-init="initData()" class="flex flex-col gap-4">
-        <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h2 class="text-xl font-semibold tracking-tight">Manajemen Calon Lokasi</h2>
-                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Siklus 1: Dari
-                    pengajuan usulan baru hingga ditetapkan menjadi Lokasi Definitif.</p>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-wrap items-center gap-3">
-                @if ($currentStage === 'pengajuan')
-                    @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah())
-                        <a href="{{ route('program.master.calon-lokasi.create') }}"
-                            class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2.5 text-xs font-semibold transition-all flex items-center justify-between gap-2 shadow-sm whitespace-nowrap">
-                            Tambah Pengajuan <i class="fa-solid fa-plus bg-white/20 p-1.5 rounded-lg"></i>
-                        </a>
-                    @endif
-                @endif
-            </div>
-        </div>
-
         <!-- Stepper / Tabs -->
         <div
             class="bg-white dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-2 overflow-hidden">
@@ -72,28 +51,28 @@
             </div>
         </div>
 
-        <!-- Main Data Table -->
-        <div
-            class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col mt-2">
-            <div
-                class="p-4 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/50 dark:bg-gray-800/20">
-                <div class="flex items-center gap-2 text-sm text-textMuted-light dark:text-textMuted-dark">
-                    <span>Tampilkan</span>
-                    <select
-                        class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-lg px-2 py-1.5 focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark font-medium ">
-                        <option>10</option>
-                    </select>
-                    <span>entri</span>
-                </div>
-
+        <x-table.card 
+            title="Manajemen Calon Lokasi" 
+            description="Siklus 1: Dari pengajuan usulan baru hingga ditetapkan menjadi Lokasi Definitif."
+            :show-per-page="true"
+            :custom-table="true">
+            <x-slot name="actions">
+                @if ($currentStage === 'pengajuan')
+                    @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah())
+                        <a href="{{ route('program.master.calon-lokasi.create') }}"
+                            class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm shrink-0 whitespace-nowrap">
+                            Tambah Pengajuan <i class="fa-solid fa-plus"></i>
+                        </a>
+                    @endif
+                @endif
+            </x-slot>
+            <x-slot name="search">
                 <div class="relative w-full sm:w-64">
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                     <input x-model="searchQuery" type="text" placeholder="Cari data lokasi..."
-                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm focus:border-teal-light outline-none transition-all ">
+                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light transition-colors text-textMain-light dark:text-textMain-dark">
                 </div>
-            </div>
-
-            <div class="overflow-x-auto min-h-[300px]">
+            </x-slot>
 
                 <!-- TABLE 1: PENGAJUAN PROPOSAL -->
                 <table x-show="currentStage === 'pengajuan'" class="w-full text-left text-xs whitespace-nowrap">
@@ -423,8 +402,7 @@
                         </template>
                     </tbody>
                 </table>
-            </div><!-- close overflow-x-auto -->
-        </div><!-- close bg-bgSurface -->
+        </x-table.card>
 
         <!-- SEMUA MODALS DI BAWAH SINI -->
         <div>
@@ -940,6 +918,8 @@
                 currentStage: initialStage,
                 // State filter pencarian
                 searchQuery: '',
+                perPage: '10',
+                currentPage: 1,
 
                 // Toast Notification
                 // (State handled globally via x-toast-notification component)
@@ -1007,13 +987,34 @@
                     this.verifTeknisList = @json($verifTeknisList);
                     this.baCalonList = @json($baCalonList);
                     this.penetapanList = @json($penetapanList);
+                    
+                    this.$watch('perPage', () => { this.currentPage = 1; });
+                    this.$watch('searchQuery', () => { this.currentPage = 1; });
                 },
 
                 filterData(list) {
-                    if (!this.searchQuery) return list;
-                    const q = this.searchQuery.toLowerCase();
-                    return list.filter(item => Object.values(item).some(val => String(val).toLowerCase()
-                        .includes(q)));
+                    let filtered = list;
+                    if (this.searchQuery) {
+                        const q = this.searchQuery.toLowerCase();
+                        filtered = list.filter(item => Object.values(item).some(val => String(val).toLowerCase().includes(q)));
+                    }
+                    const limit = (this.perPage === 'all' || !Number(this.perPage)) ? filtered.length : Number(this.perPage);
+                    const start = (this.currentPage - 1) * limit;
+                    return filtered.slice(start, start + limit);
+                },
+
+                get totalPages() {
+                    let list = this.currentStage === 'pengajuan' ? this.proposals :
+                               (this.currentStage === 'verif-admin' ? this.verifList :
+                               (this.currentStage === 'ba-aktivasi' ? this.baAktivasiList :
+                               (this.currentStage === 'verif-teknis' ? this.verifTeknisList :
+                               (this.currentStage === 'ba-calon' ? this.baCalonList : this.penetapanList))));
+                    if (this.searchQuery) {
+                        const q = this.searchQuery.toLowerCase();
+                        list = list.filter(item => Object.values(item).some(val => String(val).toLowerCase().includes(q)));
+                    }
+                    if (this.perPage === 'all' || !Number(this.perPage)) return 1;
+                    return Math.max(1, Math.ceil(list.length / Number(this.perPage)));
                 },
 
                 // --- Fungsi Toast ---

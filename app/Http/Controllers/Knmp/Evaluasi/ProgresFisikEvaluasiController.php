@@ -142,7 +142,7 @@ class ProgresFisikEvaluasiController extends ProgramBaseController
             ];
         }
 
-        $avgProgres = $countWithProgres > 0 ? round($totalProgres / $countWithProgres, 1) : 0;
+        $avgProgres = $countWithProgres > 0 ? round($totalProgres / $countWithProgres, 2) : 0;
         $avgDeviasi = $countWithProgres > 0 ? round($totalDeviasi / $countWithProgres, 1) : 0;
 
         // Sort by progres descending

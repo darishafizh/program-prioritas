@@ -5,25 +5,6 @@
 @section('content')
 <div x-data="operasionalManager()">
     <div class="mb-6 flex flex-col gap-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h2 class="text-xl font-semibold tracking-tight">Operasional Proyek KNMP</h2>
-                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Siklus 2: Pelaksanaan teknis dari lokasi definitif hingga serah terima pembangunan.</p>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <template x-if="currentStage === 'usulan'">
-                    @can('manage-operasional')
-                    <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
-                    @endcan
-                </template>
-                <template x-if="currentStage === 'konstruksi'">
-                    @can('import-progres')
-                    <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
-                    @endcan
-                </template>
-            </div>
-        </div>
-
         <!-- Stepper / Tabs -->
         <div class="bg-white dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-2">
             <div class="flex min-w-max md:w-full">
@@ -50,58 +31,52 @@
         </div>
     </div>
 
-    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col relative min-h-[400px]">
-        <!-- Header: Title + Pindah Tahap -->
-        <div class="px-6 pt-5 pb-3 flex justify-between items-center">
-            <h3 class="text-base font-medium text-textMuted-light dark:text-textMuted-dark" x-text="stages[currentStage].label"></h3>
-            <template x-if="currentStage !== 'serah-terima'">
-                @can('manage-operasional')
-                <form action="{{ route('program.operasional.pindah-tahap', ['program' => strtolower($activeProgram)]) }}" method="POST" class="inline-block">
-                    @csrf
-                    <input type="hidden" name="target_stage" :value="
-                        currentStage === 'usulan' ? 'survey' :
-                        (currentStage === 'survei' ? 'ded' :
-                        (currentStage === 'ded' ? 'lelang' :
-                        (currentStage === 'lelang' ? 'konstruksi' : 'serah_terima')))
-                    ">
-                    <template x-for="id in selectedIds" :key="id">
-                        <input type="hidden" name="ids[]" :value="id">
-                    </template>
-                    <button type="submit" :disabled="selectedIds.length === 0" 
-                            class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 w-max disabled:opacity-50 disabled:cursor-not-allowed"> 
-                        <span x-show="selectedIds.length > 0" class="bg-white text-teal-light rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold mr-1" x-text="selectedIds.length"></span>
-                        Pindah Tahap <i class="fa-solid fa-arrow-right"></i> 
-                    </button>
-                </form>
-                @endcan
-            </template>
-        </div>
-
-        <!-- Toolbar: Filter + Search -->
-        <div class="px-6 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <!-- Left side: Show entries -->
-            <div class="flex items-center gap-2 text-xs text-textMuted-light dark:text-textMuted-dark">
-                <span>Tampilkan</span>
-                <select x-model="perPage" @change="currentPage = 1" class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-md px-2 py-1.5 text-xs focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark font-medium">
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="250">250</option>
-                    <option value="500">500</option>
-                    <option value="all">Semua</option>
-                </select>
-                <span>entri</span>
+    <x-table.card 
+        title="Operasional Proyek KNMP" 
+        description="Siklus 2: Pelaksanaan teknis dari lokasi definitif hingga serah terima pembangunan."
+        :show-per-page="true"
+        :custom-table="true">
+        <x-slot name="actions">
+            <div class="flex flex-wrap items-center gap-2">
+                <template x-if="currentStage === 'usulan'">
+                    @can('manage-operasional')
+                    <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer shadow-xs"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    @endcan
+                </template>
+                <template x-if="currentStage === 'konstruksi'">
+                    @can('import-progres')
+                    <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer shadow-xs"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    @endcan
+                </template>
+                <template x-if="currentStage !== 'serah-terima'">
+                    @can('manage-operasional')
+                    <form action="{{ route('program.operasional.pindah-tahap', ['program' => strtolower($activeProgram)]) }}" method="POST" class="inline-block">
+                        @csrf
+                        <input type="hidden" name="target_stage" :value="
+                            currentStage === 'usulan' ? 'survey' :
+                            (currentStage === 'survei' ? 'ded' :
+                            (currentStage === 'ded' ? 'lelang' :
+                            (currentStage === 'lelang' ? 'konstruksi' : 'serah_terima')))
+                        ">
+                        <template x-for="id in selectedIds" :key="id">
+                            <input type="hidden" name="ids[]" :value="id">
+                        </template>
+                        <button type="submit" :disabled="selectedIds.length === 0" 
+                                class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 w-max disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"> 
+                            <span x-show="selectedIds.length > 0" class="bg-white text-teal-light rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold mr-1" x-text="selectedIds.length"></span>
+                            Pindah Tahap <i class="fa-solid fa-arrow-right"></i> 
+                        </button>
+                    </form>
+                    @endcan
+                </template>
             </div>
-
-            <!-- Right side: Search bar -->
+        </x-slot>
+        <x-slot name="search">
             <div class="relative w-full sm:w-64">
                 <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="Cari proyek..." class="w-full pl-8 pr-4 py-2 rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs focus:border-teal-light outline-none transition-all">
+                <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="Cari proyek..." class="w-full pl-8 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs focus:border-teal-light outline-none transition-all text-textMain-light dark:text-textMain-dark">
             </div>
-        </div>
-
-        <!-- Table Container -->
-        <div class="overflow-x-auto">
+        </x-slot>
             
             <!-- TABLE 1: USULAN -->
             <table x-show="currentStage === 'usulan'" class="w-full text-left text-xs whitespace-nowrap">
@@ -282,24 +257,24 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark"
-                                    x-text="item.rencana + '%'"></div>
+                                    x-text="formatDec(item.rencana) + '%'"></div>
                                 <div class="text-[0.65rem] text-textMuted-light mt-0.5">Kumulatif Minggu Ini</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col gap-1.5 w-48">
                                     <div class="flex justify-between items-end">
-                                        <span class="font-medium text-xs" x-text="item.progres + '%'"></span>
+                                        <span class="font-medium text-xs" x-text="formatDec(item.progres) + '%'"></span>
                                         <template x-if="item.deviasi >= 0">
                                             <span
                                                 class="text-success font-medium text-[0.65rem] flex items-center gap-1 bg-success/10 px-1.5 py-0.5 rounded"><i
                                                     class="fa-solid fa-arrow-up"></i> +<span
-                                                    x-text="item.deviasi"></span>%</span>
+                                                    x-text="formatDec(item.deviasi)"></span>%</span>
                                         </template>
                                         <template x-if="item.deviasi < 0">
                                             <span
                                                 class="text-danger font-medium text-[0.65rem] flex items-center gap-1 bg-danger/10 px-1.5 py-0.5 rounded"><i
                                                     class="fa-solid fa-arrow-down"></i> <span
-                                                    x-text="item.deviasi"></span>%</span>
+                                                    x-text="formatDec(item.deviasi)"></span>%</span>
                                         </template>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
@@ -357,38 +332,28 @@
                 </tbody>
             </table>
             
-        </div>
-
-        <!-- Footer: Info + Pagination -->
-        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/50 dark:bg-gray-800/20">
-            <!-- Info total data (kiri bawah) -->
-            <div class="text-xs text-textMuted-light dark:text-textMuted-dark">
-                Menampilkan <span class="font-medium text-textMain-light dark:text-textMain-dark" x-text="paginatedData().length"></span> dari <span class="font-medium text-textMain-light dark:text-textMain-dark" x-text="filteredData().length"></span> data
-            </div>
-
-            <!-- Pagination (kanan bawah) -->
-            <div class="flex gap-1" x-show="totalPages() > 1">
-                <button @click="currentPage = Math.max(1, currentPage - 1)" :disabled="currentPage === 1"
-                    class="w-8 h-8 rounded-md border border-gray-100 dark:border-gray-700 flex items-center justify-center text-gray-400 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
-                </button>
-                
-                <template x-for="page in visiblePages()" :key="page">
-                    <button @click="if(page !== '...') currentPage = page"
-                        class="w-8 h-8 rounded-md font-medium text-xs flex items-center justify-center transition-colors"
-                        :class="page === currentPage ? 'bg-teal-light text-white' : (page === '...' ? 'cursor-default text-gray-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-textMain-light dark:text-textMain-dark')"
-                        x-text="page">
+            <x-slot name="paginationSlot">
+                <div class="flex gap-1" x-show="totalPages() >= 1">
+                    <button @click="currentPage = Math.max(1, currentPage - 1)" :disabled="currentPage === 1"
+                        class="w-8 h-8 rounded-md border border-gray-100 dark:border-gray-700 flex items-center justify-center text-gray-400 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
                     </button>
-                </template>
+                    
+                    <template x-for="page in visiblePages()" :key="page">
+                        <button @click="if(page !== '...') currentPage = page"
+                            class="w-8 h-8 rounded-md font-medium text-xs flex items-center justify-center transition-colors"
+                            :class="page === currentPage ? 'bg-teal-light text-white' : (page === '...' ? 'cursor-default text-gray-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-textMain-light dark:text-textMain-dark')"
+                            x-text="page">
+                        </button>
+                    </template>
 
-                <button @click="currentPage = Math.min(totalPages(), currentPage + 1)" :disabled="currentPage === totalPages()"
-                    class="w-8 h-8 rounded-md border border-gray-100 dark:border-gray-700 flex items-center justify-center text-gray-400 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                </button>
-            </div>
-        </div>
-        </div>
-    </div>
+                    <button @click="currentPage = Math.min(totalPages(), currentPage + 1)" :disabled="currentPage === totalPages()"
+                        class="w-8 h-8 rounded-md border border-gray-100 dark:border-gray-700 flex items-center justify-center text-gray-400 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+            </x-slot>
+        </x-table.card>
 
     <!-- Modal Upload Foto -->
     <template x-teleport="body">
@@ -642,6 +607,11 @@
             searchQuery: '',
             perPage: '10',
             currentPage: 1,
+
+            formatDec(val) {
+                if (val === null || val === undefined || val === '') return '0,00';
+                return Number(val || 0).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            },
 
             isUploadModalOpen: false,
             isImportModalOpen: false,

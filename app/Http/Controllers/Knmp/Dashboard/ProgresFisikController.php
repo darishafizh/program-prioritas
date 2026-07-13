@@ -31,6 +31,23 @@ class ProgresFisikController extends ProgramBaseController
             $effectiveDate = $requestedDate;
         }
 
+        $maxTanggalProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
+        $maxUpdateProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('updated_at');
+        $maxUpdateKnmp = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
+        
+        if ($requestedDate) {
+            $lastUpdatedText = \Carbon\Carbon::parse($requestedDate)->locale('id')->translatedFormat('d F Y') . ' (Filter Tanggal)';
+        } else {
+            $dateStr = $effectiveDate ? \Carbon\Carbon::parse($effectiveDate)->locale('id')->translatedFormat('d F Y') : ($maxTanggalProgres ? \Carbon\Carbon::parse($maxTanggalProgres)->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y'));
+            $latestTs = $maxUpdateProgres ?: $maxUpdateKnmp;
+            if ($latestTs && strlen($latestTs) > 10) {
+                $timeStr = \Carbon\Carbon::parse($latestTs)->locale('id')->translatedFormat('H:i') . ' WIB';
+                $lastUpdatedText = "{$dateStr} (Pukul {$timeStr})";
+            } else {
+                $lastUpdatedText = $dateStr;
+            }
+        }
+
         $queryKnmp = \App\Models\Knmp::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
             $queryKnmp->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
@@ -55,7 +72,7 @@ class ProgresFisikController extends ProgramBaseController
         })->keyBy('id');
 
         if ($totalLokasi > 0) {
-            $semuaKnmp = (clone $queryKnmp)->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima'])
+            $semuaKnmp = (clone $queryKnmp)->where('tahap_saat_ini', 'konstruksi')
                 ->with('konstruksiKnmp.penyediaJasa', 'konstruksiKnmp.tahapKonstruksi')
                 ->get();
             
@@ -152,7 +169,7 @@ class ProgresFisikController extends ProgramBaseController
             }
 
             if ($countWithProgres > 0) {
-                $avgProgres = round($totalProgres / $countWithProgres, 1);
+                $avgProgres = round($totalProgres / $countWithProgres, 2);
             }
         }
 
@@ -165,6 +182,7 @@ class ProgresFisikController extends ProgramBaseController
         $allTableData = $sortedByProgres->all();
 
         $mapQuery = \App\Models\Knmp::select('nama', 'provinsi', 'latitude', 'longitude', 'status')
+            ->where('tahap_saat_ini', 'konstruksi')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude');
             
@@ -238,6 +256,7 @@ class ProgresFisikController extends ProgramBaseController
             'activeModule' => 'Dashboard',
             'activeProgram' => $activeProgram,
             'stats' => [
+                'last_updated' => $lastUpdatedText,
                 'total_lokasi' => $totalLokasi,
                 'rata_progres' => $avgProgres,
                 'total_selesai' => $totalSelesai,

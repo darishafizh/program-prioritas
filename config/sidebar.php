@@ -6,7 +6,7 @@ return [
             'heading' => 'Ringkasan Eksekutif',
             'items' => [
                 [
-                    'label' => 'Siklus & Operasional',
+                    'label' => 'Siklus',
                     'icon' => 'fa-arrows-spin',
                     'url' => '/dashboard/knmp/siklus',
                 ],
@@ -21,13 +21,13 @@ return [
             'heading' => 'Manajemen Data',
             'items' => [
                 [
-                    'label' => 'Tahap (Batch)',
+                    'label' => 'Tahap',
                     'icon' => 'fa-layer-group',
                     'url' => '/master/knmp/batch',
                 ],
 
                 [
-                    'label' => 'Data Vendor/Penyedia',
+                    'label' => 'Vendor',
                     'icon' => 'fa-building-user',
                     'url' => '/master/knmp/vendor',
                 ],
@@ -43,7 +43,7 @@ return [
             'heading' => 'Eksekusi Proyek',
             'items' => [
                 [
-                    'label' => 'Pelaksanaan Proyek',
+                    'label' => 'Pelaksanaan',
                     'icon' => 'fa-helmet-safety',
                     'url' => '/operasional/knmp',
                 ]
@@ -58,7 +58,7 @@ return [
                     'url' => '/evaluasi/knmp/calon-lokasi',
                 ],
                 [
-                    'label' => 'Operasional Proyek',
+                    'label' => 'Pelaksanaan Proyek',
                     'icon' => 'fa-helmet-safety',
                     'url' => '/evaluasi/knmp/operasional',
                 ],

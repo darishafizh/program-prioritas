@@ -60,11 +60,11 @@
 
             {{-- Rata-Rata Progres --}}
             <x-stat-card
-                title="Rata-Rata Progres"
-                icon="fa-solid fa-chart-pie"
+                title="Rata-rata Rencana vs Aktual"
+                icon="fa-solid fa-chart-line"
                 icon-color="text-teal-light dark:text-teal-400"
                 icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
-                value="{{ $stats['rata_progres'] }}"
+                value="{{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}"
                 unit="%"
             >
                 <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">

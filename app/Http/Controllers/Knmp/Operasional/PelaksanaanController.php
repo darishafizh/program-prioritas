@@ -77,7 +77,7 @@ class PelaksanaanController extends ProgramBaseController
                         ->where('knmp_konstruksi_id', $kons->id)
                         ->orderBy('tanggal', 'desc')
                         ->first();
-                    $progres = $lastProgres ? round($lastProgres->progres, 1) : 0;
+                    $progres = $lastProgres ? round($lastProgres->progres, 2) : 0;
 
                     if ($kons->tanggal_mulai) {
                         $tanggalMulai = \Carbon\Carbon::parse($kons->tanggal_mulai);
@@ -96,11 +96,11 @@ class PelaksanaanController extends ProgramBaseController
                             if ($val > 100) {
                                 $val = $val / 1000;
                             }
-                            $rencana = round($val, 1);
+                            $rencana = round($val, 2);
                         }
                     }
                 }
-                $deviasi = round($progres - $rencana, 1);
+                $deviasi = round($progres - $rencana, 2);
 
                 return [
                     'id' => $k->id,

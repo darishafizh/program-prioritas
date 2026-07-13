@@ -68,90 +68,62 @@
             </div>
         @endif
 
-        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h2 class="text-xl font-semibold tracking-tight">Data Tahap (Batch)</h2>
-                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Kelola data tahapan
-                    atau batch pelaksanaan program KNMP.</p>
-            </div>
-
-            <div class="flex items-center gap-3">
+        <x-table.card 
+            title="Data Tahap (Batch)" 
+            description="Kelola data tahapan atau batch pelaksanaan program KNMP."
+            search-placeholder="Cari tahap / tahun..."
+            :show-per-page="true">
+            <x-slot name="actions">
                 <button @click="openCreate()"
-                    class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm">
+                    class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm shrink-0">
                     Input Batch <i class="fa-solid fa-plus"></i>
                 </button>
-            </div>
-        </div>
+            </x-slot>
 
-        <div
-            class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
-            <div
-                class="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
-                <div class="relative w-full sm:w-64">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                    <input type="text" placeholder="Cari tahap / tahun..."
-                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light transition-colors">
-                </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4 w-16 text-center">ID</th>
-                            <th class="px-6 py-4">Nama Tahap</th>
-                            <th class="px-6 py-4">Tahun</th>
-                            <th class="px-6 py-4 text-center w-32">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
-                        @forelse($batches as $batch)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4 text-center font-medium text-textMuted-light">{{ $batch->id }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-textMain-light dark:text-textMain-dark">
-                                        {{ $batch->nama_tahap }}</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="px-2 py-1 bg-teal-light/10 text-teal-light dark:bg-teal-500/10 dark:text-teal-400 rounded-md text-xs font-semibold">{{ $batch->tahun }}</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <button @click="openEdit({{ json_encode($batch) }})"
-                                            class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center"
-                                            title="Edit">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <form :id="'delete-form-' + {{ $batch->id }}"
-                                            action="{{ route('program.master.batch.destroy', $batch->id) }}" method="POST"
-                                            class="inline-flex">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" @click="confirmDelete({{ $batch->id }})"
-                                                class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-danger hover:text-white hover:bg-danger transition-colors flex items-center justify-center"
-                                                title="Hapus">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-textMuted-light">
-                                    <div class="flex flex-col items-center justify-center gap-2">
-                                        <i class="fa-solid fa-inbox text-3xl opacity-50 mb-2"></i>
-                                        <p>Belum ada data batch.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <x-table.thead>
+                <x-table.th align="center" width="64px">ID</x-table.th>
+                <x-table.th>Nama Tahap</x-table.th>
+                <x-table.th>Tahun</x-table.th>
+                <x-table.th align="center" width="128px">Aksi</x-table.th>
+            </x-table.thead>
+            <x-table.tbody>
+                @forelse($batches as $batch)
+                    <x-table.tr>
+                        <x-table.td align="center" class="font-medium text-textMuted-light dark:text-textMuted-dark">{{ $batch->id }}</x-table.td>
+                        <x-table.td>
+                            <div class="font-medium text-textMain-light dark:text-textMain-dark">
+                                {{ $batch->nama_tahap }}</div>
+                        </x-table.td>
+                        <x-table.td>
+                            <span
+                                class="px-2.5 py-1 bg-teal-light/10 text-teal-light dark:bg-teal-500/10 dark:text-teal-400 rounded-lg text-xs font-semibold">{{ $batch->tahun }}</span>
+                        </x-table.td>
+                        <x-table.td align="center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button @click="openEdit({{ json_encode($batch) }})"
+                                    class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center"
+                                    title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <form :id="'delete-form-' + {{ $batch->id }}"
+                                    action="{{ route('program.master.batch.destroy', $batch->id) }}" method="POST"
+                                    class="inline-flex">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" @click="confirmDelete({{ $batch->id }})"
+                                        class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-danger hover:text-white hover:bg-danger transition-colors flex items-center justify-center"
+                                        title="Hapus">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                @empty
+                    <x-table.empty colspan="4" icon="fa-layer-group" message="Belum ada data tahap/batch terdaftar." />
+                @endforelse
+            </x-table.tbody>
+        </x-table.card>
 
         <!-- Modal Form -->
         <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">

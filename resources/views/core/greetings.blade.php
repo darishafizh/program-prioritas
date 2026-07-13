@@ -99,9 +99,6 @@
  <a href="{{ $targetUrl }}" 
  class="group bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 sm:p-8 relative flex flex-col h-full hover:border-teal-light/50 dark:hover:border-teal-light/50 hover:shadow-lg hover:shadow-teal-light/5 transition-all duration-300">
  
- <!-- Hover Accent Line -->
- <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-light to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"></div>
-
  <div class="flex-1 flex flex-col relative z-10 mt-2">
  <div class="flex items-center gap-4 mb-6">
  <div class="w-12 h-12 rounded-xl bg-gray-50 dark:bg-gray-800/50 group-hover:bg-teal-light/10 flex items-center justify-center border border-gray-100 dark:border-gray-800 group-hover:border-teal-light/20 transition-colors duration-300">

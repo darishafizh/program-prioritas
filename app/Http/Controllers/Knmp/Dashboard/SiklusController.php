@@ -15,6 +15,25 @@ class SiklusController extends ProgramBaseController
         
         $requestedBatchId = request('batch_id');
 
+        $maxUpdateCalon = \Illuminate\Support\Facades\Schema::connection('mysql_knmp')->hasColumn('calon_lokasi', 'updated_at')
+            ? \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('calon_lokasi')->max('updated_at')
+            : null;
+        $maxUpdateKnmp = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
+        $maxTanggalProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
+        
+        $dates = array_filter([$maxUpdateCalon, $maxUpdateKnmp, $maxTanggalProgres]);
+        if (!empty($dates)) {
+            usort($dates, function($a, $b) { return strtotime($b) - strtotime($a); });
+            $latest = reset($dates);
+            if (strlen($latest) > 10) {
+                $lastUpdatedText = \Carbon\Carbon::parse($latest)->locale('id')->translatedFormat('d F Y') . ' (Pukul ' . \Carbon\Carbon::parse($latest)->locale('id')->translatedFormat('H:i') . ' WIB)';
+            } else {
+                $lastUpdatedText = \Carbon\Carbon::parse($latest)->locale('id')->translatedFormat('d F Y');
+            }
+        } else {
+            $lastUpdatedText = now()->locale('id')->translatedFormat('d F Y');
+        }
+
         $queryKnmp = \App\Models\Knmp::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
             $queryKnmp->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
@@ -113,6 +132,7 @@ class SiklusController extends ProgramBaseController
             'activeModule' => 'Dashboard',
             'activeProgram' => $activeProgram,
             'stats' => [
+                'last_updated' => $lastUpdatedText,
                 'total_lokasi' => $totalLokasi,
                 'pipeline' => $pipeline,
                 'pipeline_pengajuan' => $pipelinePengajuan,

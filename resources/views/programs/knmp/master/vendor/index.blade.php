@@ -74,95 +74,73 @@
     </div>
     @endif
 
-    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h2 class="text-xl font-semibold tracking-tight">Data Vendor / Penyedia</h2>
-            <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Direktori perusahaan kontraktor pelaksana proyek KNMP berserta status performansinya.</p>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button @click="openCreate()" class="bg-teal-light hover:bg-teal-600 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm"> 
-                Input Vendor <i class="fa-solid fa-plus"></i> 
+    <x-table.card 
+        title="Data Vendor / Penyedia" 
+        description="Direktori perusahaan kontraktor pelaksana proyek KNMP beserta status performansinya."
+        search-placeholder="Cari nama vendor / NPWP..."
+        :show-per-page="true">
+        <x-slot name="actions">
+            <button @click="openCreate()"
+                class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm shrink-0">
+                Input Vendor <i class="fa-solid fa-plus"></i>
             </button>
-        </div>
-    </div>
+        </x-slot>
 
-    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
-        <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
-            <div class="relative w-full sm:w-64">
-                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                <input type="text" placeholder="Cari nama vendor / NPWP..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none focus:border-teal-light transition-colors">
-            </div>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4">Nama Perusahaan</th>
-                        <th class="px-6 py-4">NPWP</th>
-                        <th class="px-6 py-4">Direktur Utama</th>
-                        <th class="px-6 py-4">Kontak / Email</th>
-                        <th class="px-6 py-4">Kualifikasi SBU</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
-                    @forelse($vendors as $vendor)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="font-medium text-textMain-light dark:text-textMain-dark">{{ $vendor->nama }}</div>
-                            <div class="text-[10px] text-textMuted-light mt-0.5">ID: {{ $vendor->id }}</div>
-                        </td>
-                        <td class="px-6 py-4 font-mono text-xs text-textMuted-light">{{ $vendor->npwp ?: '-' }}</td>
-                        <td class="px-6 py-4 text-textMuted-light">{{ $vendor->direktur_utama ?: '-' }}</td>
-                        <td class="px-6 py-4 text-textMuted-light">{{ $vendor->kontak ?: '-' }}</td>
-                        <td class="px-6 py-4">
-                            @if($vendor->kualifikasi_sbu)
-                                <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs font-medium text-gray-600 dark:text-gray-400">{{ $vendor->kualifikasi_sbu }}</span>
-                            @else
-                                -
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            @if(strtolower($vendor->status) == 'aktif')
-                                <span class="px-2 py-1 bg-success/10 text-success text-xs font-medium rounded-md">Aktif</span>
-                            @elseif(strtolower($vendor->status) == 'blacklist')
-                                <span class="px-2 py-1 bg-danger/10 text-danger text-xs font-medium rounded-md"><i class="fa-solid fa-ban"></i> Blacklist</span>
-                            @else
-                                <span class="px-2 py-1 bg-warning/10 text-warning text-xs font-medium rounded-md">{{ $vendor->status }}</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button @click="openEdit({{ json_encode($vendor) }})" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
+        <x-table.thead>
+            <x-table.th>Nama Perusahaan</x-table.th>
+            <x-table.th>NPWP</x-table.th>
+            <x-table.th>Direktur Utama</x-table.th>
+            <x-table.th>Kontak / Email</x-table.th>
+            <x-table.th>Kualifikasi SBU</x-table.th>
+            <x-table.th>Status</x-table.th>
+            <x-table.th align="center">Aksi</x-table.th>
+        </x-table.thead>
+        <x-table.tbody>
+            @forelse($vendors as $vendor)
+                <x-table.tr>
+                    <x-table.td>
+                        <div class="font-medium text-textMain-light dark:text-textMain-dark">{{ $vendor->nama }}</div>
+                        <div class="text-[10px] text-textMuted-light mt-0.5">ID: {{ $vendor->id }}</div>
+                    </x-table.td>
+                    <x-table.td class="font-mono text-xs text-textMuted-light dark:text-textMuted-dark">{{ $vendor->npwp ?: '-' }}</x-table.td>
+                    <x-table.td class="text-textMuted-light dark:text-textMuted-dark">{{ $vendor->direktur_utama ?: '-' }}</x-table.td>
+                    <x-table.td class="text-textMuted-light dark:text-textMuted-dark">{{ $vendor->kontak ?: '-' }}</x-table.td>
+                    <x-table.td>
+                        @if($vendor->kualifikasi_sbu)
+                            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400">{{ $vendor->kualifikasi_sbu }}</span>
+                        @else
+                            -
+                        @endif
+                    </x-table.td>
+                    <x-table.td>
+                        @if(strtolower($vendor->status) == 'aktif')
+                            <span class="px-2.5 py-1 bg-success/10 text-success text-xs font-medium rounded-lg">Aktif</span>
+                        @elseif(strtolower($vendor->status) == 'blacklist')
+                            <span class="px-2.5 py-1 bg-danger/10 text-danger text-xs font-medium rounded-lg"><i class="fa-solid fa-ban"></i> Blacklist</span>
+                        @else
+                            <span class="px-2.5 py-1 bg-warning/10 text-warning text-xs font-medium rounded-lg">{{ $vendor->status }}</span>
+                        @endif
+                    </x-table.td>
+                    <x-table.td align="center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button @click="openEdit({{ json_encode($vendor) }})" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <form :id="'delete-form-' + {{ $vendor->id }}" action="{{ route('program.master.vendor.destroy', $vendor->id) }}" method="POST" class="inline-flex">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" @click="confirmDelete({{ $vendor->id }})" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-danger hover:text-white hover:bg-danger transition-colors flex items-center justify-center" title="Hapus">
+                                    <i class="fa-solid fa-trash-can"></i>
                                 </button>
-                                <form :id="'delete-form-' + {{ $vendor->id }}" action="{{ route('program.master.vendor.destroy', $vendor->id) }}" method="POST" class="inline-flex">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" @click="confirmDelete({{ $vendor->id }})" class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-danger hover:text-white hover:bg-danger transition-colors flex items-center justify-center" title="Hapus">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-textMuted-light">
-                            <div class="flex flex-col items-center justify-center gap-2">
-                                <i class="fa-solid fa-building-user text-3xl opacity-50 mb-2"></i>
-                                <p>Belum ada data vendor/penyedia.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+                            </form>
+                        </div>
+                    </x-table.td>
+                </x-table.tr>
+            @empty
+                <x-table.empty colspan="7" icon="fa-building-user" message="Belum ada data vendor/penyedia terdaftar." />
+            @endforelse
+        </x-table.tbody>
+    </x-table.card>
 
     <!-- Modal Form -->
     <!-- Modal Form -->

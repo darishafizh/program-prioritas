@@ -7,8 +7,17 @@
         <!-- Header & Global Filters (Row 1) -->
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Dashboard KNMP</h2>
-                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Ringkasan Eksekutif &
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h2 class="text-xl font-semibold tracking-tight">Dashboard KNMP</h2>
+                    @if(isset($stats['last_updated']))
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-light/10 dark:bg-teal-400/10 border border-teal-light/20 dark:border-teal-400/20 text-teal-light dark:text-teal-300 text-xs font-medium shadow-xs">
+                        <span class="w-2 h-2 rounded-full bg-teal-light dark:bg-teal-400 animate-pulse shrink-0"></span>
+                        <i class="fa-regular fa-clock text-[11px]"></i>
+                        <span>Update Data Terakhir: <strong class="font-semibold text-textMain-light dark:text-white">{{ $stats['last_updated'] }}</strong></span>
+                    </div>
+                    @endif
+                </div>
+                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1.5">Ringkasan Eksekutif &
                     Pantauan Konstruksi Kampung Nelayan Merah Putih</p>
             </div>
 
@@ -68,7 +77,7 @@
 
             <x-stat-card title="Rata-Rata Progres" icon="fa-solid fa-chart-pie"
                 icon-color="text-teal-light dark:text-teal-400" icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
-                value="{{ $stats['rata_progres'] ?? 0 }}" unit="%">
+                value="{{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}" unit="%">
                 <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">
                     <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full"
                         style="width: {{ $stats['rata_progres'] ?? 0 }}%"></div>
@@ -85,35 +94,100 @@
                 value="{{ $stats['dalam_pembangunan'] ?? 0 }}" unit="Lokasi" description="Tahap konstruksi aktif" />
         </div>
 
+        @if(($stats['dalam_pembangunan'] ?? 0) == 0)
+            <div class="mb-6 bg-blue-50/80 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 text-xl font-bold">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-textMain-light dark:text-textMain-dark">
+                            @if(($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
+                                Seluruh Proyek pada Tahap Ini Telah Rampung (`Serah Terima`)
+                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
+                                Lokasi Belum Memasuki Tahap Konstruksi Fisik
+                            @else
+                                Belum Terdapat Data pada Filter Tahap yang Dipilih
+                            @endif
+                        </h3>
+                        <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-1 leading-relaxed">
+                            @if(($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
+                                Sebanyak <strong>{{ $stats['total_selesai'] }} lokasi KNMP</strong> pada filter/tahap ini telah berhasil diselesaikan 100% dan diserahterimakan. Oleh karena itu, grafik pemantauan dan analisis progres harian konstruksi aktif di bawah ini ditutup/tidak menampilkan data konstruksi berjalan.
+                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
+                                Sebanyak <strong>{{ $stats['total_lokasi'] }} lokasi KNMP</strong> pada filter/tahap ini saat ini masih dalam tahapan pra-konstruksi (<em>Usulan, Survei, DED, atau Lelang</em>). Seluruh grafik pemantauan konstruksi baru akan aktif setelah lokasi resmi beralih ke tahap <strong>Konstruksi</strong>.
+                            @else
+                                Silakan pilih tahap/batch lain atau atur ulang filter pencarian Anda untuk melihat data pemantauan konstruksi Kampung Nelayan Merah Putih.
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <!-- 2 Columns: Top 10, Bottom 10 (Row 3) -->
         <div class="grid grid-cols-2 gap-6 mb-6">
             <!-- Top 10 Progress -->
             <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col">
+                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col min-w-0 overflow-hidden">
                 <div class="flex items-center justify-between mb-4">
                     <h3
                         class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2">
                         <i class="fa-solid fa-arrow-up-right-dots text-success"></i> Top 10 KNMP Tertinggi
                     </h3>
                 </div>
-                <div class="flex-1 w-full relative min-h-[300px]">
-                    <div id="chart-top10" class="w-full h-full"></div>
-                </div>
+                @if(($stats['dalam_pembangunan'] ?? 0) > 0)
+                    <div class="flex-1 w-full relative min-h-[300px] min-w-0">
+                        <div id="chart-top10" class="w-full h-full min-w-0 overflow-hidden"></div>
+                    </div>
+                @else
+                    <div class="flex-1 w-full flex flex-col items-center justify-center p-8 text-center min-h-[260px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                        <div class="w-12 h-12 rounded-2xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-3">
+                            <i class="fa-solid fa-chart-bar text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-xs text-textMain-light dark:text-textMain-dark">Grafik Top 10 Tidak Ditampilkan</h4>
+                        <p class="text-[11px] text-textMuted-light dark:text-textMuted-dark max-w-xs mt-1.5 leading-relaxed">
+                            @if(($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
+                                Seluruh lokasi pada tahap ini telah selesai 100% (`Serah Terima`).
+                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
+                                Lokasi pada tahap ini belum memasuki masa konstruksi aktif.
+                            @else
+                                Belum terdapat data lokasi pada tahap/filter yang dipilih.
+                            @endif
+                        </p>
+                    </div>
+                @endif
             </div>
 
             <!-- Bottom 10 Progress -->
             <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col">
+                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col min-w-0 overflow-hidden">
                 <div class="flex items-center justify-between mb-4">
                     <h3
                         class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2">
                         <i class="fa-solid fa-arrow-down-right-dots text-danger"></i> Top 10 KNMP Terendah
                     </h3>
                 </div>
-                <div class="flex-1 w-full relative min-h-[300px]">
-                    <div id="chart-bottom10" class="w-full h-full"></div>
-                </div>
+                @if(($stats['dalam_pembangunan'] ?? 0) > 0)
+                    <div class="flex-1 w-full relative min-h-[300px] min-w-0">
+                        <div id="chart-bottom10" class="w-full h-full min-w-0 overflow-hidden"></div>
+                    </div>
+                @else
+                    <div class="flex-1 w-full flex flex-col items-center justify-center p-8 text-center min-h-[260px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                        <div class="w-12 h-12 rounded-2xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-3">
+                            <i class="fa-solid fa-chart-bar text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-xs text-textMain-light dark:text-textMain-dark">Grafik Bottom 10 Tidak Ditampilkan</h4>
+                        <p class="text-[11px] text-textMuted-light dark:text-textMuted-dark max-w-xs mt-1.5 leading-relaxed">
+                            @if(($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
+                                Seluruh lokasi pada tahap ini telah selesai 100% (`Serah Terima`).
+                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
+                                Lokasi pada tahap ini belum memasuki masa konstruksi aktif.
+                            @else
+                                Belum terdapat data lokasi pada tahap/filter yang dipilih.
+                            @endif
+                        </p>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -182,8 +256,28 @@
                 </div>
             </div>
 
-            <div id="knmpMap" class="w-full h-[500px] z-0 bg-gray-100 dark:bg-gray-900"
-                style="height: 500px; width: 100%; min-height: 500px;"></div>
+            <div id="knmpMapContainer">
+                @if(($stats['dalam_pembangunan'] ?? 0) > 0)
+                    <div id="knmpMap" class="w-full h-[500px] z-0 bg-gray-100 dark:bg-gray-900"
+                        style="height: 500px; width: 100%; min-height: 500px;"></div>
+                @else
+                    <div class="w-full h-[380px] flex flex-col items-center justify-center p-8 text-center bg-gray-50/60 dark:bg-gray-900/40 border-b border-gray-100 dark:border-gray-800">
+                        <div class="w-14 h-14 rounded-3xl bg-teal-light/10 dark:bg-teal-400/10 flex items-center justify-center text-teal-light dark:text-teal-400 mb-4 shadow-sm">
+                            <i class="fa-solid fa-map-location-dot text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-textMain-light dark:text-textMain-dark">Sebaran Peta Konstruksi Tidak Ditampilkan</h4>
+                        <p class="text-xs text-textMuted-light dark:text-textMuted-dark max-w-md mt-1.5 leading-relaxed">
+                            @if(($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
+                                Semua proyek KNMP pada filter yang dipilih telah selesai dibangun (`Serah Terima`). Saat ini tidak ada lokasi dengan status konstruksi aktif di lapangan.
+                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
+                                Sebanyak <strong>{{ $stats['total_lokasi'] }} lokasi</strong> pada filter ini masih berstatus pra-konstruksi (<em>Usulan / Survei / DED / Lelang</em>), sehingga koordinat progres konstruksi belum dipetakan.
+                            @else
+                                Belum terdapat titik lokasi KNMP pada filter yang dipilih.
+                            @endif
+                        </p>
+                    </div>
+                @endif
+            </div>
 
             <div class="grid gap-3 sm:gap-4 p-6 bg-gray-50/50 dark:bg-gray-800/20 border-t border-gray-100 dark:border-gray-800 overflow-x-auto"
                 style="grid-template-columns: repeat(6, minmax(130px, 1fr));">
@@ -383,7 +477,25 @@
             </div>
             <!-- Chart -->
             <div class="p-6">
-                <div id="scatter-rencana-realisasi" style="min-height: 420px;"></div>
+                @if(($stats['dalam_pembangunan'] ?? 0) > 0)
+                    <div id="scatter-rencana-realisasi" style="min-height: 420px;"></div>
+                @else
+                    <div class="w-full flex flex-col items-center justify-center p-12 text-center min-h-[350px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                        <div class="w-14 h-14 rounded-3xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-4">
+                            <i class="fa-solid fa-chart-line text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-textMain-light dark:text-textMain-dark">Plot Deviasi Rencana vs Realisasi Tidak Tersedia</h4>
+                        <p class="text-xs text-textMuted-light dark:text-textMuted-dark max-w-md mt-1.5 leading-relaxed">
+                            @if(($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
+                                Karena seluruh proyek pada filter/tahap ini telah rampung 100% dan diserahterimakan, analisis perbandingan kurva rencana terhadap realisasi harian konstruksi sudah ditutup.
+                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
+                                Proyek pada filter/tahap ini belum memasuki masa pelaksanaan konstruksi fisik di lapangan, sehingga bobot rencana dan realisasi mingguan belum mulai dicatat.
+                            @else
+                                Tidak ada data konstruksi pada filter/tahap yang dipilih.
+                            @endif
+                        </p>
+                    </div>
+                @endif
             </div>
 
         </div>
@@ -399,7 +511,11 @@
                 function renderBarChart(elementId, data, color) {
                     if (!document.getElementById(elementId) || data.length === 0) return;
 
-                    const categories = data.map(item => item.lokasi);
+                    // Bersihkan prefix "KNMP Desa " atau "KNMP " agar label di Y-Axis lebih ringkas dan pas di dalam card
+                    const categories = data.map(item => {
+                        let name = item.lokasi || '';
+                        return name.replace(/^KNMP\s+Desa\s+/i, 'Desa ').replace(/^KNMP\s+/i, '');
+                    });
                     const progresData = data.map(item => item.progres);
                     const rencanaData = data.map(item => item.rencana);
 
@@ -410,12 +526,15 @@
                         }],
                         chart: {
                             type: 'bar',
-                            height: Math.max(300, data.length * 35),
+                            width: '100%',
+                            height: Math.max(300, data.length * 36),
                             toolbar: {
                                 show: false
                             },
                             background: 'transparent',
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            redrawOnParentResize: true,
+                            redrawOnWindowResize: true
                         },
                         plotOptions: {
                             bar: {
@@ -423,16 +542,16 @@
                                 dataLabels: {
                                     position: 'top',
                                 },
-                                borderRadius: 2,
-                                barHeight: '70%'
+                                borderRadius: 3,
+                                barHeight: '65%'
                             }
                         },
                         colors: [color],
                         dataLabels: {
                             enabled: true,
-                            offsetX: -6,
+                            offsetX: -4,
                             style: {
-                                fontSize: '9px',
+                                fontSize: '10px',
                                 colors: ['#fff']
                             },
                             formatter: function(val) {
@@ -446,7 +565,7 @@
                         },
                         xaxis: {
                             categories: categories,
-                            max: 100,
+                            max: 108, // Memberi ruang ekstra agar label "100%" di ujung bar tidak melebihi batas card
                             labels: {
                                 style: {
                                     colors: isDark ? '#9CA3AF' : '#6B7280',
@@ -461,12 +580,22 @@
                                     fontSize: '11px',
                                     fontWeight: 500
                                 },
-                                maxWidth: 180
+                                maxWidth: 130,
+                                formatter: function(val) {
+                                    if (val && val.length > 18) {
+                                        return val.substring(0, 18) + '...';
+                                    }
+                                    return val;
+                                }
                             }
                         },
                         grid: {
                             borderColor: isDark ? '#374151' : '#F3F4F6',
                             strokeDashArray: 4,
+                            padding: {
+                                left: 0,
+                                right: 15
+                            }
                         },
                         theme: {
                             mode: isDark ? 'dark' : 'light'
@@ -477,7 +606,8 @@
                                     if (opts.seriesIndex === 0) {
                                         let dev = data[opts.dataPointIndex].deviasi;
                                         let sign = dev > 0 ? '+' : '';
-                                        return val + "% (Deviasi: " + sign + dev + "%)";
+                                        let fullLoc = data[opts.dataPointIndex].lokasi;
+                                        return val + "% (Deviasi: " + sign + dev + "%) - " + fullLoc;
                                     }
                                     return val + "%";
                                 }

@@ -34,34 +34,46 @@
 <body x-data="{ sidebarOpen: $persist(window.innerWidth >= 1024), darkMode: document.documentElement.classList.contains('dark') }"
     x-init="document.documentElement.classList.remove('sidebar-init-closed')"
     @resize.window="if (window.innerWidth < 1024) sidebarOpen = false"
-    class="antialiased bg-bgBody-light dark:bg-bgBody-dark text-textMain-light dark:text-textMain-dark transition-colors duration-300">
+    class="antialiased text-textMain-light dark:text-textMain-dark transition-colors duration-300"
+    style="background-color: #E8ECF1;"
+    :style="darkMode ? 'background-color: #0A0E17;' : 'background-color: #E8ECF1;'">
 
- <!-- Top Navigation (Module Nav) -->
- <x-topbar :activeProgram="$activeProgram ?? 'Bioflok'" :activeModule="$activeModule ?? 'Dashboard'" />
+  <div class="flex h-screen overflow-hidden">
+  
+  <!-- Sidebar Overlay (Mobile) -->
+  <div x-show="sidebarOpen" 
+  x-transition.opacity 
+  @click="sidebarOpen = false" 
+  class="fixed inset-0 bg-black/50 z-50 lg:hidden">
+  </div>
 
- <div class="flex h-screen overflow-hidden pt-[var(--topbar-height)]">
- 
- @if(($activeModule ?? '') !== 'Pengguna')
- <!-- Sidebar Overlay (Mobile) -->
- <div x-show="sidebarOpen" 
- x-transition.opacity 
- @click="sidebarOpen = false" 
- class="fixed inset-0 bg-black/50 z-30 lg:hidden">
- </div>
+  <!-- Sidebar Navigation (Program Menu) -->
+  <x-sidebar :activeProgram="$activeProgram ?? 'Bioflok'" :activeModule="$activeModule ?? 'Dashboard'" />
 
- <!-- Sidebar Navigation (Program Menu) -->
- <x-sidebar :activeProgram="$activeProgram ?? 'Bioflok'" :activeModule="$activeModule ?? 'Dashboard'" />
- @endif
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden relative">
+      <!-- Mobile Hamburger Header (Visible < 1024px) -->
+      <div class="lg:hidden flex items-center justify-between px-4 py-3.5 bg-bgBody-light dark:bg-bgBody-dark shrink-0">
+          <button @click="sidebarOpen = true" class="p-2 -ml-2 rounded-xl text-textMain-light dark:text-textMain-dark hover:bg-gray-200/50 dark:hover:bg-gray-800 transition-colors">
+              <i class="fa-solid fa-bars text-lg"></i>
+          </button>
+          <div class="flex items-center gap-2.5">
+              <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-6 h-6 object-contain dark:bg-white dark:rounded-full dark:p-0.5">
+              <span class="font-bold text-sm tracking-tight text-slate-900 dark:text-white">{{ $activeProgram ?? 'Program Prioritas' }}</span>
+          </div>
+          <a href="{{ url('greetings') }}" class="p-2 -mr-2 text-xs font-medium text-textMuted-light hover:text-teal-light transition-colors">
+              <i class="fa-solid fa-grid-2"></i>
+          </a>
+      </div>
 
- <!-- Main Content -->
- <div class="flex-1 flex flex-col overflow-hidden relative">
- <main class="flex-1 overflow-y-auto p-6 lg:p-8 scroll-smooth">
- <div class="w-full">
- @yield('content')
- </div>
- </main>
- </div>
- </div>
+      <!-- Content Sheet: subtle shadow, 1rem margin top & right, rounded top corners only, hidden scrollbar (no entrance animation on refresh) -->
+      <main style="margin-top: 1rem; margin-right: 1rem; margin-bottom: 0; border-radius: 1rem 1rem 0 0; scrollbar-width: none; -ms-overflow-style: none; background-color: #FFFFFF;" :style="darkMode ? 'margin-top: 1rem; margin-right: 1rem; margin-bottom: 0; border-radius: 1rem 1rem 0 0; scrollbar-width: none; -ms-overflow-style: none; background-color: #131C2E;' : 'margin-top: 1rem; margin-right: 1rem; margin-bottom: 0; border-radius: 1rem 1rem 0 0; scrollbar-width: none; -ms-overflow-style: none; background-color: #FFFFFF;'" class="flex-1 overflow-y-auto shadow-sm shadow-slate-200/80 dark:shadow-black/30 p-6 lg:p-8 scroll-smooth border-0 [&::-webkit-scrollbar]:hidden">
+          <div class="w-full">
+              @yield('content')
+          </div>
+      </main>
+  </div>
+  </div>
 
  <!-- Dynamic Confirm Modal -->
  <x-confirm-modal />

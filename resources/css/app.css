@@ -11,10 +11,10 @@
   --color-textMain-dark: #F9FAFB;
   --color-textMuted-light: #64748b;
   --color-textMuted-dark: #94a3b8;
-  --color-bgBody-light: #F8FAFC;
-  --color-bgBody-dark: #0b0f19;
+  --color-bgBody-light: #ECEFF4;
+  --color-bgBody-dark: #0A0E17;
   --color-bgSurface-light: #FFFFFF;
-  --color-bgSurface-dark: #111827;
+  --color-bgSurface-dark: #131C2E;
   --color-danger: #EF4444;
   --color-danger-alert: #FCA5A5;
   --color-success: #10B981;
@@ -39,8 +39,8 @@
    Structural Layout Variables (fixed px — immune to font scaling)
    ============================================================ */
 :root {
-  --sidebar-width: 256px;
-  --topbar-height: 56px;
+  --sidebar-width: 276px;
+  --topbar-height: 0px;
 }
 
 @layer base {
