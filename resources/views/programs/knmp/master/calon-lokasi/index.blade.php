@@ -27,7 +27,7 @@
             <div class="flex items-center w-full">
                 @foreach ($stages as $key => $data)
                     <a href="?stage={{ $key }}"
-                        class="flex items-center group relative py-2 px-2 {{ $loop->last ? '' : 'flex-1' }}">
+                        class="flex items-center group relative py-2 px-2 cursor-pointer {{ $loop->last ? '' : 'flex-1' }}">
                         <div class="flex items-center gap-2 relative z-10 shrink-0">
                             <div
                                 class="w-7 h-7 rounded-full flex items-center justify-center font-medium text-xs transition-colors
@@ -58,7 +58,7 @@
             :custom-table="true">
             <x-slot name="actions">
                 @if ($currentStage === 'pengajuan')
-                    @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah())
+                    @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah() || \Illuminate\Support\Facades\Auth::user()->isSuperAdmin())
                         <a href="{{ route('program.master.calon-lokasi.create') }}"
                             class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm shrink-0 whitespace-nowrap">
                             Tambah Pengajuan <i class="fa-solid fa-plus"></i>
@@ -101,7 +101,7 @@
                                 <td class="px-6 py-4 text-center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
-                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer"
                                             title="Lihat Dokumen Proposal"><i class="fa-solid fa-file-lines"></i></a>
                                     </template>
                                     <template x-if="!item.dokumen">
@@ -111,13 +111,13 @@
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <button type="button" @click="openDetailModal(item)"
-                                            class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center"
+                                            class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                             title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
                                         <template
                                             x-if="item.status === 'Menunggu Review' || item.status === undefined || item.status === null">
                                             @can('verify-calon-lokasi')
                                                 <button type="button" @click="verifyProposalDirect(item)"
-                                                    class="w-8 h-8 rounded-md bg-success/10 text-success hover:bg-success hover:text-white transition-colors flex items-center justify-center"
+                                                    class="w-8 h-8 rounded-md bg-success/10 text-success hover:bg-success hover:text-white transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                                     title="Terima Proposal"><i
                                                         class="fa-solid fa-check pointer-events-none"></i></button>
                                             @endcan
@@ -157,7 +157,7 @@
                                 <td class="px-6 py-4 text-center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
-                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
                                             title="Lihat Dokumen Proposal"><i class="fa-solid fa-file-lines"></i></a>
                                     </template>
                                     <template x-if="!item.dokumen">
@@ -173,7 +173,7 @@
                                     <div class="flex items-center justify-center gap-2">
                                         @can('verify-calon-lokasi')
                                             <button type="button" @click="openVerifAdminModal(item)"
-                                                class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center"
+                                                class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                                 title="Penilaian Verifikasi"><i
                                                     class="fa-solid fa-clipboard-check pointer-events-none"></i></button>
                                         @endcan
@@ -214,7 +214,7 @@
                                 <td class="px-6 py-4 text-center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
-                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
                                             title="Lihat BA Aktivasi"><i class="fa-solid fa-file-pdf"></i></a>
                                     </template>
                                     <template x-if="!item.dokumen">
@@ -269,7 +269,7 @@
                                 <td class="px-6 py-4 text-center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
-                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
                                             title="Lihat BA Aktivasi"><i class="fa-solid fa-file-pdf"></i></a>
                                     </template>
                                     <template x-if="!item.dokumen">
@@ -321,7 +321,7 @@
                                 <td class="px-6 py-4 text-center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
-                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
                                             title="Lihat BA Calon"><i class="fa-solid fa-file-pdf"></i></a>
                                     </template>
                                     <template x-if="!item.dokumen">
@@ -376,9 +376,14 @@
                                     <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <a :href="item.dokumen || '#'" target="_blank"
-                                        class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto"
-                                        title="Lihat BA Calon"><i class="fa-solid fa-file-pdf"></i></a>
+                                    <template x-if="item.dokumen">
+                                        <a :href="item.dokumen" target="_blank"
+                                            class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
+                                            title="Lihat SK Penetapan"><i class="fa-solid fa-file-pdf"></i></a>
+                                    </template>
+                                    <template x-if="!item.dokumen">
+                                        <span class="text-gray-400 dark:text-gray-600">-</span>
+                                    </template>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
@@ -450,7 +455,7 @@
                     <div class="w-full md:w-2/5 flex flex-col bg-white dark:bg-bgSurface-dark">
                         <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center shrink-0">
                             <h3 class="text-base font-medium text-textMain-light dark:text-textMain-dark">Detail Verifikasi</h3>
-                            <button type="button" @click="showPreviewModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                            <button type="button" @click="showPreviewModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                                 <i class="fa-solid fa-xmark text-lg"></i>
                             </button>
                         </div>
@@ -481,10 +486,10 @@
                             @can('verify-calon-lokasi')
                                 <template x-if="activeProposal?.status === 'Menunggu Review'">
                                     <div class="flex gap-3">
-                                        <button @click="verifyProposal('Ditolak', '')" class="flex-1 px-4 py-2 border border-danger text-danger hover:bg-danger hover:text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                                        <button @click="verifyProposal('Ditolak', '')" class="flex-1 px-4 py-2 border border-danger text-danger hover:bg-danger hover:text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer">
                                             <i class="fa-solid fa-xmark"></i> Tolak
                                         </button>
-                                        <button @click="verifyProposal('Diverifikasi', '')" class="flex-1 px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center justify-center gap-2">
+                                        <button @click="verifyProposal('Diverifikasi', '')" class="flex-1 px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center justify-center gap-2 cursor-pointer">
                                             <i class="fa-solid fa-check-double"></i> Verifikasi
                                         </button>
                                     </div>
@@ -524,7 +529,7 @@
                             <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Checklist Verifikasi Administrasi</h3>
                             <p class="text-xs font-normal text-teal-light font-medium mt-1" x-text="activeVerif?.desa"></p>
                         </div>
-                        <button type="button" @click="showChecklistModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <button type="button" @click="showChecklistModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -542,7 +547,7 @@
                                         <div>
                                             <h4 class="font-medium text-sm text-textMain-light dark:text-textMain-dark" x-text="doc.name"></h4>
                                             <p class="text-xs text-textMuted-light mt-0.5" x-text="doc.desc"></p>
-                                            <button class="text-[0.7rem] font-medium text-teal-light hover:underline mt-1 flex items-center justify-between gap-1">
+                                            <button class="text-[0.7rem] font-medium text-teal-light hover:underline mt-1 flex items-center justify-between gap-1 cursor-pointer">
                                                 Lihat File <i class="fa-solid fa-paperclip"></i>
                                             </button>
                                         </div>
@@ -574,7 +579,7 @@
 
                         <button @click="terbitkanBA()"
                             class="px-5 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between gap-2"
-                            :class="activeVerif?.checkedDocs === activeVerif?.totalDocs ? 'bg-teal-light hover:bg-teal-600 text-white' : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'"
+                            :class="activeVerif?.checkedDocs === activeVerif?.totalDocs ? 'bg-teal-light hover:bg-teal-600 text-white cursor-pointer' : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'"
                             :disabled="activeVerif?.checkedDocs !== activeVerif?.totalDocs">
                             Terbitkan BA <i class="fa-solid fa-file-signature"></i>
                         </button>
@@ -607,7 +612,7 @@
                             <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Penilaian Verifikasi</h3>
                             <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">Tahap Administrasi</p>
                         </div>
-                        <button type="button" @click="showVerifAdminModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <button type="button" @click="showVerifAdminModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -630,7 +635,7 @@
                                 <!-- Status -->
                                 <div>
                                     <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Keputusan <span class="text-danger">*</span></label>
-                                    <select x-model="formVerif.status" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
+                                    <select x-model="formVerif.status" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark cursor-pointer">
                                         <option value="Lolos">Lolos</option>
                                         <option value="Revisi">Revisi</option>
                                         <option value="Ditolak">Ditolak</option>
@@ -645,8 +650,8 @@
                             </div>
 
                             <div class="mt-8 flex justify-end gap-3">
-                                <button type="button" @click="showVerifAdminModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                                <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                                <button type="button" @click="showVerifAdminModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">Batal</button>
+                                <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2 cursor-pointer">
                                     <i class="fa-solid fa-paper-plane"></i> Simpan Hasil
                                 </button>
                             </div>
@@ -681,7 +686,7 @@
                             <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Penilaian Lapangan</h3>
                             <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">Tahap Verifikasi Teknis</p>
                         </div>
-                        <button type="button" @click="showVerifTeknisModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <button type="button" @click="showVerifTeknisModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -702,7 +707,7 @@
                             <div class="space-y-5">
                                 <div>
                                     <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Keputusan <span class="text-danger">*</span></label>
-                                    <select x-model="formVerifTeknis.status" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
+                                    <select x-model="formVerifTeknis.status" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark cursor-pointer">
                                         <option value="Lolos">Lolos (Lanjut BA Calon)</option>
                                         <option value="Revisi">Revisi</option>
                                         <option value="Ditolak">Ditolak</option>
@@ -714,8 +719,8 @@
                                 </div>
 
                                 <div class="mt-8 flex justify-end gap-3">
-                                    <button type="button" @click="showVerifTeknisModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                                    <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                                    <button type="button" @click="showVerifTeknisModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">Batal</button>
+                                    <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2 cursor-pointer">
                                         <i class="fa-solid fa-paper-plane"></i> Simpan Penilaian
                                     </button>
                                 </div>
@@ -746,7 +751,7 @@
 
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Unggah BA Calon Lokasi</h3>
-                        <button type="button" @click="showUploadBaCalonModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <button type="button" @click="showUploadBaCalonModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -754,7 +759,7 @@
                     <div class="space-y-4">
                         <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Silakan unggah dokumen Berita Acara yang telah disetujui bersama.</p>
 
-                        <div class="mt-4 p-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group"
+                        <div class="mt-4 p-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group cursor-pointer"
                              :class="fileNameBaCalon ? 'bg-teal-50 border-teal-light dark:bg-teal-900/20' : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-teal-light/50'">
                             <template x-if="!fileNameBaCalon">
                                 <div>
@@ -776,8 +781,8 @@
                         </div>
 
                         <div class="mt-8 flex justify-end gap-3">
-                            <button @click="showUploadBaCalonModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                            <button @click="submitUploadBaCalon()" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                            <button @click="showUploadBaCalonModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">Batal</button>
+                            <button @click="submitUploadBaCalon()" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2 cursor-pointer">
                                 Unggah <i class="fa-solid fa-check"></i>
                             </button>
                         </div>
@@ -806,7 +811,7 @@
 
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Unggah SK Penetapan</h3>
-                        <button type="button" @click="showUploadSkPenetapanModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <button type="button" @click="showUploadSkPenetapanModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -814,7 +819,7 @@
                     <div class="space-y-4">
                         <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Silakan unggah dokumen Surat Keputusan (SK) Penetapan final.</p>
 
-                        <div class="mt-4 p-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group"
+                        <div class="mt-4 p-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group cursor-pointer"
                              :class="fileNameSkPenetapan ? 'bg-teal-50 border-teal-light dark:bg-teal-900/20' : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-teal-light/50'">
                             <template x-if="!fileNameSkPenetapan">
                                 <div>
@@ -836,8 +841,8 @@
                         </div>
 
                         <div class="mt-8 flex justify-end gap-3">
-                            <button @click="showUploadSkPenetapanModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                            <button @click="submitUploadSkPenetapan()" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                            <button @click="showUploadSkPenetapanModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">Batal</button>
+                            <button @click="submitUploadSkPenetapan()" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2 cursor-pointer">
                                 Unggah <i class="fa-solid fa-check"></i>
                             </button>
                         </div>
@@ -866,7 +871,7 @@
 
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-semibold text-textMain-light dark:text-textMain-dark">Unggah BA Aktivasi</h3>
-                        <button type="button" @click="showUploadBaAktivasiModal = false" class="text-gray-400 hover:text-danger transition-colors">
+                        <button type="button" @click="showUploadBaAktivasiModal = false" class="text-gray-400 hover:text-danger transition-colors cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -874,7 +879,7 @@
                     <div class="space-y-4">
                         <p class="text-xs text-textMuted-light dark:text-textMuted-dark leading-relaxed">Silakan unggah salinan Berita Acara Aktivasi yang telah ditandatangani.</p>
 
-                        <div class="mt-4 p-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group"
+                        <div class="mt-4 p-5 rounded-xl border-2 border-dashed flex flex-col items-center justify-center text-center relative transition-colors group cursor-pointer"
                              :class="fileNameBaAktivasi ? 'bg-teal-50 border-teal-light dark:bg-teal-900/20' : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-teal-light/50'">
                             <template x-if="!fileNameBaAktivasi">
                                 <div>
@@ -896,8 +901,8 @@
                         </div>
 
                         <div class="mt-8 flex justify-end gap-3">
-                            <button @click="showUploadBaAktivasiModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                            <button @click="submitUploadBaAktivasi()" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
+                            <button @click="showUploadBaAktivasiModal = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">Batal</button>
+                            <button @click="submitUploadBaAktivasi()" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2 cursor-pointer">
                                 Unggah <i class="fa-solid fa-check"></i>
                             </button>
                         </div>

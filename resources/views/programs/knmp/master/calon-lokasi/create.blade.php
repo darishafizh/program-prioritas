@@ -28,7 +28,7 @@
         color: #ffffff !important;
     }
 </style>
-<div x-data="createPengajuan()" x-init="initForm()" class="flex flex-col gap-6 max-w-5xl mx-auto pb-12">
+<div x-data="createPengajuan()" x-init="initForm()" class="flex flex-col gap-6 pb-12">
     
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -47,7 +47,7 @@
         
         <div class="space-y-6">
             <!-- A. Informasi Wilayah -->
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-teal-light/10 text-teal-light flex items-center justify-center font-bold text-sm">A</div>
                     <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark">Informasi Wilayah & Pengisi</h3>
@@ -117,7 +117,7 @@
             </div>
 
             <!-- B. Informasi Lahan -->
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-teal-light/10 text-teal-light flex items-center justify-center font-bold text-sm">B</div>
                     <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark">Spesifikasi Lahan yang Diusulkan</h3>
@@ -309,7 +309,7 @@
             </div>
 
             <!-- C. Dokumen Pendukung -->
-            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-teal-light/10 text-teal-light flex items-center justify-center font-bold text-sm">C</div>
                     <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark">Lampiran Dokumen Pendukung</h3>

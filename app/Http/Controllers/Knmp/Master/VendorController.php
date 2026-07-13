@@ -43,7 +43,7 @@ class VendorController extends ProgramBaseController
         return redirect()->back()->with('success', 'Data vendor berhasil ditambahkan.');
     }
 
-    public function update(Request $request, $program, $id)
+    public function update(Request $request, $id, $program = 'knmp')
     {
         $this->checkAuth();
         \Illuminate\Support\Facades\Gate::authorize('manage-master');
@@ -63,7 +63,7 @@ class VendorController extends ProgramBaseController
         return redirect()->back()->with('success', 'Data vendor berhasil diperbarui.');
     }
 
-    public function destroy($program, $id)
+    public function destroy($id, $program = 'knmp')
     {
         $this->checkAuth();
         \Illuminate\Support\Facades\Gate::authorize('manage-master');

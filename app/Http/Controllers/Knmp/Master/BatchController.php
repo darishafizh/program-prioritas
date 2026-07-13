@@ -39,7 +39,7 @@ class BatchController extends ProgramBaseController
         return redirect()->back()->with('success', 'Data tahap berhasil ditambahkan.');
     }
 
-    public function update(Request $request, $program, $id)
+    public function update(Request $request, $id, $program = 'knmp')
     {
         $this->checkAuth();
         \Illuminate\Support\Facades\Gate::authorize('manage-master');
@@ -56,7 +56,7 @@ class BatchController extends ProgramBaseController
         return redirect()->back()->with('success', 'Data tahap berhasil diperbarui.');
     }
 
-    public function destroy($program, $id)
+    public function destroy($id, $program = 'knmp')
     {
         $this->checkAuth();
         \Illuminate\Support\Facades\Gate::authorize('manage-master');

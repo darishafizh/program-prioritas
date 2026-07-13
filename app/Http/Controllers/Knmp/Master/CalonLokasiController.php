@@ -123,7 +123,7 @@ class CalonLokasiController extends ProgramBaseController
     public function create(Request $request, $program)
     {
         $this->checkAuth();
-        abort_unless(\Illuminate\Support\Facades\Auth::user()->isUserDaerah(), 403, 'Hanya User Daerah yang dapat mengakses form pengajuan.');
+        abort_unless(\Illuminate\Support\Facades\Auth::user()->isUserDaerah() || \Illuminate\Support\Facades\Auth::user()->isSuperAdmin(), 403, 'Hanya User Daerah dan Super Admin yang dapat mengakses form pengajuan.');
         $activeProgram = $this->formatProgramName($program);
 
         $userKabupaten = \Illuminate\Support\Facades\Auth::user()->kabupaten;
@@ -149,7 +149,7 @@ class CalonLokasiController extends ProgramBaseController
     public function store(Request $request)
     {
         $this->checkAuth();
-        abort_unless(\Illuminate\Support\Facades\Auth::user()->isUserDaerah(), 403, 'Hanya User Daerah yang dapat mengirim pengajuan.');
+        abort_unless(\Illuminate\Support\Facades\Auth::user()->isUserDaerah() || \Illuminate\Support\Facades\Auth::user()->isSuperAdmin(), 403, 'Hanya User Daerah dan Super Admin yang dapat mengirim pengajuan.');
 
         $request->validate([
             'provinsi' => 'required',

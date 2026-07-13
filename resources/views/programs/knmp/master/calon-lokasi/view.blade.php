@@ -20,7 +20,7 @@
             <!-- Fixed Header -->
             <div
                 class="px-6 sm:px-8 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center flex-shrink-0 bg-white dark:bg-gray-900 shadow-sm gap-4">
-                <h3 class="text-lg font-bold tracking-tight text-textMain-light dark:text-textMain-dark">
+                <h3 class="text-base font-semibold tracking-tight text-textMain-light dark:text-textMain-dark">
                     Detail Usulan Calon Lokasi
                 </h3>
 
@@ -37,7 +37,7 @@
             <!-- Scrollable Body with internal scroll -->
             <div class="flex flex-col flex-1 overflow-hidden bg-gray-50/60 dark:bg-gray-950/50">
                 <div class="overflow-y-auto overscroll-contain p-6 sm:p-8 flex-1">
-                    <div class="max-w-5xl mx-auto space-y-8">
+                    <div class="w-full space-y-8">
                         <template x-if="activeDetail && activeDetail.detail">
                             <div class="space-y-8">
 
@@ -73,7 +73,7 @@
                                             }"></i>
                                     </div>
                                     <div class="flex-1 text-xs sm:text-sm leading-relaxed">
-                                        <div class="font-bold text-sm mb-0.5"
+                                        <div class="font-semibold text-sm mb-0.5"
                                             x-text="activeDetail?.status === 'Diverifikasi' || activeDetail?.status === 'Selesai' ? 'Status Disetujui' : (activeDetail?.status === 'Ditolak' ? 'Pemberitahuan Penolakan' : 'Informasi Verifikasi')">
                                         </div>
                                         <div class="font-normal"
@@ -95,7 +95,7 @@
                                     <!-- SECTION 1: INFORMASI WILAYAH & GEOGRAFIS -->
                                     <div>
                                         <h4
-                                            class="text-sm font-bold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
+                                            class="text-sm font-semibold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
                                             Informasi Wilayah & Geografis
                                         </h4>
 
@@ -135,14 +135,14 @@
                                                     Luas
                                                     Lahan</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="`${activeDetail?.pengajuan?.luas_lahan || 0} m²`"></dd>
+                                                    x-text="`${activeDetail?.pengajuan?.luas_lahan || activeDetail?.detail?.luas_lahan || 0} m²`"></dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
                                                 <dt
                                                     class="w-40 shrink-0 font-normal text-textMuted-light dark:text-textMuted-dark text-left">
                                                     Dimensi (P × L)</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="`${activeDetail?.pengajuan?.panjang_lahan || 0}m × ${activeDetail?.pengajuan?.lebar_lahan || 0}m`">
+                                                    x-text="`${activeDetail?.pengajuan?.panjang_lahan || activeDetail?.detail?.panjang_lahan || 0}m × ${activeDetail?.pengajuan?.lebar_lahan || activeDetail?.detail?.lebar_lahan || 0}m`">
                                                 </dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
@@ -166,7 +166,7 @@
                                     <!-- SECTION 2: SPESIFIKASI FISIK & KARAKTERISTIK LAHAN -->
                                     <div>
                                         <h4
-                                            class="text-sm font-bold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
+                                            class="text-sm font-semibold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
                                             Spesifikasi Fisik & Karakteristik Lahan
                                         </h4>
 
@@ -190,28 +190,28 @@
                                                     class="w-40 shrink-0 font-normal text-textMuted-light dark:text-textMuted-dark text-left">
                                                     Kemiringan Lahan</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="`${activeDetail?.pengajuan?.kemiringan_lahan || 0}°`"></dd>
+                                                    x-text="`${activeDetail?.pengajuan?.kemiringan_lahan || activeDetail?.detail?.kemiringan_lahan || 0}°`"></dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
                                                 <dt
                                                     class="w-40 shrink-0 font-normal text-textMuted-light dark:text-textMuted-dark text-left">
                                                     Tekstur Tanah</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="activeDetail?.pengajuan?.tekstur_tanah || '-'"></dd>
+                                                    x-text="activeDetail?.pengajuan?.tekstur_tanah || activeDetail?.detail?.tekstur_tanah || '-'"></dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
                                                 <dt
                                                     class="w-40 shrink-0 font-normal text-textMuted-light dark:text-textMuted-dark text-left">
                                                     Salinitas Air</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="activeDetail?.pengajuan?.salinitas_air || '-'"></dd>
+                                                    x-text="activeDetail?.pengajuan?.salinitas_air || activeDetail?.detail?.salinitas_air || '-'"></dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
                                                 <dt
                                                     class="w-40 shrink-0 font-normal text-textMuted-light dark:text-textMuted-dark text-left">
                                                     Jarak ke Pantai</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="`${activeDetail?.pengajuan?.jarak_pantai || '-'} meter`">
+                                                    x-text="`${activeDetail?.pengajuan?.jarak_pantai || activeDetail?.detail?.jarak_pantai || '-'} meter`">
                                                 </dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
@@ -219,7 +219,7 @@
                                                     class="w-40 shrink-0 font-normal text-textMuted-light dark:text-textMuted-dark text-left">
                                                     Jarak ke Sungai</dt>
                                                 <dd class="flex-1 font-medium text-textMain-light dark:text-textMain-dark text-left"
-                                                    x-text="`${activeDetail?.pengajuan?.jarak_sungai || '-'} meter`">
+                                                    x-text="`${activeDetail?.pengajuan?.jarak_sungai || activeDetail?.detail?.jarak_sungai || '-'} meter`">
                                                 </dd>
                                             </div>
                                             <div class="flex items-start gap-4 py-1 text-left">
@@ -238,7 +238,7 @@
                                     <!-- SECTION 3: KRITERIA KHUSUS KAWASAN -->
                                     <div>
                                         <h4
-                                            class="text-sm font-bold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
+                                            class="text-sm font-semibold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
                                             Kriteria Khusus Kawasan
                                         </h4>
 
@@ -285,7 +285,7 @@
                                     <!-- SECTION 4: PENANGGUNG JAWAB USULAN -->
                                     <div>
                                         <h4
-                                            class="text-sm font-bold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
+                                            class="text-sm font-semibold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
                                             Penanggung Jawab Usulan
                                         </h4>
 
@@ -321,7 +321,7 @@
                                     <!-- SECTION 5: LAMPIRAN DOKUMEN RESMI -->
                                     <div>
                                         <h4
-                                            class="text-sm font-bold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
+                                            class="text-sm font-semibold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
                                             Lampiran Dokumen Resmi
                                         </h4>
 
@@ -338,7 +338,7 @@
                                                         </div>
                                                         <div class="flex-1 min-w-0 text-left ml-3">
                                                             <div
-                                                                class="text-xs font-bold text-white dark:text-white truncate">
+                                                                class="text-xs font-semibold text-white dark:text-white truncate">
                                                                 Proposal Usulan</div>
                                                             <div class="text-[11px] font-normal text-white/90 dark:text-white/90 truncate mt-0.5"
                                                                 x-text="activeDetail?.created_at || 'PDF'"></div>
@@ -368,7 +368,7 @@
                                                         </div>
                                                         <div class="flex-1 min-w-0 text-left ml-3">
                                                             <div
-                                                                class="text-xs font-bold text-white dark:text-white truncate">
+                                                                class="text-xs font-semibold text-white dark:text-white truncate">
                                                                 BA Aktivasi</div>
                                                             <div class="text-[11px] font-normal text-white/90 dark:text-white/90 truncate mt-0.5"
                                                                 x-text="activeDetail?.baAktivasi?.status || 'Verifikasi'">
@@ -398,7 +398,7 @@
                                                         </div>
                                                         <div class="flex-1 min-w-0 text-left ml-3">
                                                             <div
-                                                                class="text-xs font-bold text-white dark:text-white truncate">
+                                                                class="text-xs font-semibold text-white dark:text-white truncate">
                                                                 BA Calon Lokasi</div>
                                                             <div class="text-[11px] font-normal text-white/90 dark:text-white/90 truncate mt-0.5"
                                                                 x-text="activeDetail?.baCalon?.status || 'Survei'">
@@ -428,7 +428,7 @@
                                                         </div>
                                                         <div class="flex-1 min-w-0 text-left ml-3">
                                                             <div
-                                                                class="text-xs font-bold text-white dark:text-white truncate">
+                                                                class="text-xs font-semibold text-white dark:text-white truncate">
                                                                 SK Penetapan</div>
                                                             <div class="text-[11px] font-normal text-white/90 dark:text-white/90 truncate mt-0.5"
                                                                 x-text="activeDetail?.penetapan?.no_sk || 'Penetapan'">
@@ -457,7 +457,7 @@
                                     <!-- SECTION 6: HISTORY / RIWAYAT VERIFIKASI -->
                                     <div>
                                         <h4
-                                            class="text-sm font-bold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
+                                            class="text-sm font-semibold tracking-tight text-textMain-light dark:text-textMain-dark mb-3 text-left">
                                             History / Riwayat Verifikasi
                                         </h4>
 
