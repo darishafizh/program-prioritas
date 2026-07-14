@@ -94,6 +94,77 @@ class OperasionalEvaluasiController extends ProgramBaseController
             $stageStats[$stage] = collect($operasionalData)->where('tahap_saat_ini', $stage)->count();
         }
 
+        // === ANALYTICAL DATA ===
+
+        // 1. Average duration per stage (days)
+        $avgDurationDays = [];
+        $stageLabels = [
+            'usulan' => 'Usulan',
+            'survey' => 'Survei',
+            'ded' => 'DED',
+            'lelang' => 'Lelang',
+            'konstruksi' => 'Konstruksi',
+            'serah_terima' => 'Serah Terima',
+        ];
+
+        foreach ($this->stageOrder as $idx => $stage) {
+            if ($idx >= count($this->stageOrder) - 1) break; // skip last stage
+            $nextStage = $this->stageOrder[$idx + 1];
+            $durations = [];
+
+            foreach ($operasionalData as $item) {
+                $currentStageIdx = array_search($item['tahap_saat_ini'], $this->stageOrder);
+                if ($currentStageIdx === false) continue;
+                // Only count locations that have passed this stage
+                if ($currentStageIdx <= $idx) continue;
+
+                $stageData = $item['stages'][$idx] ?? null;
+                $nextStageData = $item['stages'][$idx + 1] ?? null;
+
+                if ($stageData && $nextStageData && $stageData['date'] && $nextStageData['date']) {
+                    $start = \Carbon\Carbon::parse($stageData['date']);
+                    $end = \Carbon\Carbon::parse($nextStageData['date']);
+                    $days = $start->diffInDays($end);
+                    if ($days >= 0 && $days < 3650) { // sanity check
+                        $durations[] = $days;
+                    }
+                }
+            }
+
+            $avgDurationDays[$stage] = count($durations) > 0 ? round(array_sum($durations) / count($durations)) : 0;
+        }
+
+        // Find bottleneck (longest average duration)
+        $bottleneckStage = '';
+        $maxDuration = 0;
+        foreach ($avgDurationDays as $stage => $days) {
+            if ($days > $maxDuration) {
+                $maxDuration = $days;
+                $bottleneckStage = $stage;
+            }
+        }
+
+        // 2. Insight text
+        $totalOps = count($operasionalData);
+        if ($totalOps > 0) {
+            $insightParts = [];
+            $insightParts[] = "Terdapat <strong>{$totalOps} lokasi KNMP</strong> yang terpantau dalam siklus operasional";
+
+            if ($bottleneckStage && $maxDuration > 0) {
+                $insightParts[] = "Tahap <span class='text-warning font-semibold'>" . ($stageLabels[$bottleneckStage] ?? $bottleneckStage) . "</span> menjadi <strong>bottleneck</strong> dengan rata-rata durasi <strong>{$maxDuration} hari</strong> per lokasi";
+            }
+
+            $serahTerimaCount = $stageStats['serah_terima'] ?? 0;
+            if ($serahTerimaCount > 0) {
+                $completionRate = round(($serahTerimaCount / $totalOps) * 100, 1);
+                $insightParts[] = "<strong>{$serahTerimaCount} lokasi</strong> ({$completionRate}%) telah mencapai <span class='text-success font-semibold'>Serah Terima</span>";
+            }
+
+            $insightText = implode('. ', $insightParts) . '.';
+        } else {
+            $insightText = 'Belum ada data operasional untuk dianalisis pada filter yang dipilih.';
+        }
+
         return view('programs.knmp.evaluasi.operasional', [
             'activeModule' => 'Evaluasi',
             'activeProgram' => $activeProgram,
@@ -102,6 +173,10 @@ class OperasionalEvaluasiController extends ProgramBaseController
             'stats' => [
                 'total' => count($operasionalData),
                 'per_tahap' => $stageStats,
+                'avg_duration_days' => $avgDurationDays,
+                'bottleneck_stage' => $bottleneckStage,
+                'stage_labels' => $stageLabels,
+                'insight_text' => $insightText,
             ],
         ]);
     }

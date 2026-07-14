@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Bioflok - Evaluasi Progres Fisik')
+@section('title', 'Budidaya Tematik - Evaluasi Progres Fisik')
 
 @section('content')
     <div x-data="{ batch: '' }">
         {{-- Header & Filters --}}
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Evaluasi Progres Fisik Bioflok</h2>
+                <h2 class="text-xl font-semibold tracking-tight">Evaluasi Progres Fisik Budidaya Tematik</h2>
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Evaluasi historis konstruksi bak kolam & aerator per KDKMP — perbandingan rencana vs aktual.</p>
             </div>
 
@@ -100,9 +100,7 @@
                         <tr>
                             <th class="py-4 px-6 w-12 text-center">No</th>
                             <th class="py-4 px-6">KDKMP & Wilayah</th>
-                            <th class="py-4 px-6 text-center">Rencana</th>
-                            <th class="py-4 px-6 text-center">Aktual</th>
-                            <th class="py-4 px-6 text-center">Deviasi</th>
+                            <th class="py-4 px-6">Progres & Deviasi</th>
                             <th class="py-4 px-6 text-center">Status Kurva</th>
                             <th class="py-4 px-6">Catatan Evaluasi / Audit</th>
                             <th class="py-4 px-6 text-center">Aksi</th>
@@ -116,16 +114,24 @@
                                 <div class="font-semibold text-textMain-light dark:text-white">{{ $lok['kdkmp'] }}</div>
                                 <div class="text-[11px] text-textMuted-light mt-0.5 truncate"><i class="fa-solid fa-location-dot mr-1"></i>{{ $lok['kabupaten'] }}</div>
                             </td>
-                            <td class="py-4 px-6 text-center font-semibold text-textMuted-light whitespace-nowrap">{{ $lok['progres_rencana'] }}%</td>
-                            <td class="py-4 px-6 text-center font-bold text-textMain-light dark:text-white whitespace-nowrap">{{ $lok['progres_aktual'] }}%</td>
-                            <td class="py-4 px-6 text-center whitespace-nowrap">
-                                @if($lok['deviasi'] < 0)
-                                    <span class="font-bold text-danger">{{ $lok['deviasi'] }}%</span>
-                                @elseif($lok['deviasi'] > 0)
-                                    <span class="font-bold text-success">+{{ $lok['deviasi'] }}%</span>
-                                @else
-                                    <span class="font-bold text-textMuted-light">0.0%</span>
-                                @endif
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center justify-between text-xs w-32">
+                                        <span class="text-textMuted-light">Aktual: <span class="font-bold text-textMain-light dark:text-white">{{ $lok['progres_aktual'] }}%</span></span>
+                                        @if($lok['deviasi'] < 0)
+                                            <span class="font-bold text-[10px] text-danger">{{ $lok['deviasi'] }}%</span>
+                                        @elseif($lok['deviasi'] > 0)
+                                            <span class="font-bold text-[10px] text-success">+{{ $lok['deviasi'] }}%</span>
+                                        @else
+                                            <span class="font-bold text-[10px] text-textMuted-light">0.0%</span>
+                                        @endif
+                                    </div>
+                                    <div class="w-32 bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 overflow-hidden flex relative">
+                                        <div class="bg-gray-300 dark:bg-gray-600 h-1.5 absolute left-0 z-0" style="width: {{ $lok['progres_rencana'] }}%"></div>
+                                        <div class="bg-teal-light h-1.5 absolute left-0 z-10 opacity-80" style="width: {{ $lok['progres_aktual'] }}%"></div>
+                                    </div>
+                                    <div class="text-[10px] text-textMuted-light mt-0.5">Target: {{ $lok['progres_rencana'] }}%</div>
+                                </div>
                             </td>
                             <td class="py-4 px-6 text-center whitespace-nowrap">
                                 <span class="px-3 py-1 rounded-full text-[11px] font-semibold border {{ $lok['status_class'] }}">

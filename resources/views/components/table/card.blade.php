@@ -85,7 +85,7 @@ if (typeof window.tableCardInit === 'undefined') {
     <!-- Row 1: Header (Left: Title + Subtitle, Right: Search + Add Button / Actions) -->
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div class="shrink-0">
-            <h2 class="text-xl font-semibold tracking-tight text-textMain-light dark:text-textMain-dark">{{ $title }}</h2>
+            <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">{{ $title }}</h2>
             @if($description)
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">{{ $description }}</p>
             @endif

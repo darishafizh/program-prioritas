@@ -108,7 +108,7 @@ class CalonLokasiController extends ProgramBaseController
         }
 
         return view('programs.knmp.master.calon-lokasi.index', [
-            'activeModule' => 'Master Data',
+            'activeModule' => 'Operasional',
             'activeProgram' => $activeProgram,
             'stage' => $stage,
             'proposals' => $proposals,
@@ -139,7 +139,7 @@ class CalonLokasiController extends ProgramBaseController
         }
 
         return view('programs.knmp.master.calon-lokasi.create', [
-            'activeModule' => 'Master Data',
+            'activeModule' => 'Operasional',
             'activeProgram' => $activeProgram,
             'userProvinsiId' => $userProvinsiId,
             'userKabupatenId' => $userKabupatenId,

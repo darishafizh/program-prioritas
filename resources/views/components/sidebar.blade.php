@@ -36,9 +36,9 @@
  <div class="p-5 shrink-0 flex flex-col gap-3 border-0">
      <div class="flex items-center justify-between">
          <div class="flex items-center gap-3">
-             <div class="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shadow-xs shrink-0">
-                 <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-6 h-6 object-contain dark:bg-white dark:rounded-full dark:p-0.5 transition-all">
-             </div>
+             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-light to-teal-700 text-white flex items-center justify-center shadow-md shadow-teal-light/20 shrink-0 border border-teal-500/30">
+                <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-6 h-6 object-contain bg-white/95 rounded-md p-0.5 transition-all">
+            </div>
              <div class="min-w-0">
                  <h1 class="font-sans font-medium text-sm text-textMain-light dark:text-textMain-dark leading-tight truncate">
                      Program Prioritas
@@ -56,11 +56,11 @@
      @if($activeModule !== 'Pengguna')
      <div class="pt-1">
          @if(\Illuminate\Support\Facades\Auth::user()->isUserDaerah())
-             <a href="{{ url('greetings') }}" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-200/70 dark:bg-slate-800/70 text-xs font-sans font-medium text-textMain-light dark:text-textMain-dark hover:bg-slate-300/70 dark:hover:bg-slate-700/70 transition-all">
+             <a href="{{ url('greetings') }}" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-sans font-medium text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark transition-all">
                  <i class="fa-solid fa-arrow-left text-xs text-teal-light"></i> Kembali ke Portal
              </a>
          @else
-             <a href="{{ url('greetings') }}" class="w-full flex items-center justify-between py-2 px-3.5 rounded-xl bg-slate-200/70 dark:bg-slate-800/70 text-xs font-sans font-medium text-textMain-light dark:text-textMain-dark hover:bg-slate-300/70 dark:hover:bg-slate-700/70 transition-all group">
+             <a href="{{ url('greetings') }}" class="w-full flex items-center justify-between py-2 px-3 rounded-xl text-xs font-sans font-medium text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark transition-all group">
                  <span class="flex items-center gap-2.5 font-sans font-medium">
                      <i class="fa-regular fa-star text-amber-500 text-xs group-hover:scale-110 transition-transform"></i> Portal Utama (Ganti Program)
                  </span>
@@ -106,7 +106,7 @@
              <!-- Level 1: Module Header (WITH ICON, font-sans font-medium, open state uses text color + primary icon) -->
              <button @click="activeAccordion = (activeAccordion === '{{ $moduleName }}') ? '' : '{{ $moduleName }}'" 
                  class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-sans font-medium transition-all border-0 select-none"
-                 :class="activeAccordion === '{{ $moduleName }}' ? 'text-textMain-light dark:text-textMain-dark bg-slate-200/60 dark:bg-slate-800/60' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark hover:bg-slate-200/40 dark:hover:bg-slate-800/40'">
+                 :class="activeAccordion === '{{ $moduleName }}' ? 'text-textMain-light dark:text-textMain-dark font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark'">
                  <div class="flex items-center gap-3 truncate">
                      <div class="w-6 h-6 flex items-center justify-center shrink-0 transition-colors"
                          :class="activeAccordion === '{{ $moduleName }}' ? 'text-teal-light dark:text-teal-400' : 'text-textMuted-light dark:text-textMuted-dark'">
@@ -179,7 +179,7 @@
  <div class="p-4 bg-transparent shrink-0 mt-auto border-0">
      <div class="flex items-center justify-between gap-2 p-2 rounded-2xl bg-slate-200/50 dark:bg-slate-800/40">
          <div class="flex items-center gap-2.5 min-w-0 flex-1 px-1">
-             <div class="w-8 h-8 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-sans font-medium text-xs shrink-0 shadow-xs">
+             <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-light to-teal-700 text-white flex items-center justify-center font-sans font-semibold text-xs shrink-0 shadow-md shadow-teal-light/20 border border-teal-500/30">
                  {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
              </div>
              <div class="min-w-0 flex-1 truncate">

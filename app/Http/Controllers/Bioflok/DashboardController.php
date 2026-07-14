@@ -11,7 +11,7 @@ class DashboardController extends ProgramBaseController
     public function progresFisik(Request $request)
     {
         $this->checkAuth();
-        $activeProgram = 'Bioflok';
+        $activeProgram = 'Budidaya Tematik';
 
         $filter_batches = [
             ['id' => 1, 'name' => 'Tahap I - 2025/2026'],
@@ -24,7 +24,7 @@ class DashboardController extends ProgramBaseController
             'total_selesai' => 28,
             'dalam_pembangunan' => 17,
             'filter_batches' => $filter_batches,
-            'narasi' => 'Pengerjaan budidaya ikan sistem <strong class="text-textMain-light dark:text-white">Bioflok Terintegrasi</strong> menunjukkan progres fisik rata-rata <strong class="text-teal-light dark:text-teal-400">78.4%</strong> di 45 titik lokasi Sentra Kampung Perikanan. Sebanyak 28 kelompok/lokasi telah rampung konstruksi kolam dan instalasi aerator (Siap Tebar/Sudah Panen), sementara 17 titik masih dalam tahap akselerasi pengecoran fondasi dan pemasangan rangka besi.'
+            'narasi' => 'Pengerjaan budidaya ikan sistem <strong class="text-textMain-light dark:text-white">Budidaya Tematik</strong> menunjukkan progres fisik rata-rata <strong class="text-teal-light dark:text-teal-400">78.4%</strong> di 45 titik lokasi Sentra Kampung Perikanan. Sebanyak 28 kelompok/lokasi telah rampung konstruksi kolam dan instalasi aerator (Siap Tebar/Sudah Panen), sementara 17 titik masih dalam tahap akselerasi pengecoran fondasi dan pemasangan rangka besi.'
         ];
 
         $regionalData = [
@@ -70,7 +70,7 @@ class DashboardController extends ProgramBaseController
             ],
         ];
 
-        return view('programs.bioflok.dashboard.progres-fisik', compact(
+        return view('programs.budidaya-tematik.dashboard.progres-fisik', compact(
             'activeProgram',
             'stats',
             'filter_batches',
@@ -83,7 +83,7 @@ class DashboardController extends ProgramBaseController
     public function produksi(Request $request)
     {
         $this->checkAuth();
-        $activeProgram = 'Bioflok';
+        $activeProgram = 'Budidaya Tematik';
 
         // Filter parameters
         $bulan = $request->get('bulan', '');
@@ -290,7 +290,7 @@ class DashboardController extends ProgramBaseController
             ],
         ];
 
-        return view('programs.bioflok.dashboard.produksi', compact(
+        return view('programs.budidaya-tematik.dashboard.produksi', compact(
             'activeProgram',
             'kpi',
             'scatterData',
@@ -366,9 +366,9 @@ class DashboardController extends ProgramBaseController
         ];
         $bulanName = $bulan && isset($indonesianMonths[(int)$bulan]) ? $indonesianMonths[(int)$bulan] . ' ' . date('Y') : 'Keseluruhan / Semua Bulan';
 
-        $filename = "Data_Produksi_Bioflok_" . ($bulan ? "Bulan_{$bulan}_" : "") . date('Ymd_His') . ".pdf";
+        $filename = "Data_Produksi_Budidaya_Tematik_" . ($bulan ? "Bulan_{$bulan}_" : "") . date('Ymd_His') . ".pdf";
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('programs.bioflok.dashboard.pdf-produksi', [
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('programs.budidaya-tematik.dashboard.pdf-produksi', [
             'data' => $tableProduksi,
             'totalKdmp' => $totalKdmp,
             'sudahPanen' => $sudahPanen,

@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Bioflok - Dashboard Progres Fisik')
+@section('title', 'Budidaya Tematik - Dashboard Progres Fisik')
 
 @section('content')
     <div x-data="{ batch: '', tanggal: '' }">
         <!-- Header & Global Filters (Responsive Row) -->
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Dashboard Progres Fisik Bioflok</h2>
-                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Ringkasan Eksekutif & Pantauan Konstruksi Kolam Sentra Kampung Perikanan Bioflok</p>
+                <h2 class="text-xl font-semibold tracking-tight">Dashboard Progres Fisik Budidaya Tematik</h2>
+                <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Ringkasan Eksekutif & Pantauan Konstruksi Kolam Sentra Kampung Perikanan Budidaya Tematik</p>
             </div>
 
             <!-- Filters -->
@@ -140,7 +140,7 @@
                 <!-- Root Cause Analysis List -->
                 <div class="bg-bgSurface-light dark:bg-bgSurface-dark rounded-3xl border border-gray-100 dark:border-gray-800 p-6 flex flex-col">
                     <h4 class="font-medium text-sm mb-1">Kendala Lapangan Terbanyak</h4>
-                    <p class="text-xs text-textMuted-light mb-5">Distribusi hambatan dari log harian proyek Bioflok.</p>
+                    <p class="text-xs text-textMuted-light mb-5">Distribusi hambatan dari log harian proyek Budidaya Tematik.</p>
 
                     <div class="space-y-4 flex-1">
                         @foreach($kendala as $ken)

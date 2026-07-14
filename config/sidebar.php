@@ -23,25 +23,27 @@ return [
                 [
                     'label' => 'Tahap',
                     'icon' => 'fa-layer-group',
-                    'url' => '/master/knmp/batch',
+                    'url' => '/master/knmp/tahap',
+                    'active' => ['master/knmp/tahap*']
                 ],
 
                 [
                     'label' => 'Vendor',
                     'icon' => 'fa-building-user',
                     'url' => '/master/knmp/vendor',
-                ],
-                [
-                    'label' => 'Calon Lokasi',
-                    'icon' => 'fa-map-location-dot',
-                    'url' => '/master/knmp/calon-lokasi',
-                    'active' => ['master/knmp/calon-lokasi*']
+                    'active' => ['master/knmp/vendor*']
                 ]
             ]
         ],
         'Operasional' => [
             'heading' => 'Eksekusi Proyek',
             'items' => [
+                [
+                    'label' => 'Pengajuan',
+                    'icon' => 'fa-map-location-dot',
+                    'url' => '/master/knmp/calon-lokasi',
+                    'active' => ['master/knmp/calon-lokasi*']
+                ],
                 [
                     'label' => 'Pelaksanaan',
                     'icon' => 'fa-helmet-safety',
@@ -53,12 +55,12 @@ return [
             'heading' => 'Pelaporan & Audit',
             'items' => [
                 [
-                    'label' => 'Calon Lokasi',
+                    'label' => 'Pengajuan',
                     'icon' => 'fa-map-location-dot',
                     'url' => '/evaluasi/knmp/calon-lokasi',
                 ],
                 [
-                    'label' => 'Pelaksanaan Proyek',
+                    'label' => 'Pelaksanaan',
                     'icon' => 'fa-helmet-safety',
                     'url' => '/evaluasi/knmp/operasional',
                 ],
@@ -74,62 +76,33 @@ return [
         'Dashboard' => [
             'heading' => 'Ringkasan Eksekutif',
             'items' => [
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/bioflok/produksi', 'active' => ['dashboard/bioflok*', 'dashboard/budidaya-tematik*']],
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok/progres-fisik']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/budidaya-tematik/produksi', 'active' => ['dashboard/bioflok/produksi*', 'dashboard/budidaya-tematik/produksi*']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/budidaya-tematik/progres-fisik']
             ]
         ],
         'Master Data' => [
             'heading' => 'Referensi Program',
             'items' => [
-                ['label' => 'KDKMP', 'icon' => 'fa-water', 'url' => '/master/bioflok/kdkmp', 'active' => ['master/bioflok*', 'master/budidaya-tematik*']],
+                ['label' => 'KDKMP', 'icon' => 'fa-water', 'url' => '/master/budidaya-tematik/kdkmp', 'active' => ['master/bioflok*', 'master/budidaya-tematik*']],
                 ['label' => 'SPPG', 'icon' => 'fa-fish', 'url' => '#']
             ]
         ],
         'Operasional' => [
             'heading' => 'Manajemen Data',
             'items' => [
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/bioflok/produksi', 'active' => ['operasional/bioflok*', 'operasional/budidaya-tematik*']],
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/bioflok/progres-fisik']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/budidaya-tematik/produksi', 'active' => ['operasional/bioflok/produksi*', 'operasional/budidaya-tematik/produksi*']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/budidaya-tematik/progres-fisik']
             ]
         ],
         'Evaluasi' => [
             'heading' => 'Pelaporan & Audit',
             'items' => [
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/bioflok/produksi', 'active' => ['evaluasi/bioflok*', 'evaluasi/budidaya-tematik*']],
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok/progres-fisik']
+                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/budidaya-tematik/produksi', 'active' => ['evaluasi/bioflok/produksi*', 'evaluasi/budidaya-tematik/produksi*']],
+                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/budidaya-tematik/progres-fisik']
             ]
         ]
     ],
-    'bioflok' => [
-        'Dashboard' => [
-            'heading' => 'Ringkasan Eksekutif',
-            'items' => [
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/dashboard/bioflok/produksi', 'active' => ['dashboard/bioflok', 'dashboard/bioflok/produksi']],
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/dashboard/bioflok/progres-fisik']
-            ]
-        ],
-        'Master Data' => [
-            'heading' => 'Referensi Program',
-            'items' => [
-                ['label' => 'KDKMP', 'icon' => 'fa-water', 'url' => '/master/bioflok/kdkmp', 'active' => ['master/bioflok', 'master/bioflok/kdkmp*']],
-                ['label' => 'SPPG', 'icon' => 'fa-fish', 'url' => '#']
-            ]
-        ],
-        'Operasional' => [
-            'heading' => 'Manajemen Data',
-            'items' => [
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/operasional/bioflok/produksi', 'active' => ['operasional/bioflok', 'operasional/bioflok/produksi']],
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/operasional/bioflok/progres-fisik']
-            ]
-        ],
-        'Evaluasi' => [
-            'heading' => 'Pelaporan & Audit',
-            'items' => [
-                ['label' => 'Produksi', 'icon' => 'fa-boxes-stacked', 'url' => '/evaluasi/bioflok/produksi', 'active' => ['evaluasi/bioflok', 'evaluasi/bioflok/produksi']],
-                ['label' => 'Progres Fisik', 'icon' => 'fa-person-digging', 'url' => '/evaluasi/bioflok/progres-fisik']
-            ]
-        ]
-    ],
+
     'bins' => [
         'Dashboard' => [
             'heading' => 'Ringkasan Eksekutif',

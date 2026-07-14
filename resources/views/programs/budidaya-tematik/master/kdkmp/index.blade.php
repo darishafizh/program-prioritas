@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Bioflok - Master Data KDKMP')
+@section('title', 'Budidaya Tematik - Master Data KDKMP')
 
 @section('content')
 <div x-data="kdkmpManager()" class="space-y-6">
@@ -28,7 +28,7 @@
                 <h3 class="font-medium text-sm flex items-center gap-2">
                     <i class="fa-solid fa-table-list text-teal-light"></i> Tabel Data Master KDKMP
                 </h3>
-                <p class="text-xs text-textMuted-light mt-1">Daftar referensi lengkap Kelompok Pembudidaya Ikan (KDKMP) program Bioflok.</p>
+                <p class="text-xs text-textMuted-light mt-1">Daftar referensi lengkap Kelompok Pembudidaya Ikan (KDKMP) program Budidaya Tematik.</p>
             </div>
             <div class="flex gap-2 w-full sm:w-auto self-end sm:self-auto">
                 <button @click="openModal('add')" class="px-4 py-2 bg-teal-light text-white rounded-xl text-xs font-medium hover:bg-teal-light/90 transition-all flex items-center gap-2"> 
@@ -176,8 +176,8 @@
     </div>
 
     <!-- Include Modal Partials -->
-    @include('programs.bioflok.master.kdkmp.create')
-    @include('programs.bioflok.master.kdkmp.edit')
+    @include('programs.budidaya-tematik.master.kdkmp.create')
+    @include('programs.budidaya-tematik.master.kdkmp.edit')
 
     <!-- Modal Delete -->
     <div x-show="isDeleteOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
@@ -412,7 +412,7 @@ document.addEventListener('alpine:init', () => {
         async submitCreate() {
             this.loading = true;
             try {
-                const response = await fetch('/master/bioflok/kdkmp', {
+                const response = await fetch('/master/budidaya-tematik/kdkmp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -442,7 +442,7 @@ document.addEventListener('alpine:init', () => {
             if (!this.selectedItem) return;
             this.loading = true;
             try {
-                const response = await fetch(`/master/bioflok/kdkmp/${this.selectedItem.id}`, {
+                const response = await fetch(`/master/budidaya-tematik/kdkmp/${this.selectedItem.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -473,7 +473,7 @@ document.addEventListener('alpine:init', () => {
             
             this.loading = true;
             try {
-                const response = await fetch(`/master/bioflok/kdkmp/${this.selectedItem.id}`, {
+                const response = await fetch(`/master/budidaya-tematik/kdkmp/${this.selectedItem.id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',

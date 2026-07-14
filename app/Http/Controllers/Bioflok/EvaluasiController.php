@@ -10,7 +10,7 @@ class EvaluasiController extends ProgramBaseController
     public function progresFisik(Request $request)
     {
         $this->checkAuth();
-        $activeProgram = 'Bioflok';
+        $activeProgram = 'Budidaya Tematik';
 
         $filter_batches = [
             ['id' => 1, 'name' => 'Tahap I - 2025/2026'],
@@ -100,7 +100,7 @@ class EvaluasiController extends ProgramBaseController
             ]
         ];
 
-        return view('programs.bioflok.evaluasi.progres-fisik', compact(
+        return view('programs.budidaya-tematik.evaluasi.progres-fisik', compact(
             'activeProgram',
             'stats',
             'filter_batches',
@@ -111,7 +111,7 @@ class EvaluasiController extends ProgramBaseController
     public function produksi(Request $request)
     {
         $this->checkAuth();
-        $activeProgram = 'Bioflok';
+        $activeProgram = 'Budidaya Tematik';
 
         $stats = [
             'total_target_panen' => 150.0, // Ton
@@ -236,7 +236,7 @@ class EvaluasiController extends ProgramBaseController
             ]
         ];
 
-        return view('programs.bioflok.evaluasi.produksi', compact(
+        return view('programs.budidaya-tematik.evaluasi.produksi', compact(
             'activeProgram',
             'stats',
             'chartEvaluasi',

@@ -46,17 +46,28 @@ Route::middleware('auth')->group(function () {
 
     // Master - KNMP
     Route::prefix('master/knmp')->name('program.')->group(function () {
-        // Batch & Vendor - Super Admin only
+        // Tahap & Vendor - Super Admin only
         Route::middleware('role:super_admin')->group(function () {
-            Route::get('/batch', [\App\Http\Controllers\Knmp\Master\BatchController::class, 'index'])->defaults('program', 'knmp')->name('master.batch');
-            Route::post('/batch', [\App\Http\Controllers\Knmp\Master\BatchController::class, 'store'])->defaults('program', 'knmp')->name('master.batch.store');
-            Route::put('/batch/{id}', [\App\Http\Controllers\Knmp\Master\BatchController::class, 'update'])->defaults('program', 'knmp')->name('master.batch.update');
-            Route::delete('/batch/{id}', [\App\Http\Controllers\Knmp\Master\BatchController::class, 'destroy'])->defaults('program', 'knmp')->name('master.batch.destroy');
+            Route::get('/tahap', [\App\Http\Controllers\Knmp\Master\TahapController::class, 'index'])->defaults('program', 'knmp')->name('master.tahap.index');
+            Route::get('/tahap/create', [\App\Http\Controllers\Knmp\Master\TahapController::class, 'create'])->defaults('program', 'knmp')->name('master.tahap.create');
+            Route::post('/tahap', [\App\Http\Controllers\Knmp\Master\TahapController::class, 'store'])->defaults('program', 'knmp')->name('master.tahap.store');
+            Route::get('/tahap/{id}/edit', [\App\Http\Controllers\Knmp\Master\TahapController::class, 'edit'])->defaults('program', 'knmp')->name('master.tahap.edit');
+            Route::put('/tahap/{id}', [\App\Http\Controllers\Knmp\Master\TahapController::class, 'update'])->defaults('program', 'knmp')->name('master.tahap.update');
+            Route::delete('/tahap/{id}', [\App\Http\Controllers\Knmp\Master\TahapController::class, 'destroy'])->defaults('program', 'knmp')->name('master.tahap.destroy');
 
             Route::get('/vendor', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'index'])->defaults('program', 'knmp')->name('master.vendor.index');
+            Route::get('/vendor/create', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'create'])->defaults('program', 'knmp')->name('master.vendor.create');
             Route::post('/vendor', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'store'])->defaults('program', 'knmp')->name('master.vendor.store');
+            Route::get('/vendor/{id}/edit', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'edit'])->defaults('program', 'knmp')->name('master.vendor.edit');
             Route::put('/vendor/{id}', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'update'])->defaults('program', 'knmp')->name('master.vendor.update');
             Route::delete('/vendor/{id}', [\App\Http\Controllers\Knmp\Master\VendorController::class, 'destroy'])->defaults('program', 'knmp')->name('master.vendor.destroy');
+
+            Route::get('/template-crud', [\App\Http\Controllers\Knmp\Master\CrudTemplateController::class, 'index'])->defaults('program', 'knmp')->name('master.template-crud.index');
+            Route::get('/template-crud/create', [\App\Http\Controllers\Knmp\Master\CrudTemplateController::class, 'create'])->defaults('program', 'knmp')->name('master.template-crud.create');
+            Route::post('/template-crud', [\App\Http\Controllers\Knmp\Master\CrudTemplateController::class, 'store'])->defaults('program', 'knmp')->name('master.template-crud.store');
+            Route::get('/template-crud/{id}/edit', [\App\Http\Controllers\Knmp\Master\CrudTemplateController::class, 'edit'])->defaults('program', 'knmp')->name('master.template-crud.edit');
+            Route::put('/template-crud/{id}', [\App\Http\Controllers\Knmp\Master\CrudTemplateController::class, 'update'])->defaults('program', 'knmp')->name('master.template-crud.update');
+            Route::delete('/template-crud/{id}', [\App\Http\Controllers\Knmp\Master\CrudTemplateController::class, 'destroy'])->defaults('program', 'knmp')->name('master.template-crud.destroy');
         });
 
         // Calon Lokasi - All authenticated users (with per-action authorization in controller)
@@ -116,48 +127,40 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==========================================
-    // Bioflok Routes - Super Admin, Admin Roren, Verifikator
+    // Budidaya Tematik (Bioflok) Routes - Super Admin, Admin Roren, Verifikator
     // ==========================================
     Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {
-        Route::prefix('dashboard/bioflok')->name('program.bioflok.dashboard.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('index');
-            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
-            Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
-            Route::get('/export-pdf', [\App\Http\Controllers\Bioflok\DashboardController::class, 'exportProduksiPdf'])->defaults('program', 'bioflok')->name('export-pdf');
-            Route::get('/produksi/export-pdf', [\App\Http\Controllers\Bioflok\DashboardController::class, 'exportProduksiPdf'])->defaults('program', 'bioflok')->name('produksi.export-pdf');
+        Route::prefix('dashboard/budidaya-tematik')->name('program.budidaya-tematik.dashboard.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('index');
+            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'budidaya-tematik')->name('progres-fisik');
+            Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('produksi');
+            Route::get('/export-pdf', [\App\Http\Controllers\Bioflok\DashboardController::class, 'exportProduksiPdf'])->defaults('program', 'budidaya-tematik')->name('export-pdf');
+            Route::get('/produksi/export-pdf', [\App\Http\Controllers\Bioflok\DashboardController::class, 'exportProduksiPdf'])->defaults('program', 'budidaya-tematik')->name('produksi.export-pdf');
         });
-        Route::prefix('evaluasi/bioflok')->name('program.bioflok.evaluasi.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'bioflok')->name('index');
-            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
-            Route::get('/produksi', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
+        Route::prefix('evaluasi/budidaya-tematik')->name('program.budidaya-tematik.evaluasi.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('index');
+            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'progresFisik'])->defaults('program', 'budidaya-tematik')->name('progres-fisik');
+            Route::get('/produksi', [\App\Http\Controllers\Bioflok\EvaluasiController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('produksi');
         });
-        Route::prefix('operasional/bioflok')->name('program.bioflok.operasional.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('index');
-            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'bioflok')->name('progres-fisik');
-            Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'bioflok')->name('produksi');
+        Route::prefix('operasional/budidaya-tematik')->name('program.budidaya-tematik.operasional.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('index');
+            Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'budidaya-tematik')->name('progres-fisik');
+            Route::get('/produksi', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('produksi');
         });
     });
 
     // ==========================================
-    // Bioflok Master Routes
+    // Budidaya Tematik Master Routes
     // ==========================================
     Route::middleware('role:super_admin,admin_roren,verifikator,user_daerah')->group(function () {
-        Route::prefix('master/bioflok')->name('program.bioflok.master.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'bioflok')->name('index');
-            Route::get('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'bioflok')->name('kdkmp.index');
-            Route::post('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'store'])->defaults('program', 'bioflok')->name('kdkmp.store');
-            Route::put('/kdkmp/{id}', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'update'])->defaults('program', 'bioflok')->name('kdkmp.update');
-            Route::delete('/kdkmp/{id}', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'destroy'])->defaults('program', 'bioflok')->name('kdkmp.destroy');
+        Route::prefix('master/budidaya-tematik')->name('program.budidaya-tematik.master.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'budidaya-tematik')->name('index');
+            Route::get('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'budidaya-tematik')->name('kdkmp.index');
+            Route::post('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'store'])->defaults('program', 'budidaya-tematik')->name('kdkmp.store');
+            Route::put('/kdkmp/{id}', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'update'])->defaults('program', 'budidaya-tematik')->name('kdkmp.update');
+            Route::delete('/kdkmp/{id}', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'destroy'])->defaults('program', 'budidaya-tematik')->name('kdkmp.destroy');
         });
     });
-
-    // ==========================================
-    // Redirect Budidaya Tematik -> Bioflok
-    // ==========================================
-    Route::redirect('/dashboard/budidaya-tematik', '/dashboard/bioflok');
-    Route::redirect('/master/budidaya-tematik', '/master/bioflok/kdkmp');
-    Route::redirect('/operasional/budidaya-tematik', '/operasional/bioflok');
-    Route::redirect('/evaluasi/budidaya-tematik', '/evaluasi/bioflok');
 
     // ==========================================
     // Default Program Routes

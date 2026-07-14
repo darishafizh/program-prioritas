@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Data Produksi KDKMP Bioflok</title>
+    <title>Laporan Data Produksi KDKMP Budidaya Tematik</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 10px; color: #333; margin: 0; padding: 0; }
         .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
@@ -40,7 +40,7 @@
     </div>
 
     <div class="sub-header">
-        <h3>Laporan Data Produksi KDKMP Bioflok</h3>
+        <h3>Laporan Data Produksi KDKMP Budidaya Tematik</h3>
         <p>Periode: <strong>{{ $bulanName ?? 'Keseluruhan' }}</strong> | Dicetak pada: {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y H:i') }}</p>
     </div>
 

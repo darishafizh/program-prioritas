@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Bioflok - Evaluasi Kinerja Produksi')
+@section('title', 'Budidaya Tematik - Evaluasi Kinerja Produksi')
 
 @section('content')
     <div x-data>
         {{-- Header & Filter Sejajar --}}
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Evaluasi Kinerja Produksi Bioflok</h2>
+                <h2 class="text-xl font-semibold tracking-tight">Evaluasi Kinerja Produksi Budidaya Tematik</h2>
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Analisis mendalam efisiensi pakan (FCR), tingkat kelangsungan hidup ikan (SR), dan deviasi target panen.</p>
             </div>
 
@@ -89,10 +89,12 @@
         </div>
 
         {{-- Grafik Komparasi Target vs Realisasi Produksi --}}
-        <div class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6">
-            <h3 class="text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">Perbandingan Target vs Realisasi Produksi Bioflok per KDKMP (Ton)</h3>
+        <div class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 min-w-0 overflow-hidden">
+            <h3 class="text-sm font-medium text-textMain-light dark:text-textMain-dark mb-1">Perbandingan Target vs Realisasi Produksi Budidaya Tematik per KDKMP (Ton)</h3>
             <p class="text-xs text-textMuted-light mb-6">Grafik evaluasi volume hasil panen terhadap target rencana pada siklus berjalan.</p>
-            <div id="evaluasiProduksiChart" class="w-full h-64 sm:h-72"></div>
+            <div class="relative w-full h-64 sm:h-72 min-w-0">
+                <div id="evaluasiProduksiChart" class="w-full h-full min-w-0 overflow-hidden"></div>
+            </div>
         </div>
 
         {{-- Table Evaluasi Kinerja Produksi KDKMP --}}
@@ -110,9 +112,7 @@
                         <tr>
                             <th class="py-4 px-6 w-12 text-center">No</th>
                             <th class="py-4 px-6">KDKMP & Wilayah</th>
-                            <th class="py-4 px-6 text-center">Target</th>
-                            <th class="py-4 px-6 text-center">Realisasi</th>
-                            <th class="py-4 px-6 text-center">Capaian</th>
+                            <th class="py-4 px-6">Target & Realisasi</th>
                             <th class="py-4 px-6 text-center">SR / FCR</th>
                             <th class="py-4 px-6 text-center">Status Evaluasi</th>
                             <th class="py-4 px-6">Rekomendasi / Tindak Lanjut</th>
@@ -127,16 +127,20 @@
                                 <div class="font-semibold text-textMain-light dark:text-white">{{ $row['kdkmp'] }}</div>
                                 <div class="text-[11px] text-textMuted-light mt-0.5 truncate"><i class="fa-solid fa-location-dot mr-1"></i>{{ $row['lokasi'] }}</div>
                             </td>
-                            <td class="py-4 px-6 text-center font-semibold text-textMuted-light whitespace-nowrap">{{ $row['target_ton'] }} Ton</td>
-                            <td class="py-4 px-6 text-center font-bold text-textMain-light dark:text-white whitespace-nowrap">{{ $row['realisasi_ton'] }} Ton</td>
-                            <td class="py-4 px-6 text-center whitespace-nowrap">
-                                @if($row['capaian_persen'] >= 100)
-                                    <span class="text-success font-bold">{{ $row['capaian_persen'] }}%</span>
-                                @elseif($row['capaian_persen'] >= 90)
-                                    <span class="text-textMain-light font-bold">{{ $row['capaian_persen'] }}%</span>
-                                @else
-                                    <span class="text-danger font-bold">{{ $row['capaian_persen'] }}%</span>
-                                @endif
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                <div class="flex flex-col gap-1 w-32">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-textMuted-light">Aktual: <span class="font-bold text-textMain-light dark:text-white">{{ $row['realisasi_ton'] }}</span> Ton</span>
+                                        @if($row['capaian_persen'] >= 100)
+                                            <span class="text-success font-bold text-[10px]">{{ $row['capaian_persen'] }}%</span>
+                                        @elseif($row['capaian_persen'] >= 90)
+                                            <span class="text-textMain-light font-bold text-[10px]">{{ $row['capaian_persen'] }}%</span>
+                                        @else
+                                            <span class="text-danger font-bold text-[10px]">{{ $row['capaian_persen'] }}%</span>
+                                        @endif
+                                    </div>
+                                    <div class="text-[10px] text-textMuted-light">Target: {{ $row['target_ton'] }} Ton</div>
+                                </div>
                             </td>
                             <td class="py-4 px-6 text-center whitespace-nowrap">
                                 <div class="font-bold text-textMain-light dark:text-white">SR: {{ $row['survival_rate'] }}</div>

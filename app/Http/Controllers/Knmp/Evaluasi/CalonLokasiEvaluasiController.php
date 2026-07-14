@@ -105,6 +105,86 @@ class CalonLokasiEvaluasiController extends ProgramBaseController
         $totalDitetapkan = collect($calonLokasiData)->where('status_tahapan', 'penetapan')->count();
         $totalDitolak = collect($calonLokasiData)->where('status_tahapan', 'ditolak')->count();
 
+        // === ANALYTICAL DATA ===
+
+        $stageOrder = ['pengajuan', 'verif_admin', 'ba_aktivasi', 'verif_teknis', 'ba_calon', 'penetapan'];
+        $stageLabels = [
+            'pengajuan' => 'Pengajuan',
+            'verif_admin' => 'Verif Admin',
+            'ba_aktivasi' => 'BA Aktivasi',
+            'verif_teknis' => 'Verif Teknis',
+            'ba_calon' => 'BA Calon',
+            'penetapan' => 'Penetapan',
+        ];
+
+        // 1. Funnel: cumulative count (locations that have reached or passed each stage)
+        $funnel = [];
+        foreach ($stageOrder as $idx => $stage) {
+            $count = collect($calonLokasiData)->filter(function ($item) use ($stageOrder, $idx) {
+                $itemIdx = array_search($item['status_tahapan'], $stageOrder);
+                return $itemIdx !== false && $itemIdx >= $idx;
+            })->count();
+            $funnel[$stage] = $count;
+        }
+        // Adjust: funnel should show how many entered each stage (cumulative from start)
+        $funnelCumulative = [];
+        foreach ($stageOrder as $idx => $stage) {
+            $reached = collect($calonLokasiData)->filter(function ($item) use ($stageOrder, $idx) {
+                $itemIdx = array_search($item['status_tahapan'], $stageOrder);
+                if ($itemIdx === false) return false;
+                return $itemIdx >= $idx;
+            })->count();
+            $funnelCumulative[$stage] = $reached;
+        }
+
+        // 2. Conversion rate per stage
+        $conversionRate = [];
+        foreach ($stageOrder as $idx => $stage) {
+            if ($idx === 0) {
+                $conversionRate[$stage] = 100;
+            } else {
+                $prevCount = $funnelCumulative[$stageOrder[$idx - 1]] ?? 0;
+                $currCount = $funnelCumulative[$stage] ?? 0;
+                $conversionRate[$stage] = $prevCount > 0 ? round(($currCount / $prevCount) * 100, 1) : 0;
+            }
+        }
+
+        // 3. Rejection rate
+        $rejectionRate = $totalCalonLokasi > 0 ? round(($totalDitolak / $totalCalonLokasi) * 100, 1) : 0;
+
+        // 4. Insight text
+        if ($totalCalonLokasi > 0) {
+            $overallConversion = $totalCalonLokasi > 0 ? round(($totalDitetapkan / $totalCalonLokasi) * 100, 1) : 0;
+            
+            $insightParts = [];
+            $insightParts[] = "Dari <strong>{$totalCalonLokasi} calon lokasi</strong>, <strong>{$totalDitetapkan}</strong> ({$overallConversion}%) berhasil mencapai <span class='text-success font-semibold'>Penetapan</span>";
+
+            // Find stage with biggest dropout
+            $maxDropout = 0;
+            $dropoutStage = '';
+            foreach ($stageOrder as $idx => $stage) {
+                if ($idx === 0) continue;
+                $prev = $funnelCumulative[$stageOrder[$idx - 1]] ?? 0;
+                $curr = $funnelCumulative[$stage] ?? 0;
+                $dropout = $prev - $curr;
+                if ($dropout > $maxDropout) {
+                    $maxDropout = $dropout;
+                    $dropoutStage = $stageOrder[$idx - 1];
+                }
+            }
+            if ($dropoutStage && $maxDropout > 0) {
+                $insightParts[] = "Tahap <span class='text-warning font-semibold'>" . ($stageLabels[$dropoutStage] ?? $dropoutStage) . "</span> memiliki <strong>dropout tertinggi</strong> ({$maxDropout} lokasi)";
+            }
+
+            if ($totalDitolak > 0) {
+                $insightParts[] = "<strong>{$totalDitolak} lokasi</strong> ({$rejectionRate}%) berstatus <span class='text-danger font-semibold'>Ditolak</span>";
+            }
+
+            $insightText = implode('. ', $insightParts) . '.';
+        } else {
+            $insightText = 'Belum ada data calon lokasi untuk dianalisis pada filter yang dipilih.';
+        }
+
         return view('programs.knmp.evaluasi.calon-lokasi', [
             'activeModule' => 'Evaluasi',
             'activeProgram' => $activeProgram,
@@ -116,6 +196,11 @@ class CalonLokasiEvaluasiController extends ProgramBaseController
                 'verifikasi' => $totalVerifikasi,
                 'ditetapkan' => $totalDitetapkan,
                 'ditolak' => $totalDitolak,
+                'funnel' => $funnelCumulative,
+                'conversion_rate' => $conversionRate,
+                'rejection_rate' => $rejectionRate,
+                'stage_labels' => $stageLabels,
+                'insight_text' => $insightText,
             ],
         ]);
     }

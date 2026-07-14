@@ -3,12 +3,12 @@
 @section('title', 'KNMP - Evaluasi Operasional Proyek')
 
 @section('content')
-    <div x-data="evaluasiOperasionalManager()">
+    <div x-data="evaluasiOperasionalManager()" class="min-w-0 overflow-hidden">
 
         {{-- Header --}}
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Evaluasi Operasional Proyek</h2>
+                <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Evaluasi Operasional Proyek</h2>
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Evaluasi historis
                     perjalanan proyek KNMP — dari usulan hingga serah terima.</p>
             </div>
@@ -38,7 +38,7 @@
 
                 @can('generate-pdf')
                 <button type="button" @click="isPdfModalOpen = true"
-                    class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2">
+                    class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-md text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
                     <i class="fa-solid fa-file-pdf"></i> Generate PDF
                 </button>
                 @endcan
@@ -68,26 +68,40 @@
             @endforeach
         </div>
 
-        {{-- Total Summary Banner --}}
-        <div
-            class="mb-6 bg-gradient-to-r from-teal-light/5 to-blue-500/5 dark:from-teal-light/10 dark:to-blue-500/10 border border-teal-light/20 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-light/20 flex items-center justify-center text-teal-light"><i
-                        class="fa-solid fa-chart-simple"></i></div>
-                <div>
-                    <div class="text-xs font-medium text-textMuted-light dark:text-textMuted-dark">Total Lokasi KNMP
-                        Terdaftar</div>
-                    <div class="text-lg font-bold text-textMain-light dark:text-textMain-dark">{{ $stats['total'] }} <span
-                            class="text-sm font-normal text-textMuted-light">Lokasi</span></div>
+        {{-- Insight Banner --}}
+        <div class="mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-bgSurface-light to-blue-50 dark:from-bgSurface-dark dark:to-blue-900/10 border border-teal-light/20 dark:border-teal-light/10 p-5 sm:p-6">
+            <div class="absolute top-0 right-0 p-6 opacity-5 dark:opacity-10 pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass-chart text-7xl text-teal-light"></i>
+            </div>
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 text-teal-light dark:text-teal-400 font-medium text-[11px] tracking-widest uppercase mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-light animate-pulse"></span> Insight Evaluasi
+                </div>
+                <p class="text-xs text-textMain-light dark:text-textMain-dark leading-relaxed font-medium">
+                    {!! $stats['insight_text'] !!}
+                </p>
+            </div>
+        </div>
+
+        {{-- Chart Row: Distribusi Tahap + Durasi per Tahap --}}
+        <div class="grid grid-cols-2 gap-6 mb-6">
+            {{-- Bar Chart: Distribusi Lokasi per Tahap --}}
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 flex flex-col min-w-0">
+                <h3 class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2 mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
+                    <i class="fa-solid fa-chart-bar text-teal-light flex-shrink-0"></i> <span class="truncate">Distribusi Lokasi per Tahap</span>
+                </h3>
+                <div class="flex-1 min-h-[260px] min-w-0">
+                    <div id="chart-distribusi-tahap" class="w-full h-full min-w-0"></div>
                 </div>
             </div>
-            <div class="flex items-center gap-4 text-xs">
-                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-success"></span> <span
-                        class="text-textMuted-light">Selesai: <strong
-                            class="text-success">{{ $stats['per_tahap']['serah_terima'] ?? 0 }}</strong></span></div>
-                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-warning"></span> <span
-                        class="text-textMuted-light">Dalam Proses: <strong
-                            class="text-warning">{{ ($stats['total'] ?? 0) - ($stats['per_tahap']['serah_terima'] ?? 0) }}</strong></span>
+
+            {{-- Horizontal Bar Chart: Rata-rata Durasi per Tahap --}}
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 flex flex-col min-w-0">
+                <h3 class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2 mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
+                    <i class="fa-solid fa-clock text-orange-500 flex-shrink-0"></i> <span class="truncate">Rata-rata Durasi per Tahap (Hari)</span>
+                </h3>
+                <div class="flex-1 min-h-[260px] min-w-0">
+                    <div id="chart-durasi-tahap" class="w-full h-full min-w-0"></div>
                 </div>
             </div>
         </div>
@@ -130,39 +144,28 @@
             {{-- Table --}}
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">Nama KNMP</th>
-                            <th class="px-6 py-4">Wilayah</th>
-                            <th class="px-6 py-4">Tipe</th>
-                            <th class="px-6 py-4">Tahap</th>
-                            <th class="px-6 py-4 min-w-[420px]">Tracking Operasional</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>KNMP & Tipe</x-table.th>
+                        <x-table.th>Wilayah & Tahap</x-table.th>
+                        <x-table.th class="min-w-[400px]">Tracking Operasional</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="(item, index) in paginatedData()" :key="index">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.nama">
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-textMuted-light" x-text="item.kabupaten"></div>
-                                    <div class="text-[10px] text-gray-400" x-text="item.provinsi"></div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-0.5 rounded-md text-[0.65rem] font-medium"
-                                        :class="item.status === 'Hub' ? 'bg-teal-light/10 text-teal-light' :
-                                            'bg-warning/10 text-warning'"
+                            <x-table.tr>
+                                <x-table.td>
+                                    <div class="font-medium text-textMain-light dark:text-textMain-dark whitespace-normal min-w-[120px]" x-text="item.nama"></div>
+                                    <span class="inline-block mt-1 px-2 py-0.5 rounded-md text-[0.65rem] font-medium"
+                                        :class="item.status === 'Hub' ? 'bg-teal-light/10 text-teal-light' : 'bg-warning/10 text-warning'"
                                         x-text="item.status"></span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium"
+                                </x-table.td>
+                                <x-table.td>
+                                    <div class="text-textMuted-light whitespace-normal min-w-[100px]" x-text="item.kabupaten"></div>
+                                    <div class="text-[10px] text-gray-400 mb-1" x-text="item.provinsi"></div>
+                                    <span class="inline-block px-2.5 py-1 rounded-md text-[0.7rem] font-medium"
                                         :class="tahapColors[item.tahap_saat_ini] || 'bg-gray-100 text-gray-500'"
                                         x-text="tahapLabels[item.tahap_saat_ini] || item.tahap_saat_ini"></span>
-                                </td>
-                                <td class="px-6 py-4">
+                                </x-table.td>
+                                <x-table.td>
                                     {{-- Visual Stepper --}}
                                     <div class="flex items-center gap-0">
                                         <template x-for="(stage, sIdx) in item.stages" :key="stage.key">
@@ -198,14 +201,13 @@
                                             </div>
                                         </template>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                        <tr x-show="paginatedData().length === 0">
-                            <td colspan="5" class="px-6 py-8 text-center text-textMuted-light">Belum ada data atau
-                                tidak ada hasil pencarian.</td>
-                        </tr>
-                    </tbody>
+                        <x-table.tr x-show="paginatedData().length === 0">
+                            <x-table.td colspan="3" class="px-6 py-8 text-center text-textMuted-light">Belum ada data atau tidak ada hasil pencarian.</x-table.td>
+                        </x-table.tr>
+                    </x-table.tbody>
                 </table>
             </div>
 
@@ -274,10 +276,10 @@
                     </div>
                     <div class="mt-8 flex justify-end gap-3">
                         <button type="button" @click="isPdfModalOpen = false"
-                            class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                            class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center gap-2"><i class="fa-solid fa-xmark"></i> <span>Batal</span></button>
                         <button type="submit"
-                            class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2"><i
-                                class="fa-solid fa-download"></i> Generate PDF</button>
+                            class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2 cursor-pointer shadow-sm"><i
+                                class="fa-solid fa-download"></i> <span>Generate PDF</span></button>
                     </div>
                 </form>
             </div>
@@ -365,4 +367,126 @@
             }));
         });
     </script>
+
+    {{-- ApexCharts for Evaluasi Operasional --}}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+
+            const stageLabels = @json($stats['stage_labels']);
+            const perTahap = @json($stats['per_tahap']);
+            const avgDuration = @json($stats['avg_duration_days']);
+            const bottleneck = @json($stats['bottleneck_stage']);
+
+            const stageKeys = Object.keys(stageLabels);
+            const stageNames = stageKeys.map(k => stageLabels[k]);
+            const stageColors = ['#3b82f6', '#14b8a6', '#8b5cf6', '#f59e0b', '#f97316', '#10b981'];
+
+            // 1. Bar Chart — Distribusi Lokasi per Tahap
+            const distEl = document.querySelector('#chart-distribusi-tahap');
+            if (distEl) {
+                new ApexCharts(distEl, {
+                    chart: {
+                        type: 'bar',
+                        height: 260,
+                        background: 'transparent',
+                        fontFamily: 'Inter, sans-serif',
+                        toolbar: { show: false },
+                    },
+                    series: [{ name: 'Jumlah Lokasi', data: stageKeys.map(k => perTahap[k] || 0) }],
+                    xaxis: {
+                        categories: stageNames,
+                        labels: { style: { fontSize: '10px', colors: textColor } },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                    },
+                    yaxis: {
+                        labels: {
+                            style: { fontSize: '10px', colors: textColor },
+                            formatter: v => Math.round(v),
+                        }
+                    },
+                    colors: stageColors,
+                    plotOptions: {
+                        bar: {
+                            columnWidth: '50%',
+                            borderRadius: 6,
+                            borderRadiusApplication: 'end',
+                            distributed: true,
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        style: { fontSize: '11px', fontWeight: 700 },
+                        offsetY: -18,
+                        formatter: v => v > 0 ? v : '',
+                    },
+                    grid: {
+                        borderColor: isDark ? '#1e293b' : '#f1f5f9',
+                        strokeDashArray: 4,
+                    },
+                    legend: { show: false },
+                    tooltip: { theme: isDark ? 'dark' : 'light' },
+                }).render();
+            }
+
+            // 2. Horizontal Bar Chart — Rata-rata Durasi per Tahap
+            const durEl = document.querySelector('#chart-durasi-tahap');
+            const durKeys = Object.keys(avgDuration);
+            if (durEl && durKeys.length > 0) {
+                const durColors = durKeys.map(k => k === bottleneck ? '#ef4444' : '#14b8a6');
+                new ApexCharts(durEl, {
+                    chart: {
+                        type: 'bar',
+                        height: 260,
+                        background: 'transparent',
+                        fontFamily: 'Inter, sans-serif',
+                        toolbar: { show: false },
+                    },
+                    series: [{ name: 'Rata-rata (Hari)', data: durKeys.map(k => avgDuration[k]) }],
+                    xaxis: {
+                        categories: durKeys.map(k => stageLabels[k] || k),
+                        labels: { style: { fontSize: '10px', colors: textColor } },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                    },
+                    yaxis: {
+                        labels: {
+                            style: { fontSize: '10px', colors: textColor },
+                            formatter: v => v + ' hari',
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            barHeight: '55%',
+                            borderRadius: 4,
+                            borderRadiusApplication: 'end',
+                            distributed: true,
+                        }
+                    },
+                    colors: durColors,
+                    dataLabels: {
+                        enabled: true,
+                        style: { fontSize: '10px', fontWeight: 600 },
+                        formatter: v => v > 0 ? v + ' hari' : '—',
+                    },
+                    grid: {
+                        borderColor: isDark ? '#1e293b' : '#f1f5f9',
+                        strokeDashArray: 4,
+                    },
+                    legend: { show: false },
+                    tooltip: {
+                        theme: isDark ? 'dark' : 'light',
+                        y: { formatter: v => v + ' hari' },
+                    },
+                }).render();
+            } else if (durEl) {
+                durEl.innerHTML = '<div class="flex items-center justify-center h-full text-textMuted-light dark:text-textMuted-dark text-xs">Belum ada data durasi</div>';
+            }
+        });
+    </script>
 @endsection
+

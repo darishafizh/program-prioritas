@@ -25,29 +25,29 @@
         <div
             class="bg-white dark:bg-bgSurface-dark rounded-2xl border border-gray-100 dark:border-gray-800 p-2 overflow-hidden">
             <div class="flex items-center w-full">
-                @foreach ($stages as $key => $data)
-                    <a href="?stage={{ $key }}"
-                        class="flex items-center group relative py-2 px-2 cursor-pointer {{ $loop->last ? '' : 'flex-1' }}">
+                <template x-for="(data, key, index) in stages" :key="key">
+                    <a href="#" @click.prevent="switchStage(key)"
+                        class="flex items-center group relative py-2 px-2 cursor-pointer"
+                        :class="{ 'flex-1': key !== 'penetapan' }">
                         <div class="flex items-center gap-2 relative z-10 shrink-0">
-                            <div
-                                class="w-7 h-7 rounded-full flex items-center justify-center font-medium text-xs transition-colors
- {{ $currentStage === $key ? 'bg-teal-light text-white ' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 group-hover:bg-teal-light/20 group-hover:text-teal-light' }}">
-                                <i class="fa-solid {{ $data['icon'] }} text-[10px]"></i>
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center font-medium text-xs transition-colors"
+                                :class="currentStage === key ? 'bg-teal-light text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 group-hover:bg-teal-light/20 group-hover:text-teal-light'">
+                                <i class="fa-solid text-[10px]" :class="data.icon"></i>
                             </div>
-                            <span
-                                class="font-medium text-xs transition-colors whitespace-normal max-w-[90px] leading-[1.1] {{ $currentStage === $key ? 'text-teal-light' : 'text-textMuted-light dark:text-textMuted-dark group-hover:text-teal-light' }}">
-                                {{ $data['label'] }}
+                            <span class="font-medium text-xs transition-colors whitespace-normal max-w-[90px] leading-[1.1]"
+                                :class="currentStage === key ? 'text-teal-light' : 'text-textMuted-light dark:text-textMuted-dark group-hover:text-teal-light'"
+                                x-text="data.label">
                             </span>
                         </div>
-                        @if (!$loop->last)
+                        <template x-if="key !== 'penetapan'">
                             <div class="flex-1 h-px bg-gray-300 dark:bg-gray-700 mx-2 min-w-[10px]"></div>
-                        @endif
+                        </template>
 
-                        @if ($currentStage === $key)
+                        <template x-if="currentStage === key">
                             <div class="absolute inset-0 bg-teal-light/5 dark:bg-teal-600/10 rounded-xl"></div>
-                        @endif
+                        </template>
                     </a>
-                @endforeach
+                </template>
             </div>
         </div>
 
@@ -57,13 +57,10 @@
             :show-per-page="true"
             :custom-table="true">
             <x-slot name="actions">
-                @if ($currentStage === 'pengajuan')
-                    @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah() || \Illuminate\Support\Facades\Auth::user()->isSuperAdmin())
-                        <a href="{{ route('program.master.calon-lokasi.create') }}"
-                            class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 shadow-sm shrink-0 whitespace-nowrap">
-                            Tambah Pengajuan <i class="fa-solid fa-plus"></i>
-                        </a>
-                    @endif
+                @if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah() || \Illuminate\Support\Facades\Auth::user()->isSuperAdmin())
+                    <div x-show="currentStage === 'pengajuan'">
+                        <x-button-add href="{{ route('program.master.calon-lokasi.create') }}" label="Tambah Pengajuan" icon="fa-plus" />
+                    </div>
                 @endif
             </x-slot>
             <x-slot name="search">
@@ -76,29 +73,26 @@
 
                 <!-- TABLE 1: PENGAJUAN PROPOSAL -->
                 <table x-show="currentStage === 'pengajuan'" class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">Pengusul</th>
-                            <th class="px-6 py-4">Usulan Lokasi</th>
-                            <th class="px-6 py-4">Tanggal Pengajuan</th>
-                            <th class="px-6 py-4 text-center">Dokumen</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>Pengusul</x-table.th>
+                        <x-table.th>Usulan Lokasi</x-table.th>
+                        <x-table.th>Tanggal Pengajuan</x-table.th>
+                        <x-table.th align="center">Dokumen</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="item in filterData(proposals)" :key="item.id">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4"><a href="#" class="font-medium text-teal-light hover:underline"
-                                        x-text="item.idUser"></a></td>
-                                <td class="px-6 py-4">
+                            <x-table.tr>
+                                <x-table.td><a href="#" class="font-medium text-teal-light hover:underline"
+                                        x-text="item.idUser"></a></x-table.td>
+                                <x-table.td>
                                     <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.desa">
                                     </div>
                                     <div class="text-[11px] text-textMuted-light dark:text-textMuted-dark mt-0.5"
                                         x-text="`${item.kecamatan}, ${item.kabupaten}, ${item.provinsi}`"></div>
-                                </td>
-                                <td class="px-6 py-4 text-textMuted-light" x-text="item.tanggal"></td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td class="text-textMuted-light" x-text="item.tanggal"></x-table.td>
+                                <x-table.td align="center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
                                             class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer"
@@ -107,8 +101,8 @@
                                     <template x-if="!item.dokumen">
                                         <span class="text-gray-400 dark:text-gray-600">-</span>
                                     </template>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <div class="flex items-center justify-center gap-2">
                                         <button type="button" @click="openDetailModal(item)"
                                             class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
@@ -123,38 +117,40 @@
                                             @endcan
                                         </template>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                    </tbody>
+                        <tr x-show="filterData(proposals).length === 0">
+                            <x-table.td colspan="5" align="center" class="py-8 text-textMuted-light">
+                                Belum ada data pengajuan proposal atau tidak ada hasil pencarian.
+                            </x-table.td>
+                        </tr>
+                    </x-table.tbody>
                 </table>
 
                 <!-- TABLE 2: VERIFIKASI ADMINISTRASI -->
                 <table x-show="currentStage === 'verif-admin'" style="display: none;"
                     class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">ID User</th>
-                            <th class="px-6 py-4">Usulan Lokasi</th>
-                            <th class="px-6 py-4 text-center">Dokumen</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>ID User</x-table.th>
+                        <x-table.th>Usulan Lokasi</x-table.th>
+                        <x-table.th align="center">Dokumen</x-table.th>
+                        <x-table.th>Status</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="item in filterData(verifList)" :key="item.id">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4"><span
+                            <x-table.tr>
+                                <x-table.td><span
                                         class="font-medium text-teal-light cursor-pointer hover:underline"
-                                        x-text="item.idUser"></span></td>
-                                <td class="px-6 py-4">
+                                        x-text="item.idUser"></span></x-table.td>
+                                <x-table.td>
                                     <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.desa">
                                     </div>
                                     <div class="text-[11px] text-textMuted-light dark:text-textMuted-dark mt-0.5"
                                         x-text="item.kabupaten"></div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
                                             class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
@@ -163,13 +159,13 @@
                                     <template x-if="!item.dokumen">
                                         <span class="text-gray-400 dark:text-gray-600">-</span>
                                     </template>
-                                </td>
-                                <td class="px-6 py-4">
+                                </x-table.td>
+                                <x-table.td>
                                     <span
                                         class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light"
                                         x-text="item.status"></span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <div class="flex items-center justify-center gap-2">
                                         @can('verify-calon-lokasi')
                                             <button type="button" @click="openVerifAdminModal(item)"
@@ -181,37 +177,39 @@
                                             class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                             title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                    </tbody>
+                        <tr x-show="filterData(verifList).length === 0">
+                            <x-table.td colspan="5" align="center" class="py-8 text-textMuted-light">
+                                Belum ada data verifikasi administrasi atau tidak ada hasil pencarian.
+                            </x-table.td>
+                        </tr>
+                    </x-table.tbody>
                 </table>
 
                 <!-- TABLE 3: BA AKTIVASI -->
                 <table x-show="currentStage === 'ba-aktivasi'" style="display: none;"
                     class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">ID User</th>
-                            <th class="px-6 py-4">Usulan Lokasi</th>
-                            <th class="px-6 py-4 text-center">Berita Acara</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>ID User</x-table.th>
+                        <x-table.th>Usulan Lokasi</x-table.th>
+                        <x-table.th align="center">Berita Acara</x-table.th>
+                        <x-table.th>Status</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="item in filterData(baAktivasiList)" :key="item.id">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4"><span
+                            <x-table.tr>
+                                <x-table.td><span
                                         class="font-medium text-teal-light cursor-pointer hover:underline"
-                                        x-text="item.idUser"></span></td>
-                                <td class="px-6 py-4">
+                                        x-text="item.idUser"></span></x-table.td>
+                                <x-table.td>
                                     <div class="font-medium text-textMain-light dark:text-textMain-dark"
                                         x-text="item.desa"></div>
                                     <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
                                             class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
@@ -220,13 +218,13 @@
                                     <template x-if="!item.dokumen">
                                         <span class="text-gray-400 dark:text-gray-600">-</span>
                                     </template>
-                                </td>
-                                <td class="px-6 py-4">
+                                </x-table.td>
+                                <x-table.td>
                                     <span
                                         class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-warning/10 text-warning"
                                         x-text="item.status"></span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <div class="flex items-center justify-center gap-2">
                                         @can('manage-calon-lokasi')
                                             <button type="button" @click="openUploadBaAktivasiModal(item)"
@@ -238,35 +236,37 @@
                                             class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                             title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                    </tbody>
+                        <tr x-show="filterData(baAktivasiList).length === 0">
+                            <x-table.td colspan="5" align="center" class="py-8 text-textMuted-light">
+                                Belum ada data Berita Acara Aktivasi atau tidak ada hasil pencarian.
+                            </x-table.td>
+                        </tr>
+                    </x-table.tbody>
                 </table>
 
                 <!-- TABLE 4: VERIFIKASI TEKNIS LAPANGAN -->
                 <table x-show="currentStage === 'verif-teknis'" style="display: none;"
                     class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">ID User</th>
-                            <th class="px-6 py-4">Usulan Lokasi</th>
-                            <th class="px-6 py-4 text-center">Dokumen</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>ID User</x-table.th>
+                        <x-table.th>Usulan Lokasi</x-table.th>
+                        <x-table.th align="center">Dokumen</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="item in filterData(verifTeknisList)" :key="item.id">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4"><span
+                            <x-table.tr>
+                                <x-table.td><span
                                         class="font-medium text-teal-light cursor-pointer hover:underline"
-                                        x-text="item.idUser"></span></td>
-                                <td class="px-6 py-4">
+                                        x-text="item.idUser"></span></x-table.td>
+                                <x-table.td>
                                     <div class="font-medium text-textMain-light dark:text-textMain-dark"
                                         x-text="item.desa"></div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
                                             class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
@@ -275,8 +275,8 @@
                                     <template x-if="!item.dokumen">
                                         <span class="text-gray-400 dark:text-gray-600">-</span>
                                     </template>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <div class="flex items-center justify-center gap-2">
                                         @can('verify-calon-lokasi')
                                             <button type="button" @click="openVerifTeknisModal(item)"
@@ -288,37 +288,39 @@
                                             class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                             title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                    </tbody>
+                        <tr x-show="filterData(verifTeknisList).length === 0">
+                            <x-table.td colspan="4" align="center" class="py-8 text-textMuted-light">
+                                Belum ada data verifikasi teknis lapangan atau tidak ada hasil pencarian.
+                            </x-table.td>
+                        </tr>
+                    </x-table.tbody>
                 </table>
 
                 <!-- TABLE 5: BA CALON -->
                 <table x-show="currentStage === 'ba-calon'" style="display: none;"
                     class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">ID User</th>
-                            <th class="px-6 py-4">Usulan Lokasi</th>
-                            <th class="px-6 py-4 text-center">Berita Acara</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>ID User</x-table.th>
+                        <x-table.th>Usulan Lokasi</x-table.th>
+                        <x-table.th align="center">Berita Acara</x-table.th>
+                        <x-table.th>Status</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="item in filterData(baCalonList)" :key="item.id">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4"><span
+                            <x-table.tr>
+                                <x-table.td><span
                                         class="font-medium text-teal-light cursor-pointer hover:underline"
-                                        x-text="item.idUser"></span></td>
-                                <td class="px-6 py-4">
+                                        x-text="item.idUser"></span></x-table.td>
+                                <x-table.td>
                                     <div class="font-medium text-textMain-light dark:text-textMain-dark"
                                         x-text="item.desa"></div>
                                     <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
                                             class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
@@ -327,13 +329,13 @@
                                     <template x-if="!item.dokumen">
                                         <span class="text-gray-400 dark:text-gray-600">-</span>
                                     </template>
-                                </td>
-                                <td class="px-6 py-4">
+                                </x-table.td>
+                                <x-table.td>
                                     <span
                                         class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-warning/10 text-warning"
                                         x-text="item.status"></span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <div class="flex items-center justify-center gap-2">
                                         @can('manage-calon-lokasi')
                                             <button type="button" @click="openBaCalonModal(item)"
@@ -345,37 +347,39 @@
                                             class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                             title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                    </tbody>
+                        <tr x-show="filterData(baCalonList).length === 0">
+                            <x-table.td colspan="5" align="center" class="py-8 text-textMuted-light">
+                                Belum ada data Berita Acara Calon atau tidak ada hasil pencarian.
+                            </x-table.td>
+                        </tr>
+                    </x-table.tbody>
                 </table>
 
                 <!-- TABLE 6: PENETAPAN CALON -->
                 <table x-show="currentStage === 'penetapan'" style="display: none;"
                     class="w-full text-left text-xs whitespace-nowrap">
-                    <thead
-                        class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                        <tr>
-                            <th class="px-6 py-4">ID User</th>
-                            <th class="px-6 py-4">Usulan Lokasi</th>
-                            <th class="px-6 py-4 text-center">Dokumen</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                    <x-table.thead>
+                        <x-table.th>ID User</x-table.th>
+                        <x-table.th>Usulan Lokasi</x-table.th>
+                        <x-table.th align="center">Dokumen</x-table.th>
+                        <x-table.th>Status</x-table.th>
+                        <x-table.th align="center">Aksi</x-table.th>
+                    </x-table.thead>
+                    <x-table.tbody>
                         <template x-for="item in filterData(penetapanList)" :key="item.id">
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4"><span
+                            <x-table.tr>
+                                <x-table.td><span
                                         class="font-medium text-teal-light cursor-pointer hover:underline"
-                                        x-text="item.idUser"></span></td>
-                                <td class="px-6 py-4">
+                                        x-text="item.idUser"></span></x-table.td>
+                                <x-table.td>
                                     <div class="font-medium text-textMain-light dark:text-textMain-dark"
                                         x-text="item.desa"></div>
                                     <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.kabupaten"></div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <template x-if="item.dokumen">
                                         <a :href="item.dokumen" target="_blank"
                                             class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors inline-flex items-center justify-center mx-auto cursor-pointer relative z-50"
@@ -384,13 +388,13 @@
                                     <template x-if="!item.dokumen">
                                         <span class="text-gray-400 dark:text-gray-600">-</span>
                                     </template>
-                                </td>
-                                <td class="px-6 py-4">
+                                </x-table.td>
+                                <x-table.td>
                                     <span
                                         class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-success/10 text-success border border-success/20 w-max"
                                         x-text="item.status"></span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                </x-table.td>
+                                <x-table.td align="center">
                                     <div class="flex items-center justify-center gap-2">
                                         @can('manage-calon-lokasi')
                                             <button type="button" @click="openPenetapanModal(item)"
@@ -402,10 +406,15 @@
                                             class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center cursor-pointer relative z-50"
                                             title="Detail"><i class="fa-solid fa-eye pointer-events-none"></i></button>
                                     </div>
-                                </td>
-                            </tr>
+                                </x-table.td>
+                            </x-table.tr>
                         </template>
-                    </tbody>
+                        <tr x-show="filterData(penetapanList).length === 0">
+                            <x-table.td colspan="5" align="center" class="py-8 text-textMuted-light">
+                                Belum ada data penetapan calon atau tidak ada hasil pencarian.
+                            </x-table.td>
+                        </tr>
+                    </x-table.tbody>
                 </table>
         </x-table.card>
 
@@ -921,6 +930,23 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('calonLokasiManager', (initialStage) => ({
                 currentStage: initialStage,
+                stages: {
+                    'pengajuan': { label: 'Pengajuan Proposal', icon: 'fa-file-lines' },
+                    'verif-admin': { label: 'Verif Administrasi', icon: 'fa-clipboard-check' },
+                    'ba-aktivasi': { label: 'BA Aktivasi', icon: 'fa-signature' },
+                    'verif-teknis': { label: 'Verif Teknis Lapangan', icon: 'fa-map-location-dot' },
+                    'ba-calon': { label: 'BA Calon', icon: 'fa-file-contract' },
+                    'penetapan': { label: 'Penetapan Calon (SK)', icon: 'fa-award' }
+                },
+                switchStage(key) {
+                    this.currentStage = key;
+                    this.currentPage = 1;
+                    this.searchQuery = '';
+                    
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('stage', key);
+                    window.history.replaceState({}, '', url);
+                },
                 // State filter pencarian
                 searchQuery: '',
                 perPage: '10',

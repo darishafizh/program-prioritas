@@ -150,6 +150,52 @@ class ProgresFisikEvaluasiController extends ProgramBaseController
             return $b['progres'] <=> $a['progres'];
         });
 
+        // === ANALYTICAL DATA ===
+
+        // 1. Distribution by health status (for donut chart)
+        $collection = collect($progresFisikData);
+        $distribution = [
+            'Sesuai Jadwal' => $collection->where('status_kesehatan', 'Sesuai Jadwal')->count(),
+            'Terlambat' => $collection->where('status_kesehatan', 'Terlambat')->count(),
+            'Kritis' => $collection->where('status_kesehatan', 'Kritis')->count(),
+        ];
+
+        // 2. Average progress by vendor/konstruktor (for bar chart)
+        $avgByVendor = $collection->groupBy('konstruktor')->map(function ($items, $vendor) {
+            return [
+                'vendor' => $vendor,
+                'avg_progres' => round($items->avg('progres'), 1),
+                'avg_rencana' => round($items->avg('rencana'), 1),
+                'count' => $items->count(),
+            ];
+        })->sortByDesc('avg_progres')->values()->take(10)->all();
+
+        // 3. Insight text
+        $totalData = count($progresFisikData);
+        $kritisCount = $distribution['Kritis'];
+        $terlambatCount = $distribution['Terlambat'];
+        $sesuaiCount = $distribution['Sesuai Jadwal'];
+
+        if ($totalData > 0) {
+            $kritisPercent = round(($kritisCount / $totalData) * 100, 1);
+            $sesuaiPercent = round(($sesuaiCount / $totalData) * 100, 1);
+
+            $insightParts = [];
+            if ($kritisCount > 0) {
+                $insightParts[] = "<strong>{$kritisCount} dari {$totalData} lokasi</strong> ({$kritisPercent}%) berstatus <span class='text-danger font-semibold'>Kritis</span> dengan deviasi di bawah -5%";
+            }
+            if ($terlambatCount > 0) {
+                $insightParts[] = "<strong>{$terlambatCount} lokasi</strong> berstatus <span class='text-warning font-semibold'>Terlambat</span>";
+            }
+            if ($sesuaiCount > 0) {
+                $insightParts[] = "<strong>{$sesuaiCount} lokasi</strong> ({$sesuaiPercent}%) berjalan <span class='text-success font-semibold'>Sesuai Jadwal</span>";
+            }
+
+            $insightText = implode('. ', $insightParts) . ". Rata-rata deviasi keseluruhan: <strong>" . ($avgDeviasi >= 0 ? '+' : '') . "{$avgDeviasi}%</strong>.";
+        } else {
+            $insightText = 'Belum ada data konstruksi untuk dianalisis pada filter yang dipilih.';
+        }
+
         return view('programs.knmp.evaluasi.progres-fisik', [
             'activeModule' => 'Evaluasi',
             'activeProgram' => $activeProgram,
@@ -161,6 +207,9 @@ class ProgresFisikEvaluasiController extends ProgramBaseController
                 'rata_progres' => $avgProgres,
                 'total_selesai' => $totalSelesai,
                 'rata_deviasi' => $avgDeviasi,
+                'distribution' => $distribution,
+                'avg_by_vendor' => $avgByVendor,
+                'insight_text' => $insightText,
             ],
         ]);
     }

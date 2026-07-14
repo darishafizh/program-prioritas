@@ -3,12 +3,12 @@
 @section('title', 'KNMP - Evaluasi Progres Fisik')
 
 @section('content')
-    <div x-data="evaluasiProgresFisikManager()">
+    <div x-data="evaluasiProgresFisikManager()" class="min-w-0 overflow-hidden">
 
         {{-- Header --}}
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Evaluasi Progres Fisik</h2>
+                <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Evaluasi Progres Fisik</h2>
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Evaluasi historis
                     progres konstruksi KNMP — perbandingan rencana vs aktual.</p>
             </div>
@@ -39,7 +39,7 @@
 
                 @can('generate-pdf')
                 <button type="button" @click="isPdfModalOpen = true"
-                    class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2">
+                    class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-md text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
                     <i class="fa-solid fa-file-pdf"></i> Generate PDF
                 </button>
                 @endcan
@@ -93,15 +93,51 @@
             />
         </div>
 
+        {{-- Insight Banner --}}
+        <div class="mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-bgSurface-light to-blue-50 dark:from-bgSurface-dark dark:to-blue-900/10 border border-teal-light/20 dark:border-teal-light/10 p-5 sm:p-6">
+            <div class="absolute top-0 right-0 p-6 opacity-5 dark:opacity-10 pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass-chart text-7xl text-teal-light"></i>
+            </div>
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 text-teal-light dark:text-teal-400 font-medium text-[11px] tracking-widest uppercase mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-light animate-pulse"></span> Insight Evaluasi
+                </div>
+                <p class="text-xs text-textMain-light dark:text-textMain-dark leading-relaxed font-medium">
+                    {!! $stats['insight_text'] !!}
+                </p>
+            </div>
+        </div>
+
+        {{-- Chart Row: Distribusi Kesehatan + Rata-rata per Provinsi --}}
+        <div class="grid grid-cols-2 gap-6 mb-6">
+            {{-- Donut Chart: Distribusi Kesehatan --}}
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 flex flex-col min-w-0">
+                <h3 class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2 mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
+                    <i class="fa-solid fa-chart-pie text-teal-light flex-shrink-0"></i> <span class="truncate">Distribusi Kesehatan Proyek</span>
+                </h3>
+                <div class="flex-1 min-h-[260px] min-w-0">
+                    <div id="chart-distribusi-kesehatan" class="w-full h-full min-w-0"></div>
+                </div>
+            </div>
+
+            {{-- Bar Chart: Rata-rata Progres per Konstruktor --}}
+            <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl p-6 flex flex-col min-w-0">
+                <h3 class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2 mb-4 whitespace-nowrap overflow-hidden text-ellipsis">
+                    <i class="fa-solid fa-chart-bar text-blue-500 flex-shrink-0"></i> <span class="truncate">Rata-rata Progres per Konstruktor</span>
+                </h3>
+                <div class="flex-1 min-h-[260px] min-w-0">
+                    <div id="chart-progres-konstruktor" class="w-full h-full min-w-0"></div>
+                </div>
+            </div>
+        </div>
+
         {{-- Table Card --}}
         <div
-            class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col">
+            class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden flex flex-col">
             <div
                 class="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h3 class="font-medium text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-table-list text-teal-light"></i> Daftar Progres Konstruksi KNMP
-                    </h3>
+                    <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Daftar Progres Konstruksi KNMP</h2>
                     <p class="text-xs text-textMuted-light mt-1">Data progres per tanggal
                         <strong>{{ \Carbon\Carbon::parse($effectiveDate)->format('d M Y') }}</strong>.</p>
                 </div>
@@ -137,9 +173,7 @@
                         <tr>
                             <th class="px-6 py-4">Nama KNMP</th>
                             <th class="px-6 py-4">Konstruktor</th>
-                            <th class="px-6 py-4">Rencana</th>
-                            <th class="px-6 py-4">Progres Aktual</th>
-                            <th class="px-6 py-4">Deviasi</th>
+                            <th class="px-6 py-4 min-w-[200px]">Progres & Deviasi</th>
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4">Tanggal Data</th>
                         </tr>
@@ -148,7 +182,7 @@
                         <template x-for="(item, index) in paginatedData()" :key="index">
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                                 <td class="px-6 py-4">
-                                    <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.nama">
+                                    <div class="font-medium text-textMain-light dark:text-textMain-dark whitespace-normal min-w-[150px]" x-text="item.nama">
                                     </div>
                                     <template x-if="item.tahap === 'serah_terima'">
                                         <span
@@ -158,42 +192,39 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-light flex items-center justify-center text-[10px] font-bold"
+                                        <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-light flex items-center justify-center text-[10px] font-bold flex-shrink-0"
                                             x-text="item.konstruktor.substring(0, 2).toUpperCase()"></div>
-                                        <span class="font-medium text-textMuted-light" x-text="item.konstruktor"></span>
+                                        <span class="font-medium text-textMuted-light whitespace-normal min-w-[100px]" x-text="item.konstruktor"></span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="font-medium text-textMain-light dark:text-textMain-dark"
-                                        x-text="item.rencana + '%'"></span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex flex-col gap-1.5 w-40">
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-medium text-xs" x-text="item.progres + '%'"></span>
+                                    <div class="flex flex-col gap-2 w-full">
+                                        <div class="flex justify-between items-center text-xs">
+                                            <span class="text-textMuted-light dark:text-textMuted-dark">Renc: <span class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.rencana + '%'"></span></span>
+                                            <span class="font-medium text-textMain-light dark:text-textMain-dark" x-text="'Aktual: ' + item.progres + '%'"></span>
                                         </div>
                                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                                             <div class="h-1.5 rounded-full transition-all"
                                                 :class="item.progres >= 100 ? 'bg-success' : 'bg-teal-light'"
                                                 :style="'width: ' + Math.min(item.progres, 100) + '%'"></div>
                                         </div>
+                                        <div class="flex">
+                                            <template x-if="item.deviasi >= 0">
+                                                <span
+                                                    class="text-success font-medium text-[0.7rem] flex items-center gap-1 bg-success/10 px-2 py-0.5 rounded w-fit">
+                                                    <i class="fa-solid fa-arrow-up text-[8px]"></i> +<span
+                                                        x-text="item.deviasi"></span>%
+                                                </span>
+                                            </template>
+                                            <template x-if="item.deviasi < 0">
+                                                <span
+                                                    class="text-danger font-medium text-[0.7rem] flex items-center gap-1 bg-danger/10 px-2 py-0.5 rounded w-fit">
+                                                    <i class="fa-solid fa-arrow-down text-[8px]"></i> <span
+                                                        x-text="item.deviasi"></span>%
+                                                </span>
+                                            </template>
+                                        </div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <template x-if="item.deviasi >= 0">
-                                        <span
-                                            class="text-success font-medium text-[0.7rem] flex items-center gap-1 bg-success/10 px-2 py-0.5 rounded w-fit">
-                                            <i class="fa-solid fa-arrow-up text-[8px]"></i> +<span
-                                                x-text="item.deviasi"></span>%
-                                        </span>
-                                    </template>
-                                    <template x-if="item.deviasi < 0">
-                                        <span
-                                            class="text-danger font-medium text-[0.7rem] flex items-center gap-1 bg-danger/10 px-2 py-0.5 rounded w-fit">
-                                            <i class="fa-solid fa-arrow-down text-[8px]"></i> <span
-                                                x-text="item.deviasi"></span>%
-                                        </span>
-                                    </template>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium"
@@ -280,9 +311,9 @@
                     </div>
                     <div class="mt-8 flex justify-end gap-3">
                         <button type="button" @click="isPdfModalOpen = false"
-                            class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                            class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer shadow-sm">Batal</button>
                         <button type="submit"
-                            class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2"><i
+                            class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2 cursor-pointer shadow-sm"><i
                                 class="fa-solid fa-download"></i> Generate PDF</button>
                     </div>
                 </form>
@@ -342,4 +373,119 @@
             }));
         });
     </script>
+
+    {{-- ApexCharts for Evaluasi Progres Fisik --}}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const bgColor = isDark ? '#0f172a' : '#ffffff';
+
+            // 1. Donut Chart — Distribusi Kesehatan
+            const distData = @json($stats['distribution']);
+            const donutEl = document.querySelector('#chart-distribusi-kesehatan');
+            if (donutEl) {
+                new ApexCharts(donutEl, {
+                    chart: {
+                        type: 'donut',
+                        height: 260,
+                        background: 'transparent',
+                        fontFamily: 'Inter, sans-serif',
+                    },
+                    series: [distData['Sesuai Jadwal'] || 0, distData['Terlambat'] || 0, distData['Kritis'] || 0],
+                    labels: ['Sesuai Jadwal', 'Terlambat', 'Kritis'],
+                    colors: ['#10b981', '#f59e0b', '#ef4444'],
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '70%',
+                                labels: {
+                                    show: true,
+                                    name: { fontSize: '12px', color: textColor },
+                                    value: { fontSize: '20px', fontWeight: 700, color: isDark ? '#e2e8f0' : '#1e293b' },
+                                    total: {
+                                        show: true,
+                                        label: 'Total',
+                                        fontSize: '11px',
+                                        color: textColor,
+                                        formatter: function (w) {
+                                            return w.globals.seriesTotals.reduce((a, b) => a + b, 0) + ' Lokasi';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    legend: {
+                        position: 'bottom',
+                        fontSize: '11px',
+                        labels: { colors: textColor },
+                        markers: { size: 6, offsetX: -3 },
+                    },
+                    stroke: { width: 2, colors: [bgColor] },
+                    tooltip: { theme: isDark ? 'dark' : 'light' },
+                }).render();
+            }
+
+            // 2. Bar Chart — Rata-rata Progres per Konstruktor
+            const vendorData = @json($stats['avg_by_vendor']);
+            const barEl = document.querySelector('#chart-progres-konstruktor');
+            if (barEl && vendorData.length > 0) {
+                new ApexCharts(barEl, {
+                    chart: {
+                        type: 'bar',
+                        height: 260,
+                        background: 'transparent',
+                        fontFamily: 'Inter, sans-serif',
+                        toolbar: { show: false },
+                    },
+                    series: [
+                        { name: 'Aktual', data: vendorData.map(p => p.avg_progres) },
+                        { name: 'Rencana', data: vendorData.map(p => p.avg_rencana) },
+                    ],
+                    xaxis: {
+                        categories: vendorData.map(p => {
+                            const name = p.vendor || '-';
+                            return name.length > 20 ? name.substring(0, 20) + '…' : name;
+                        }),
+                        labels: { style: { fontSize: '10px', colors: textColor } },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                    },
+                    yaxis: {
+                        max: 100,
+                        labels: {
+                            style: { fontSize: '10px', colors: textColor },
+                            formatter: v => v + '%',
+                        }
+                    },
+                    colors: ['#14b8a6', '#94a3b8'],
+                    plotOptions: {
+                        bar: { horizontal: true, barHeight: '65%', borderRadius: 3, borderRadiusApplication: 'end' }
+                    },
+                    dataLabels: { enabled: false },
+                    grid: {
+                        borderColor: isDark ? '#1e293b' : '#f1f5f9',
+                        strokeDashArray: 4,
+                    },
+                    legend: {
+                        position: 'top',
+                        horizontalAlign: 'right',
+                        fontSize: '11px',
+                        labels: { colors: textColor },
+                        markers: { size: 6, offsetX: -3 },
+                    },
+                    tooltip: {
+                        theme: isDark ? 'dark' : 'light',
+                        y: { formatter: v => v + '%' },
+                    },
+                }).render();
+            } else if (barEl) {
+                barEl.innerHTML = '<div class="flex items-center justify-center h-full text-textMuted-light dark:text-textMuted-dark text-xs">Belum ada data provinsi</div>';
+            }
+        });
+    </script>
 @endsection
+

@@ -40,12 +40,12 @@
             <div class="flex flex-wrap items-center gap-2">
                 <template x-if="currentStage === 'usulan'">
                     @can('manage-operasional')
-                    <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer shadow-xs"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    <button type="button" @click="$dispatch('open-import-usulan-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer shadow-sm"> Import Data <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
                     @endcan
                 </template>
                 <template x-if="currentStage === 'konstruksi'">
                     @can('import-progres')
-                    <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer shadow-xs"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
+                    <button type="button" @click="$dispatch('open-import-modal')" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 text-textMain-light dark:text-textMain-dark rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer shadow-sm"> Import Progres <i class="fa-solid fa-cloud-arrow-up text-teal-light"></i> </button>
                     @endcan
                 </template>
                 <template x-if="currentStage !== 'serah-terima'">
@@ -62,7 +62,7 @@
                             <input type="hidden" name="ids[]" :value="id">
                         </template>
                         <button type="submit" :disabled="selectedIds.length === 0" 
-                                class="bg-teal-light hover:bg-teal-600 text-white rounded-xl px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 w-max disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"> 
+                                class="bg-teal-light hover:bg-teal-light/90 text-white rounded-md px-4 py-2 text-xs font-medium transition-all flex items-center justify-between gap-2 w-max disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"> 
                             <span x-show="selectedIds.length > 0" class="bg-white text-teal-light rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold mr-1" x-text="selectedIds.length"></span>
                             Pindah Tahap <i class="fa-solid fa-arrow-right"></i> 
                         </button>
@@ -80,187 +80,209 @@
             
             <!-- TABLE 1: USULAN -->
             <table x-show="currentStage === 'usulan'" class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                        </th>
-                        <th class="px-6 py-4">Lokasi KNMP</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                <x-table.thead>
+                    <x-table.th class="w-10 text-center">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                    </x-table.th>
+                    <x-table.th>Lokasi KNMP</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </x-table.thead>
+                <x-table.tbody>
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
-                            <td class="px-6 py-4 text-center">
+                        <x-table.tr x-bind:class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
+                            <x-table.td align="center">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
                                 <div class="text-[11px] text-textMuted-light mt-0.5" x-text="item.daerah"></div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     </template>
-                </tbody>
+                    <x-table.tr x-show="paginatedData().length === 0">
+                        <x-table.td colspan="4" class="text-center py-8 text-textMuted-light dark:text-textMuted-dark">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open text-3xl text-gray-400"></i>
+                                <span>Belum ada data proyek pada tahap ini...</span>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                </x-table.tbody>
             </table>
 
             <!-- TABLE 2: SURVEI -->
             <table x-show="currentStage === 'survei'" style="display: none;" class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                        </th>
-                        <th class="px-6 py-4">Lokasi KNMP</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4">Koordinat</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                <x-table.thead>
+                    <x-table.th class="w-10 text-center">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                    </x-table.th>
+                    <x-table.th>Lokasi KNMP</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th>Koordinat</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </x-table.thead>
+                <x-table.tbody>
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
-                            <td class="px-6 py-4 text-center">
+                        <x-table.tr x-bind:class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
+                            <x-table.td align="center">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
-                            </td>
-                            <td class="px-6 py-4 text-textMuted-light" x-text="item.koordinat"></td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td class="text-textMuted-light" x-text="item.koordinat"></x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     </template>
-                </tbody>
+                    <x-table.tr x-show="paginatedData().length === 0">
+                        <x-table.td colspan="5" class="text-center py-8 text-textMuted-light dark:text-textMuted-dark">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open text-3xl text-gray-400"></i>
+                                <span>Belum ada data proyek pada tahap ini...</span>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                </x-table.tbody>
             </table>
 
             <!-- TABLE 3: DED -->
             <table x-show="currentStage === 'ded'" style="display: none;" class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                        </th>
-                        <th class="px-6 py-4">Lokasi KNMP</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-center">Dokumen DED</th>
-                        <th class="px-6 py-4">Nilai Skala Kriteria</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                <x-table.thead>
+                    <x-table.th class="w-10 text-center">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                    </x-table.th>
+                    <x-table.th>Lokasi KNMP</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th align="center">Dokumen DED</x-table.th>
+                    <x-table.th>Nilai Skala Kriteria</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </x-table.thead>
+                <x-table.tbody>
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
-                            <td class="px-6 py-4 text-center">
+                        <x-table.tr x-bind:class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
+                            <x-table.td align="center">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Lihat DED"><i class="fa-solid fa-file-pdf"></i></button>
-                            </td>
-                            <td class="px-6 py-4 font-medium text-teal-light" x-text="item.nilaiSkala"></td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td class="font-medium text-teal-light" x-text="item.nilaiSkala"></x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     </template>
-                </tbody>
+                    <x-table.tr x-show="paginatedData().length === 0">
+                        <x-table.td colspan="6" class="text-center py-8 text-textMuted-light dark:text-textMuted-dark">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open text-3xl text-gray-400"></i>
+                                <span>Belum ada data proyek pada tahap ini...</span>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                </x-table.tbody>
             </table>
 
             <!-- TABLE 4: SIAP LELANG -->
             <table x-show="currentStage === 'lelang'" style="display: none;" class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                        </th>
-                        <th class="px-6 py-4">Lokasi KNMP</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4">Nama Konstruksi</th>
-                        <th class="px-6 py-4 text-center">Dokumen</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                <x-table.thead>
+                    <x-table.th class="w-10 text-center">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                    </x-table.th>
+                    <x-table.th>Lokasi KNMP</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th>Nama Konstruksi</x-table.th>
+                    <x-table.th align="center">Dokumen</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </x-table.thead>
+                <x-table.tbody>
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
-                            <td class="px-6 py-4 text-center">
+                        <x-table.tr x-bind:class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
+                            <x-table.td align="center">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
-                            </td>
-                            <td class="px-6 py-4 text-textMuted-light" x-text="item.namaKonstruksi"></td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td class="text-textMuted-light" x-text="item.namaKonstruksi"></x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Dokumen Lelang"><i class="fa-solid fa-file-pdf"></i></button>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     </template>
-                </tbody>
+                    <x-table.tr x-show="paginatedData().length === 0">
+                        <x-table.td colspan="6" class="text-center py-8 text-textMuted-light dark:text-textMuted-dark">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open text-3xl text-gray-400"></i>
+                                <span>Belum ada data proyek pada tahap ini...</span>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                </x-table.tbody>
             </table>
 
             <!-- TABLE 5: KONSTRUKSI -->
             <table x-show="currentStage === 'konstruksi'" style="display: none;" class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                        </th>
-                        <th class="px-6 py-4">Lokasi KNMP</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4">Konstruktor (Vendor)</th>
-                        <th class="px-6 py-4">Rencana</th>
-                        <th class="px-6 py-4">Progres & Deviasi</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                <x-table.thead>
+                    <x-table.th class="w-10 text-center">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                    </x-table.th>
+                    <x-table.th>Lokasi KNMP</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th>Konstruktor (Vendor)</x-table.th>
+                    <x-table.th>Rencana</x-table.th>
+                    <x-table.th>Progres & Deviasi</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </x-table.thead>
+                <x-table.tbody>
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
-                            <td class="px-6 py-4 text-center">
+                        <x-table.tr x-bind:class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
+                            <x-table.td align="center">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="flex items-center gap-2">
                                     <div class="w-6 h-6 rounded-full bg-teal-100 text-teal-light flex items-center justify-center text-[10px] font-bold"
                                         x-text="(item.konstruktor || '-').substring(0, 2)"></div>
                                     <span class="font-medium" x-text="item.konstruktor"></span>
                                 </div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark"
                                     x-text="formatDec(item.rencana) + '%'"></div>
                                 <div class="text-[0.65rem] text-textMuted-light mt-0.5">Kumulatif Minggu Ini</div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="flex flex-col gap-1.5 w-48">
                                     <div class="flex justify-between items-end">
                                         <span class="font-medium text-xs" x-text="formatDec(item.progres) + '%'"></span>
@@ -282,54 +304,68 @@
                                             :style="'width: ' + item.progres + '%'"></div>
                                     </div>
                                 </div>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td align="center">
                                 <div class="flex items-center justify-center gap-2">
                                     @can('manage-operasional')
                                     <button type="button" @click="$dispatch('open-upload-modal', { item: item })" class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center relative z-10 cursor-pointer" title="Upload Foto Progres"><i class="fa-solid fa-camera pointer-events-none"></i></button>
                                     @endcan
                                     <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center" title="Detail"><i class="fa-solid fa-eye"></i></button>
                                 </div>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     </template>
-                </tbody>
+                    <x-table.tr x-show="paginatedData().length === 0">
+                        <x-table.td colspan="7" class="text-center py-8 text-textMuted-light dark:text-textMuted-dark">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open text-3xl text-gray-400"></i>
+                                <span>Belum ada data proyek pada tahap ini...</span>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                </x-table.tbody>
             </table>
 
             <!-- TABLE 6: SERAH TERIMA -->
             <table x-show="currentStage === 'serah-terima'" style="display: none;" class="w-full text-left text-xs whitespace-nowrap">
-                <thead class="bg-white dark:bg-gray-900 text-textMuted-light dark:text-textMuted-dark text-[11px] uppercase font-normal border-b border-gray-100 dark:border-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 w-10 text-center">
-                            <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                        </th>
-                        <th class="px-6 py-4">Lokasi KNMP</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-center">Dokumen</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-bgSurface-dark">
+                <x-table.thead>
+                    <x-table.th class="w-10 text-center">
+                        <input type="checkbox" :checked="allSelected" @change="toggleAll()" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
+                    </x-table.th>
+                    <x-table.th>Lokasi KNMP</x-table.th>
+                    <x-table.th>Status</x-table.th>
+                    <x-table.th align="center">Dokumen</x-table.th>
+                    <x-table.th align="center">Aksi</x-table.th>
+                </x-table.thead>
+                <x-table.tbody>
                     <template x-for="item in paginatedData()" :key="item.id">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors" :class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
-                            <td class="px-6 py-4 text-center">
+                        <x-table.tr x-bind:class="{'bg-teal-50/30 dark:bg-teal-900/10': selectedIds.includes(item.id)}">
+                            <x-table.td align="center">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-teal-light focus:ring-teal-light dark:focus:ring-teal-light/50 cursor-pointer transition-colors">
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <div class="font-medium text-textMain-light dark:text-textMain-dark" x-text="item.lokasi"></div>
-                            </td>
-                            <td class="px-6 py-4">
+                            </x-table.td>
+                            <x-table.td>
                                 <span class="px-2.5 py-1 rounded-md text-[0.7rem] font-medium bg-teal-light/10 text-teal-light" x-text="item.statusHub"></span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-teal-light/10 text-teal-light hover:bg-teal-light hover:text-white transition-colors flex items-center justify-center mx-auto" title="Dokumen BAST"><i class="fa-solid fa-file-contract"></i></button>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </x-table.td>
+                            <x-table.td align="center">
                                 <button class="w-8 h-8 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-teal-light hover:bg-teal-light/10 transition-colors flex items-center justify-center mx-auto" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     </template>
-                </tbody>
+                    <x-table.tr x-show="paginatedData().length === 0">
+                        <x-table.td colspan="5" class="text-center py-8 text-textMuted-light dark:text-textMuted-dark">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open text-3xl text-gray-400"></i>
+                                <span>Belum ada data proyek pada tahap ini...</span>
+                            </div>
+                        </x-table.td>
+                    </x-table.tr>
+                </x-table.tbody>
             </table>
             
             <x-slot name="paginationSlot">
@@ -464,10 +500,12 @@
                                 </div>
                             </div>
                             
-                            <div class="flex gap-3 mt-6 pt-2 border-t border-gray-100 dark:border-gray-800">
-                                <button type="button" @click="isUploadModalOpen = false" class="flex-1 justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2.5 bg-white dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 relative z-10">Batal</button>
-                                <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-teal-light/30 px-4 py-2.5 bg-gradient-to-r from-teal-light to-emerald-500 text-sm font-semibold text-white hover:from-teal-light/90 hover:to-emerald-500/90 focus:outline-none hover:-translate-y-0.5 transition-all duration-200 relative z-10">
-                                    <i class="fa-solid fa-arrow-up-from-bracket mr-2"></i> Simpan Data
+                            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                <button type="button" @click="isUploadModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center gap-2">
+                                    <i class="fa-solid fa-xmark"></i> <span>Batal</span>
+                                </button>
+                                <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-light/90 transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                                    <i class="fa-solid fa-arrow-up-from-bracket"></i> <span>Simpan Data</span>
                                 </button>
                             </div>
                         </form>
@@ -527,9 +565,11 @@
                         </div>
                         
                         <div class="mt-8 flex justify-end gap-3">
-                            <button type="button" @click="isImportModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                            <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Import Data
+                            <button type="button" @click="isImportModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center gap-2">
+                                <i class="fa-solid fa-xmark"></i> <span>Batal</span>
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-light/90 transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> <span>Import Data</span>
                             </button>
                         </div>
                     </form>
@@ -588,9 +628,11 @@
                         </div>
                         
                         <div class="mt-8 flex justify-end gap-3">
-                            <button type="button" @click="isImportUsulanModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                            <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition-colors flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Import Data
+                            <button type="button" @click="isImportUsulanModalOpen = false" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer flex items-center gap-2">
+                                <i class="fa-solid fa-xmark"></i> <span>Batal</span>
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-teal-light text-white rounded-lg text-sm font-medium hover:bg-teal-light/90 transition-colors flex items-center gap-2 cursor-pointer shadow-sm">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> <span>Import Data</span>
                             </button>
                         </div>
                     </form>

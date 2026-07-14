@@ -42,6 +42,10 @@
  <i class="fa-solid fa-users-gear"></i> Pengguna
  </a>
  @endcan
+
+ <a href="{{ url('master/knmp/template-crud') }}" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-textMain-light dark:text-teal-400 text-xs font-medium transition-colors">
+ <i class="fa-solid fa-code text-teal-light"></i> Template CRUD
+ </a>
  
  <button @click="darkMode = !darkMode; if(darkMode) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }" 
  class="w-9 h-9 rounded-md flex items-center justify-center bg-gray-50 dark:bg-gray-800 text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-teal-dark transition-all">
@@ -127,7 +131,26 @@
  @endforeach
  </div>
 
- </main>
+  <!-- Shortcut Banner untuk Template Dasar CRUD -->
+  <div class="max-w-6xl mx-auto w-full pb-12">
+      <div class="bg-gradient-to-r from-teal-light/10 via-teal-light/5 to-transparent border border-teal-light/20 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-teal-light/10 text-teal-light flex items-center justify-center shrink-0 border border-teal-light/20">
+                  <i class="fa-solid fa-code text-xl"></i>
+              </div>
+              <div>
+                  <h3 class="text-base font-semibold text-textMain-light dark:text-textMain-dark">Template Dasar Manajemen Data (CRUD Boilerplate)</h3>
+                  <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-1">Acuan standar untuk pembuatan modul CRUD baru. Mengadopsi UI Manajemen Pengguna dan reusable components.</p>
+              </div>
+          </div>
+          <a href="{{ url('master/knmp/template-crud') }}" class="px-5 py-2.5 bg-teal-light text-white rounded-xl text-xs font-medium hover:bg-teal-light/90 transition-all shadow-sm shrink-0 flex items-center gap-2">
+              <span>Buka Template CRUD</span>
+              <i class="fa-solid fa-arrow-right"></i>
+          </a>
+      </div>
+  </div>
+
+  </main>
 
  <footer class="py-5 text-center text-xs text-textMuted-light dark:text-textMuted-dark border-t border-gray-100 dark:border-gray-800 bg-bgSurface-light dark:bg-bgSurface-dark mt-auto relative z-10">
  &copy; 2026 Program Prioritas - Kementerian Kelautan dan Perikanan

@@ -12,7 +12,7 @@ class KdkmpController extends ProgramBaseController
     public function index(Request $request)
     {
         $this->checkAuth();
-        $activeProgram = 'Bioflok';
+        $activeProgram = 'Budidaya Tematik';
         $activeModule = 'Master Data';
 
         $query = Kdkmp::orderBy('nama_kdkmp', 'asc');
@@ -27,7 +27,7 @@ class KdkmpController extends ProgramBaseController
         $kabupatenList = Kdkmp::select('kabupaten')->whereNotNull('kabupaten')->where('kabupaten', '!=', '')->distinct()->orderBy('kabupaten')->pluck('kabupaten');
         $komoditasList = Kdkmp::select('komoditas')->whereNotNull('komoditas')->where('komoditas', '!=', '')->distinct()->orderBy('komoditas')->pluck('komoditas');
 
-        return view('programs.bioflok.master.kdkmp.index', compact(
+        return view('programs.budidaya-tematik.master.kdkmp.index', compact(
             'activeProgram',
             'activeModule',
             'kdkmpList',

@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Bioflok - Dashboard Produksi')
+@section('title', 'Budidaya Tematik - Dashboard Produksi')
 
 @section('content')
     <div x-data="{ bulan: '{{ $bulan }}' }">
         <!-- Header & Global Filters Sejajar -->
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold tracking-tight">Dashboard Produksi Bioflok</h2>
+                <h2 class="text-xl font-semibold tracking-tight">Dashboard Produksi Budidaya Tematik</h2>
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1">Monitoring capaian
-                    produksi sistem bioflok per Kelompok Budidaya (KDKMP).</p>
+                    produksi sistem budidaya tematik per Kelompok Budidaya (KDKMP).</p>
             </div>
 
             <!-- Filter Sejajar -->
@@ -35,7 +35,7 @@
                         class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                 </div>
 
-                <a href="{{ route('program.bioflok.dashboard.produksi.export-pdf', ['bulan' => request('bulan')]) }}" target="_blank"
+                <a href="{{ route('program.budidaya-tematik.dashboard.produksi.export-pdf', ['bulan' => request('bulan')]) }}" target="_blank"
                     class="px-4 py-2 bg-danger/10 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-file-pdf"></i> PDF
                 </a>
@@ -47,7 +47,7 @@
             <!-- Card 1: Total KDMP -->
             <x-stat-card title="Total KDKMP" icon="fa-solid fa-water" icon-color="text-teal-light dark:text-teal-400"
                 icon-bg="bg-teal-light/10 dark:bg-teal-light/20" value="{{ $kpi['total_kdmp'] ?? 45 }}" unit="Lokasi"
-                description="<span class='text-teal-light font-medium inline-flex items-center gap-1.5'><i class='fa-solid fa-check-circle shrink-0'></i> Terdaftar aktif budidaya bioflok</span>" />
+                description="<span class='text-teal-light font-medium inline-flex items-center gap-1.5'><i class='fa-solid fa-check-circle shrink-0'></i> Terdaftar aktif budidaya tematik</span>" />
 
             <!-- Card 2: Sudah Panen -->
             <x-stat-card title="Sudah Panen" icon="fa-solid fa-fish-fins" icon-color="text-success dark:text-emerald-400"
@@ -102,14 +102,14 @@
             </div>
 
             <!-- Chart Container -->
-            <div class="relative w-full min-h-[340px]">
-                <div id="periodeBarChartContainer" class="w-full h-full"></div>
+            <div class="relative w-full min-h-[340px] min-w-0">
+                <div id="periodeBarChartContainer" class="w-full h-full min-w-0 overflow-hidden"></div>
             </div>
         </div>
 
         <!-- Grafik Sebaran Scatter Plot per Lokasi -->
         <div
-            class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col">
+            class="mb-6 bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col min-w-0 overflow-hidden">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                 <div>
                     <h3
@@ -124,8 +124,8 @@
                 </div>
             </div>
 
-            <div class="relative w-full h-[320px] sm:h-[380px]">
-                <div id="scatterPlotBioflok" class="w-full h-full"></div>
+            <div class="relative w-full h-[320px] sm:h-[380px] min-w-0">
+                <div id="scatterPlotBioflok" class="w-full h-full min-w-0 overflow-hidden"></div>
             </div>
         </div>
 
@@ -137,13 +137,13 @@
                 class="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h3 class="font-medium text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-table-list text-teal-light"></i> Tabel Data Produksi KDKMP Bioflok
+                        <i class="fa-solid fa-table-list text-teal-light"></i> Tabel Data Produksi KDKMP Budidaya Tematik
                     </h3>
                     <p class="text-xs text-textMuted-light mt-1">Daftar lengkap capaian panen, volume produksi, dan status
                         siklus kelompok budidaya.</p>
                 </div>
                 <div class="flex gap-2 w-full sm:w-auto self-end sm:self-auto">
-                    <a href="{{ route('program.bioflok.dashboard.produksi.export-pdf', ['bulan' => request('bulan')]) }}" target="_blank"
+                    <a href="{{ route('program.budidaya-tematik.dashboard.produksi.export-pdf', ['bulan' => request('bulan')]) }}" target="_blank"
                         class="px-4 py-2 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-file-pdf"></i> Export PDF
                     </a>
