@@ -1,6 +1,8 @@
 *.log
 error_log
 /config/database.php
+/.htaccess
+/public/.htaccess
 .DS_Store
 .env
 .env.backup
