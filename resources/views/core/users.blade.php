@@ -319,12 +319,12 @@
                     this.loading = true;
 
                     const isAdd = this.formMode === 'add';
-                    const url = isAdd ? '/users' : `/users/${this.selectedUser.id}`;
-                    const method = isAdd ? 'POST' : 'PUT';
+                    const baseUrl = "{{ url('users') }}";
+                    const url = isAdd ? `${baseUrl}/create` : `${baseUrl}/${this.selectedUser.id}/update`;
 
                     try {
                         const response = await fetch(url, {
-                            method: method,
+                            method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -355,8 +355,8 @@
 
                     this.loading = true;
                     try {
-                        const response = await fetch(`/users/${this.selectedUser.id}`, {
-                            method: 'DELETE',
+                        const response = await fetch(`{{ url('users') }}/${this.selectedUser.id}/delete`, {
+                            method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'Accept': 'application/json'

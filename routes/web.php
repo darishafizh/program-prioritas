@@ -21,8 +21,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:super_admin')->group(function () {
         Route::get('/users', [PortalController::class, 'users'])->name('users');
         Route::post('/users', [PortalController::class, 'storeUser'])->name('users.store');
+        Route::post('/users/create', [PortalController::class, 'storeUser'])->name('users.store.create');
         Route::put('/users/{id}', [PortalController::class, 'updateUser'])->name('users.update');
+        Route::post('/users/{id}/update', [PortalController::class, 'updateUser'])->name('users.update.post');
         Route::delete('/users/{id}', [PortalController::class, 'destroyUser'])->name('users.destroy');
+        Route::post('/users/{id}/delete', [PortalController::class, 'destroyUser'])->name('users.destroy.post');
     });
 
     // API Internal Routes
