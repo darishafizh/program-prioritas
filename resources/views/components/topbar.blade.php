@@ -12,7 +12,7 @@ $programs = [
 ];
 @endphp
 
-<header class="h-[var(--topbar-height)] fixed top-0 w-full bg-bgSurface-light/95 dark:bg-bgSurface-dark/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-4 lg:px-6 z-50">
+<header class="h-[var(--topbar-height)] shrink-0 fixed top-0 w-full bg-bgSurface-light/95 dark:bg-bgSurface-dark/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-4 lg:px-6 z-50">
  
  <!-- Left Side: Brand -->
  <div class="flex items-center gap-4">

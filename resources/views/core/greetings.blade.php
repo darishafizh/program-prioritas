@@ -28,7 +28,7 @@
 <body x-data="{ darkMode: document.documentElement.classList.contains('dark') }" class="antialiased bg-bgBody-light dark:bg-bgBody-dark text-textMain-light dark:text-textMain-dark min-h-screen flex flex-col">
 
  <!-- Topbar (Minimal) -->
- <header class="h-[var(--topbar-height)] w-full bg-bgSurface-light dark:bg-bgSurface-dark border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 z-50">
+ <header class="h-[var(--topbar-height)] shrink-0 w-full bg-bgSurface-light dark:bg-bgSurface-dark border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 z-50">
  <div class="flex items-center gap-3">
  <img src="{{ asset('assets/images/logo-kkp.png') }}" alt="Logo KKP" class="w-8 h-8 object-contain dark:bg-white dark:rounded-full dark:p-0.5 transition-all">
  <h1 class="font-medium text-base hidden sm:block text-textMain-light dark:text-white">

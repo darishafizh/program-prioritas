@@ -49,6 +49,7 @@
                         <option value="Admin">Admin</option>
                         <option value="Verifikator">Verifikator</option>
                         <option value="User Daerah">User Daerah</option>
+                        <option value="Menteri">Menteri</option>
                     </select>
                 </div>
             </div>
@@ -149,6 +150,7 @@
                                 <option value="Admin">Admin</option>
                                 <option value="Verifikator">Verifikator</option>
                                 <option value="User Daerah">User Daerah</option>
+                                <option value="Menteri">Menteri</option>
                             </select>
                         </div>
                         <div x-show="formData.role === 'User Daerah'" x-transition>

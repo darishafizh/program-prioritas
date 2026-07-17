@@ -29,13 +29,16 @@ class CheckRole
             if ($role === 'super_admin' && $user->isSuperAdmin()) {
                 return $next($request);
             }
-            if (($role === 'admin_roren' || $role === 'admin') && $user->isAdminRoren()) {
+            if (($role === 'admin_roren' || $role === 'admin') && ($user->isAdminRoren() || $user->isMenteri())) {
                 return $next($request);
             }
-            if ($role === 'verifikator' && $user->isVerifikator()) {
+            if ($role === 'verifikator' && ($user->isVerifikator() || $user->isMenteri())) {
                 return $next($request);
             }
             if ($role === 'user_daerah' && $user->isUserDaerah()) {
+                return $next($request);
+            }
+            if ($role === 'menteri' && $user->isMenteri()) {
                 return $next($request);
             }
 

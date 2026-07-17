@@ -40,7 +40,7 @@
    ============================================================ */
 :root {
   --sidebar-width: 276px;
-  --topbar-height: 0px;
+  --topbar-height: 64px;
 }
 
 @layer base {

@@ -1209,6 +1209,28 @@
                 perPage: '10',
                 currentPage: 1,
 
+                init() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const detailId = urlParams.get('detail_id');
+                    if (detailId) {
+                        setTimeout(() => {
+                            const allItems = [
+                                ...(this.usulanList || []),
+                                ...(this.surveiList || []),
+                                ...(this.dedList || []),
+                                ...(this.lelangList || []),
+                                ...(this.konstruksiList || []),
+                                ...(this.serahTerimaList || [])
+                            ];
+                            const found = allItems.find(item => item.id == detailId);
+                            if (found) {
+                                this.openDetailModal(found);
+                            }
+                        }, 100);
+                    }
+                },
+
+
                 formatDec(val) {
                     if (val === null || val === undefined || val === '') return '0,00';
                     return Number(val || 0).toLocaleString('id-ID', {
