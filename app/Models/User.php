@@ -46,10 +46,7 @@ class User extends Authenticatable
         return in_array(strtolower($this->role), ['user daerah', 'user_daerah']);
     }
 
-    public function isMenteri()
-    {
-        return in_array(strtolower($this->role), ['menteri']);
-    }
+
 
     /**
      * The attributes that should be hidden for serialization.

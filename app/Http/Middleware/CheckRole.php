@@ -29,18 +29,16 @@ class CheckRole
             if ($role === 'super_admin' && $user->isSuperAdmin()) {
                 return $next($request);
             }
-            if (($role === 'admin_roren' || $role === 'admin') && ($user->isAdminRoren() || $user->isMenteri())) {
+            if (($role === 'admin_roren' || $role === 'admin') && $user->isAdminRoren()) {
                 return $next($request);
             }
-            if ($role === 'verifikator' && ($user->isVerifikator() || $user->isMenteri())) {
+            if ($role === 'verifikator' && $user->isVerifikator()) {
                 return $next($request);
             }
             if ($role === 'user_daerah' && $user->isUserDaerah()) {
                 return $next($request);
             }
-            if ($role === 'menteri' && $user->isMenteri()) {
-                return $next($request);
-            }
+
 
             // Normalize fallback: accept both 'super_admin' and 'Super Admin'
             $normalizedRole = strtolower(str_replace(' ', '_', $user->role));

@@ -3,6 +3,48 @@
 @section('title', 'KNMP - Dashboard Analisis Eksekutif')
 
 @section('content')
+    <style>
+        .pin-konstruksi {
+            background-color: var(--color-warning, #F59E0B);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.8), 0 2px 5px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .pin-konstruksi::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 2px solid var(--color-warning, #F59E0B);
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        .pin-serah-terima {
+            background-color: var(--color-success, #10B981);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.8), 0 2px 5px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        @keyframes ping {
+
+            75%,
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
     <div x-data="dashboardTableManager()">
         <!-- Header & Global Filters (Row 1) -->
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -53,22 +95,6 @@
             </form>
         </div>
 
-        <!-- Narrative Storytelling Block -->
-        <div
-            class="mb-6 relative overflow-hidden rounded-3xl bg-gradient-to-br from-bgSurface-light to-blue-50 dark:from-bgSurface-dark dark:to-blue-900/10 border border-teal-light/20 dark:border-teal-light/10 p-6 sm:p-8">
-            <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 pointer-events-none">
-                <i class="fa-solid fa-quote-right text-9xl text-teal-light"></i>
-            </div>
-            <div class="relative z-10">
-                <div
-                    class="flex items-center gap-2 text-teal-light dark:text-teal-400 font-medium text-xs tracking-widest uppercase mb-3">
-                    <span class="w-2 h-2 rounded-full bg-teal-light animate-pulse"></span>Analisis Kinerja Bulan Ini
-                </div>
-                <p class="text-xs text-textMain-light dark:text-textMain-dark leading-relaxed font-medium">
-                    {!! $stats['narasi'] ?? '' !!}
-                </p>
-            </div>
-        </div>
 
         <!-- KPI Cards (Row 2) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -79,7 +105,8 @@
 
             <x-stat-card title="Rata-Rata Progres" icon="fa-solid fa-chart-pie"
                 icon-color="text-teal-light dark:text-teal-400" icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
-                value="{{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}" unit="%">
+                value="{{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}" unit="%"
+                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onclick="window.location.href='{{ route('program.dashboard.konstruksi', ['program' => strtolower($activeProgram)]) }}'">
                 <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">
                     <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full"
                         style="width: {{ $stats['rata_progres'] ?? 0 }}%"></div>
@@ -89,179 +116,18 @@
             <x-stat-card title="Total Selesai" icon="fa-solid fa-check-double"
                 icon-color="text-success dark:text-emerald-400" icon-bg="bg-success/10 dark:bg-success/20"
                 value="{{ $stats['total_selesai'] ?? 0 }}" unit="Lokasi"
-                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> Telah serah terima</span>" />
+                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> Telah serah terima</span>"
+                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onclick="window.location.href='{{ route('program.dashboard.operasional', ['program' => strtolower($activeProgram)]) }}'" />
 
             <x-stat-card title="Dalam Pembangunan" icon="fa-solid fa-person-digging"
                 icon-color="text-warning dark:text-amber-500" icon-bg="bg-warning/10 dark:bg-amber-400/20"
-                value="{{ $stats['dalam_pembangunan'] ?? 0 }}" unit="Lokasi" description="Tahap konstruksi aktif" />
+                value="{{ $stats['dalam_pembangunan'] ?? 0 }}" unit="Lokasi" description="Tahap konstruksi aktif"
+                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onclick="window.location.href='{{ route('program.dashboard.konstruksi', ['program' => strtolower($activeProgram)]) }}'" />
         </div>
 
-        @if (($stats['dalam_pembangunan'] ?? 0) == 0)
-            <div
-                class="mb-6 bg-blue-50/80 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-                <div class="flex items-start gap-4">
-                    <div
-                        class="w-12 h-12 rounded-2xl bg-blue-500/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 text-xl font-bold">
-                        <i class="fa-solid fa-circle-info"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-textMain-light dark:text-textMain-dark">
-                            @if (($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
-                                Seluruh Proyek pada Tahap Ini Telah Rampung (`Serah Terima`)
-                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
-                                Lokasi Belum Memasuki Tahap Konstruksi Fisik
-                            @else
-                                Belum Terdapat Data pada Filter Tahap yang Dipilih
-                            @endif
-                        </h3>
-                        <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-1 leading-relaxed">
-                            @if (($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
-                                Sebanyak <strong>{{ $stats['total_selesai'] }} lokasi KNMP</strong> pada filter/tahap ini
-                                telah berhasil diselesaikan 100% dan diserahterimakan. Oleh karena itu, grafik pemantauan
-                                dan analisis progres harian konstruksi aktif di bawah ini ditutup/tidak menampilkan data
-                                konstruksi berjalan.
-                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
-                                Sebanyak <strong>{{ $stats['total_lokasi'] }} lokasi KNMP</strong> pada filter/tahap ini
-                                saat ini masih dalam tahapan pra-konstruksi (<em>Usulan, Survei, DED, atau Lelang</em>).
-                                Seluruh grafik pemantauan konstruksi baru akan aktif setelah lokasi resmi beralih ke tahap
-                                <strong>Konstruksi</strong>.
-                            @else
-                                Silakan pilih tahap/batch lain atau atur ulang filter pencarian Anda untuk melihat data
-                                pemantauan konstruksi Kampung Nelayan Merah Putih.
-                            @endif
-                        </p>
-                    </div>
-                </div>
-            </div>
-        @endif
 
-        <!-- 2 Columns: Top 10, Bottom 10 (Row 3) -->
-        <div class="grid grid-cols-2 gap-6 mb-6">
-            <!-- Top 10 Progress -->
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col min-w-0 overflow-hidden">
-                <div class="flex items-center justify-between mb-4">
-                    <h3
-                        class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-up-right-dots text-success"></i> Top 10 KNMP Tertinggi
-                    </h3>
-                </div>
-                @if (($stats['dalam_pembangunan'] ?? 0) > 0)
-                    <div class="flex-1 w-full relative min-h-[300px] min-w-0">
-                        <div id="chart-top10" class="w-full h-full min-w-0 overflow-hidden"></div>
-                    </div>
-                @else
-                    <div
-                        class="flex-1 w-full flex flex-col items-center justify-center p-8 text-center min-h-[260px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-                        <div
-                            class="w-12 h-12 rounded-2xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-3">
-                            <i class="fa-solid fa-chart-bar text-xl"></i>
-                        </div>
-                        <h4 class="font-semibold text-xs text-textMain-light dark:text-textMain-dark">Grafik Top 10 Tidak
-                            Ditampilkan</h4>
-                        <p
-                            class="text-[11px] text-textMuted-light dark:text-textMuted-dark max-w-xs mt-1.5 leading-relaxed">
-                            @if (($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
-                                Seluruh lokasi pada tahap ini telah selesai 100% (`Serah Terima`).
-                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
-                                Lokasi pada tahap ini belum memasuki masa konstruksi aktif.
-                            @else
-                                Belum terdapat data lokasi pada tahap/filter yang dipilih.
-                            @endif
-                        </p>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Bottom 10 Progress -->
-            <div
-                class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl p-6 flex flex-col min-w-0 overflow-hidden">
-                <div class="flex items-center justify-between mb-4">
-                    <h3
-                        class="font-medium text-xs uppercase tracking-wider text-textMuted-light dark:text-textMuted-dark flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-down-right-dots text-danger"></i> Top 10 KNMP Terendah
-                    </h3>
-                </div>
-                @if (($stats['dalam_pembangunan'] ?? 0) > 0)
-                    <div class="flex-1 w-full relative min-h-[300px] min-w-0">
-                        <div id="chart-bottom10" class="w-full h-full min-w-0 overflow-hidden"></div>
-                    </div>
-                @else
-                    <div
-                        class="flex-1 w-full flex flex-col items-center justify-center p-8 text-center min-h-[260px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-                        <div
-                            class="w-12 h-12 rounded-2xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-3">
-                            <i class="fa-solid fa-chart-bar text-xl"></i>
-                        </div>
-                        <h4 class="font-semibold text-xs text-textMain-light dark:text-textMain-dark">Grafik Bottom 10 Tidak
-                            Ditampilkan</h4>
-                        <p
-                            class="text-[11px] text-textMuted-light dark:text-textMuted-dark max-w-xs mt-1.5 leading-relaxed">
-                            @if (($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
-                                Seluruh lokasi pada tahap ini telah selesai 100% (`Serah Terima`).
-                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
-                                Lokasi pada tahap ini belum memasuki masa konstruksi aktif.
-                            @else
-                                Belum terdapat data lokasi pada tahap/filter yang dipilih.
-                            @endif
-                        </p>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Warning Stagnant Progress -->
-        @if (count($stats['stagnant_list'] ?? []) > 0)
-            <div class="mb-6 bg-warning/10 dark:bg-warning/5 border border-warning/20 rounded-3xl p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div
-                        class="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center text-warning shrink-0">
-                        <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-warning dark:text-amber-500">Peringatan Risiko: Progres Stagnan
-                        </h3>
-                        <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">Lokasi konstruksi di bawah
-                            ini tidak mencatatkan penambahan progres fisik sedikitpun selama lebih dari 5 hari terakhir.</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    @foreach ($stats['stagnant_list'] as $item)
-                        <div
-                            class="bg-white/60 dark:bg-gray-900/40 border border-warning/20 rounded-2xl p-4 flex flex-col relative overflow-hidden hover:bg-white dark:hover:bg-gray-900/80 transition-colors shadow-sm">
-                            <div class="absolute right-0 top-0 bottom-0 w-1 bg-warning"></div>
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="font-bold text-xs text-textMain-light dark:text-textMain-dark truncate pr-2"
-                                    title="{{ $item['lokasi'] }}">{{ $item['lokasi'] }}</div>
-                                <div
-                                    class="text-[10px] font-black text-warning bg-warning/10 px-2 py-1 rounded-full shrink-0 flex items-center gap-1">
-                                    <i class="fa-regular fa-clock"></i> {{ $item['days_stagnant'] }} Hari
-                                </div>
-                            </div>
-
-                            <div class="space-y-1.5 mt-1">
-                                <div class="flex justify-between items-center text-[10px]">
-                                    <span class="text-textMuted-light dark:text-textMuted-dark"><i
-                                            class="fa-solid fa-chart-simple w-3"></i> Stuck di Angka</span>
-                                    <span
-                                        class="font-bold text-textMain-light dark:text-textMain-dark">{{ $item['progres'] }}%</span>
-                                </div>
-                                <div class="flex justify-between items-center text-[10px]">
-                                    <span class="text-textMuted-light dark:text-textMuted-dark"><i
-                                            class="fa-solid fa-hard-hat w-3"></i> Kontraktor</span>
-                                    <span
-                                        class="font-medium text-textMain-light dark:text-textMain-dark truncate max-w-[130px] text-right"
-                                        title="{{ $item['konstruktor'] }}">{{ $item['konstruktor'] }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endif
-
-        <!-- Map Distribution (Row 4) -->
+        
+    <!-- Map Distribution (Row 4) -->
         <div
             class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden mb-6 flex flex-col">
             <div
@@ -423,37 +289,52 @@
 
                 locations.forEach(function(loc) {
                     if (loc.latitude && loc.longitude) {
-                        var color = loc.status === 'Hub' ? '#0d9488' :
-                            '#f59e0b'; // teal for Hub, amber for Penyangga
-
-                        var markerHtmlStyles = `
-                    background-color: ${color};
-                    width: 1rem;
-                    height: 1rem;
-                    display: block;
-                    left: -0.5rem;
-                    top: -0.5rem;
-                    position: relative;
-                    border-radius: 3rem 3rem 0;
-                    transform: rotate(45deg);
-                    border: 1px solid #FFFFFF;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.3)
-                `;
+                        var isSerahTerima = loc.tahap === 'serah_terima' || loc.tahap_saat_ini ===
+                            'serah_terima';
+                        var className = isSerahTerima ? 'pin-serah-terima' : 'pin-konstruksi';
 
                         var icon = L.divIcon({
-                            className: "my-custom-pin",
-                            iconAnchor: [0, 12],
-                            labelAnchor: [-6, 0],
-                            popupAnchor: [0, -20],
-                            html: `<span style="${markerHtmlStyles}"></span>`
+                            className: 'custom-menteri-pin',
+                            iconAnchor: [9, 9],
+                            popupAnchor: [0, -12],
+                            html: `<div class="${className}"></div>`
                         });
 
-                        L.marker([loc.latitude, loc.longitude], {
-                                icon: icon
-                            })
-                            .addTo(map)
-                            .bindPopup(`<b>${loc.nama}</b><br/>Status: ${loc.status || 'Penyangga'}`);
+                        var marker = L.marker([loc.latitude, loc.longitude], {
+                            icon: icon
+                        });
+
+                        marker.on('click', () => {
+                            window.dispatchEvent(new CustomEvent('open-map-detail', {
+                                detail: loc
+                            }));
+
+                            // Map pan logic
+                            const targetZoom = 14;
+                            const pointPx = map.project([loc.latitude, loc.longitude], targetZoom);
+                            // Kalkulasi offset agar titik tepat berada di tengah area map yang tidak tertutup offcanvas (40% kiri layar)
+                            const offsetX = window.innerWidth * 0.30;
+                            const targetLatLng = map.unproject(L.point(pointPx.x + offsetX, pointPx.y),
+                                targetZoom);
+                            map.flyTo(targetLatLng, targetZoom, {
+                                duration: 1.2
+                            });
+                        });
+
+                        marker.bindTooltip(
+                            `<b>${loc.nama}</b><br/><span style="font-size:11px; opacity:0.85; font-weight:500;">${loc.tahap_label || 'Lokasi'}</span>`, {
+                                direction: 'top',
+                                offset: [0, -10]
+                            });
+
+                        marker.addTo(map);
                     }
+                });
+
+                window.addEventListener('map-fly-home', () => {
+                    map.flyTo([-0.7893, 113.9213], 5, {
+                        duration: 1.0
+                    });
                 });
 
                 setTimeout(function() {
@@ -462,528 +343,68 @@
             });
         </script>
 
-        <!-- Scatter Plot: Rencana vs Realisasi (Row 5) -->
-        <style>
-            .apexcharts-tooltip-z,
-            .apexcharts-tooltip-z-group,
-            .apexcharts-tooltip-text-z-label,
-            .apexcharts-tooltip-text-z-value {
-                display: none !important;
-            }
-        </style>
-        <div
-            class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col">
-            <!-- Header -->
-            <div
-                class="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h3 class="font-medium text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-teal-light"></i> Scatter Plot: Rencana vs Realisasi
-                    </h3>
-                    <p class="text-xs text-textMuted-light mt-1">Titik di bawah garis diagonal menunjukkan lokasi dengan
-                        deviasi progres negatif (realisasi di bawah rencana).</p>
-                </div>
-                <div class="flex items-center gap-4 text-[11px]">
-                    <div class="flex items-center gap-1.5">
-                        <span
-                            style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #10B981;"></span>
-                        <span class="text-textMuted-light dark:text-textMuted-dark">Deviasi Positif</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span
-                            style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #EF4444;"></span>
-                        <span class="text-textMuted-light dark:text-textMuted-dark">Deviasi Negatif</span>
-                    </div>
-                    <div class="w-px h-4 bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
-                    <a href="{{ route('program.operasional', ['stage' => 'konstruksi']) }}"
-                        class="flex items-center gap-1.5 px-3 py-1.5 bg-teal-light/10 hover:bg-teal-light/20 text-teal-light rounded-lg transition-colors font-medium">
-                        Detail Progres
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </a>
-                </div>
-            </div>
-            <!-- Chart -->
-            <div class="p-6">
-                @if (($stats['dalam_pembangunan'] ?? 0) > 0)
-                    <div id="scatter-rencana-realisasi" style="min-height: 420px;"></div>
-                @else
-                    <div
-                        class="w-full flex flex-col items-center justify-center p-12 text-center min-h-[350px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-                        <div
-                            class="w-14 h-14 rounded-3xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-4">
-                            <i class="fa-solid fa-chart-line text-2xl"></i>
-                        </div>
-                        <h4 class="font-bold text-sm text-textMain-light dark:text-textMain-dark">Plot Deviasi Rencana vs
-                            Realisasi Tidak Tersedia</h4>
-                        <p class="text-xs text-textMuted-light dark:text-textMuted-dark max-w-md mt-1.5 leading-relaxed">
-                            @if (($stats['total_selesai'] ?? 0) > 0 && ($stats['total_selesai'] ?? 0) == ($stats['total_lokasi'] ?? 0))
-                                Karena seluruh proyek pada filter/tahap ini telah rampung 100% dan diserahterimakan,
-                                analisis perbandingan kurva rencana terhadap realisasi harian konstruksi sudah ditutup.
-                            @elseif(($stats['total_lokasi'] ?? 0) > 0)
-                                Proyek pada filter/tahap ini belum memasuki masa pelaksanaan konstruksi fisik di lapangan,
-                                sehingga bobot rencana dan realisasi mingguan belum mulai dicatat.
-                            @else
-                                Tidak ada data konstruksi pada filter/tahap yang dipilih.
-                            @endif
-                        </p>
-                    </div>
-                @endif
-            </div>
-
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        <script>
-            // ApexCharts initialization for Top 10 and Bottom 10
-            document.addEventListener('DOMContentLoaded', function() {
-                const top10Data = @json($stats['top10'] ?? []);
-                const bottom10Data = @json($stats['bottom10'] ?? []);
-                const isDark = document.documentElement.classList.contains('dark');
-
-                function renderBarChart(elementId, data, color) {
-                    if (!document.getElementById(elementId) || data.length === 0) return;
-
-                    // Bersihkan prefix "KNMP Desa " atau "KNMP " agar label di Y-Axis lebih ringkas dan pas di dalam card
-                    const categories = data.map(item => {
-                        let name = item.lokasi || '';
-                        return name.replace(/^KNMP\s+Desa\s+/i, 'Desa ').replace(/^KNMP\s+/i, '');
-                    });
-                    const progresData = data.map(item => item.progres);
-                    const rencanaData = data.map(item => item.rencana);
-
-                    const options = {
-                        series: [{
-                            name: 'Progres Aktual',
-                            data: progresData
-                        }],
-                        chart: {
-                            type: 'bar',
-                            width: '100%',
-                            height: Math.max(320, data.length * 36),
-                            toolbar: {
-                                show: false
-                            },
-                            background: 'transparent',
-                            fontFamily: 'Inter, sans-serif',
-                            redrawOnParentResize: true,
-                            redrawOnWindowResize: true
-                        },
-                        plotOptions: {
-                            bar: {
-                                horizontal: true,
-                                dataLabels: {
-                                    position: 'top', // Memposisikan angka di ujung paling kanan bar
-                                },
-                                borderRadius: 4,
-                                borderRadiusApplication: 'end', // Membuat sisi kiri bar lurus dengan garis Y, hanya melengkung di sisi kanan
-                                barHeight: '62%'
-                            }
-                        },
-                        colors: [color],
-                        dataLabels: {
-                            enabled: true,
-                            offsetX: -24, // Memberikan margin right agar angka putih masuk ke dalam bar dan tidak terlalu mepet dengan ujung kanan
-                            hideOverflowingLabels: false, // Menjamin angka tidak pernah disembunyikan
-                            style: {
-                                fontSize: '11px',
-                                fontWeight: 700,
-                                colors: ['#ffffff'] // Angka tetap berwarna putih
-                            },
-                            formatter: function(val) {
-                                return val + "%";
-                            }
-                        },
-                        stroke: {
-                            show: true,
-                            width: 1,
-                            colors: ['transparent']
-                        },
-                        xaxis: {
-                            categories: categories,
-                            min: 0,
-                            max: 100,
-                            tickAmount: 5,
-                            labels: {
-                                style: {
-                                    colors: isDark ? '#9CA3AF' : '#6B7280',
-                                    fontSize: '11px',
-                                    fontFamily: 'Inter, sans-serif'
-                                },
-                                formatter: function(val) {
-                                    return Math.round(val) + "%";
-                                }
-                            }
-                        },
-                        yaxis: {
-                            labels: {
-                                style: {
-                                    colors: isDark ? '#E5E7EB' : '#374151',
-                                    fontSize: '11px',
-                                    fontWeight: 500
-                                },
-                                maxWidth: 150,
-                                formatter: function(val) {
-                                    if (val && val.length > 20) {
-                                        return val.substring(0, 20) + '...';
-                                    }
-                                    return val;
-                                }
-                            }
-                        },
-                        grid: {
-                            borderColor: isDark ? '#374151' : '#F3F4F6',
-                            strokeDashArray: 4,
-                            padding: {
-                                left: 5,
-                                right: 15
-                            }
-                        },
-                        theme: {
-                            mode: isDark ? 'dark' : 'light'
-                        },
-                        tooltip: {
-                            y: {
-                                formatter: function(val, opts) {
-                                    if (opts.seriesIndex === 0) {
-                                        let dev = data[opts.dataPointIndex].deviasi;
-                                        let sign = dev > 0 ? '+' : '';
-                                        let fullLoc = data[opts.dataPointIndex].lokasi;
-                                        return val + "% (Deviasi: " + sign + dev + "%) - " + fullLoc;
-                                    }
-                                    return val + "%";
-                                }
-                            }
-                        },
-                        legend: {
-                            position: 'top',
-                            horizontalAlign: 'center',
-                            fontSize: '11px'
-                        }
-                    };
-
-                    const chart = new ApexCharts(document.querySelector("#" + elementId), options);
-                    chart.render();
-
-                    // Re-render chart on theme change
-                    const observer = new MutationObserver((mutations) => {
-                        mutations.forEach((mutation) => {
-                            if (mutation.attributeName === 'class') {
-                                const newIsDark = document.documentElement.classList.contains('dark');
-                                chart.updateOptions({
-                                    theme: {
-                                        mode: newIsDark ? 'dark' : 'light'
-                                    },
-                                    xaxis: {
-                                        labels: {
-                                            style: {
-                                                colors: newIsDark ? '#9CA3AF' : '#6B7280'
-                                            }
-                                        }
-                                    },
-                                    yaxis: {
-                                        labels: {
-                                            style: {
-                                                colors: newIsDark ? '#E5E7EB' : '#374151'
-                                            }
-                                        }
-                                    },
-                                    grid: {
-                                        borderColor: newIsDark ? '#374151' : '#F3F4F6'
-                                    }
-                                });
-                            }
-                        });
-                    });
-                    observer.observe(document.documentElement, {
-                        attributes: true
-                    });
-                }
-
-                renderBarChart('chart-top10', top10Data, '#10B981'); // Success green
-                renderBarChart('chart-bottom10', bottom10Data, '#EF4444'); // Danger red
-
-                // Paksa ApexCharts menghitung ulang lebar SVG setelah CSS Grid selesai layout
-                // Ini menyelesaikan bug di mana chart pertama (Top 10) terpotong saat initial load
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        window.dispatchEvent(new Event('resize'));
-                    });
-                });
-            });
-        </script>
 
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('dashboardTableManager', () => ({
+                    selectedPoint: null,
+                    isOffcanvasOpen: false,
+                    
                     isPdfModalOpen: false,
                     pdfBatchId: '{{ request('batch_id') }}',
                     pdfDate: '{{ request('date') ?: date('Y-m-d') }}',
+
+                    init() {
+                        window.addEventListener('open-map-detail', (e) => {
+                            this.selectedPoint = e.detail;
+                            this.isOffcanvasOpen = true;
+                        });
+                        
+                        this.$watch('activeTab', (value) => {
+                            setTimeout(() => {
+                                window.dispatchEvent(new Event('resize'));
+                            }, 50);
+                        });
+                    },
+
+                    stageLevel(stage) {
+                        const map = {
+                            'usulan': 1,
+                            'survey': 2,
+                            'survei': 2,
+                            'ded': 3,
+                            'lelang': 4,
+                            'konstruksi': 5,
+                            'serah_terima': 6,
+                            'serah-terima': 6,
+                            'selesai': 6
+                        };
+                        return map[stage] || 1;
+                    },
+
+                    formatDec(val) {
+                        if (val === null || val === undefined || val === '') return '0,00';
+                        return Number(val || 0).toLocaleString('id-ID', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                    },
+
+                    closeDetailPanel() {
+                        this.isOffcanvasOpen = false;
+                        setTimeout(() => this.selectedPoint = null, 300);
+                        window.dispatchEvent(new CustomEvent('map-fly-home'));
+                    }
                 }));
             });
         </script>
 
-        <script>
-            // Scatter Plot: Rencana vs Realisasi
-            document.addEventListener('DOMContentLoaded', function() {
-                const allData = @json($stats['all_konstruksi'] ?? []);
-                const isDark = document.documentElement.classList.contains('dark');
+        
 
-                if (!document.getElementById('scatter-rencana-realisasi') || allData.length === 0) return;
+<!-- Offcanvas Detail -->
+        @include('programs.knmp.dashboard.partials.offcanvas_map')
+        
 
-                // Group data by deviation status: positif (hijau) vs negatif (merah)
-                const positif = []; // deviasi >= 0
-                const negatif = []; // deviasi < 0
-
-                let totalRencana = 0;
-                let totalRealisasi = 0;
-
-                allData.forEach(item => {
-                    const point = [
-                        item.rencana,
-                        item.progres,
-                        {
-                            lokasi: item.lokasi,
-                            konstruktor: item.konstruktor,
-                            deviasi: item.deviasi
-                        }
-                    ];
-                    totalRencana += item.rencana;
-                    totalRealisasi += item.progres;
-
-                    if (item.deviasi >= 0) {
-                        positif.push(point);
-                    } else {
-                        negatif.push(point);
-                    }
-                });
-
-
-
-                const options = {
-                    series: [{
-                            name: 'Deviasi Positif',
-                            data: positif
-                        },
-                        {
-                            name: 'Deviasi Negatif',
-                            data: negatif
-                        },
-                    ],
-                    chart: {
-                        type: 'scatter',
-                        height: 420,
-                        toolbar: {
-                            show: true,
-                            tools: {
-                                download: false,
-                                selection: true,
-                                zoom: true,
-                                zoomin: true,
-                                zoomout: true,
-                                pan: true,
-                                reset: true
-                            }
-                        },
-                        background: 'transparent',
-                        fontFamily: 'Inter, sans-serif',
-                        zoom: {
-                            enabled: true,
-                            type: 'xy'
-                        },
-                    },
-                    colors: ['#10B981', '#EF4444'],
-                    markers: {
-                        size: 7,
-                        strokeWidth: 1,
-                        strokeColors: isDark ? '#1F2937' : '#FFFFFF',
-                        hover: {
-                            sizeOffset: 3
-                        },
-                    },
-                    xaxis: {
-                        type: 'numeric',
-                        title: {
-                            text: 'Rencana (%)',
-                            style: {
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                color: isDark ? '#D1D5DB' : '#4B5563'
-                            }
-                        },
-                        min: 0,
-                        max: 100,
-                        tickAmount: 10,
-                        labels: {
-                            formatter: val => Math.round(val) + '%',
-                            style: {
-                                colors: isDark ? '#9CA3AF' : '#6B7280',
-                                fontSize: '10px'
-                            },
-                        },
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Realisasi (%)',
-                            style: {
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                color: isDark ? '#D1D5DB' : '#4B5563'
-                            }
-                        },
-                        min: 0,
-                        max: 100,
-                        tickAmount: 10,
-                        labels: {
-                            formatter: val => Math.round(val) + '%',
-                            style: {
-                                colors: isDark ? '#9CA3AF' : '#6B7280',
-                                fontSize: '10px'
-                            },
-                        },
-                    },
-                    grid: {
-                        borderColor: isDark ? '#374151' : '#F3F4F6',
-                        strokeDashArray: 4,
-                    },
-                    theme: {
-                        mode: isDark ? 'dark' : 'light'
-                    },
-                    legend: {
-                        show: false,
-                    },
-                    tooltip: {
-                        enabled: true,
-                        intersect: false,
-                        shared: false,
-                        theme: isDark ? 'dark' : 'light',
-                        z: {
-                            formatter: function() {
-                                return '';
-                            },
-                            title: ''
-                        },
-                        x: {
-                            formatter: function(val, {
-                                series,
-                                seriesIndex,
-                                dataPointIndex,
-                                w
-                            }) {
-                                const pointArr = w.config.series[seriesIndex].data[dataPointIndex];
-                                return (pointArr && pointArr[2]) ? pointArr[2].lokasi : val;
-                            }
-                        },
-                        y: {
-                            title: {
-                                formatter: function(seriesName) {
-                                    return 'Progres:';
-                                }
-                            },
-                            formatter: function(val) {
-                                return val + '%';
-                            }
-                        }
-                    },
-                };
-
-                const chart = new ApexCharts(document.querySelector('#scatter-rencana-realisasi'), options);
-                chart.render();
-
-                // Draw diagonal reference line after render
-                setTimeout(() => {
-                    const chartEl = document.querySelector('#scatter-rencana-realisasi .apexcharts-plot-area');
-                    if (chartEl) {
-                        const svg = chartEl.closest('svg');
-                        const plotArea = chartEl;
-                        const rect = plotArea.getBBox();
-
-                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                        line.classList.add('diagonal-ref');
-                        line.setAttribute('x1', rect.x);
-                        line.setAttribute('y1', rect.y + rect.height);
-                        line.setAttribute('x2', rect.x + rect.width);
-                        line.setAttribute('y2', rect.y);
-                        line.setAttribute('stroke', isDark ? '#4B5563' : '#D1D5DB');
-                        line.setAttribute('stroke-width', '1.5');
-                        line.setAttribute('stroke-dasharray', '6,4');
-                        line.setAttribute('opacity', '0.8');
-                        line.setAttribute('pointer-events', 'none');
-                        plotArea.appendChild(line);
-                    }
-                }, 500);
-
-                // Theme change observer
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.attributeName === 'class') {
-                            const newIsDark = document.documentElement.classList.contains('dark');
-                            chart.updateOptions({
-                                theme: {
-                                    mode: newIsDark ? 'dark' : 'light'
-                                },
-                                markers: {
-                                    strokeColors: newIsDark ? '#1F2937' : '#FFFFFF'
-                                },
-                                xaxis: {
-                                    title: {
-                                        style: {
-                                            color: newIsDark ? '#D1D5DB' : '#4B5563'
-                                        }
-                                    },
-                                    labels: {
-                                        style: {
-                                            colors: newIsDark ? '#9CA3AF' : '#6B7280'
-                                        }
-                                    },
-                                },
-                                yaxis: {
-                                    title: {
-                                        style: {
-                                            color: newIsDark ? '#D1D5DB' : '#4B5563'
-                                        }
-                                    },
-                                    labels: {
-                                        style: {
-                                            colors: newIsDark ? '#9CA3AF' : '#6B7280'
-                                        }
-                                    },
-                                },
-                                grid: {
-                                    borderColor: newIsDark ? '#374151' : '#F3F4F6'
-                                },
-                            });
-                            // Redraw diagonal line
-                            setTimeout(() => {
-                                const plotArea = document.querySelector(
-                                    '#scatter-rencana-realisasi .apexcharts-plot-area');
-                                if (plotArea) {
-                                    const oldLine = plotArea.querySelector('line.diagonal-ref');
-                                    if (oldLine) oldLine.remove();
-                                    const rect = plotArea.getBBox();
-                                    const line = document.createElementNS(
-                                        'http://www.w3.org/2000/svg', 'line');
-                                    line.classList.add('diagonal-ref');
-                                    line.setAttribute('x1', rect.x);
-                                    line.setAttribute('y1', rect.y + rect.height);
-                                    line.setAttribute('x2', rect.x + rect.width);
-                                    line.setAttribute('y2', rect.y);
-                                    line.setAttribute('stroke', newIsDark ? '#4B5563' :
-                                        '#D1D5DB');
-                                    line.setAttribute('stroke-width', '1.5');
-                                    line.setAttribute('stroke-dasharray', '6,4');
-                                    line.setAttribute('opacity', '0.8');
-                                    line.setAttribute('pointer-events', 'none');
-                                    plotArea.appendChild(line);
-                                }
-                            }, 300);
-                        }
-                    });
-                });
-                observer.observe(document.documentElement, {
-                    attributes: true
-                });
-            });
-        </script>
         <!-- Modal PDF -->
         <div x-show="isPdfModalOpen" style="display: none;"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

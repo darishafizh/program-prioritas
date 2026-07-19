@@ -1,0 +1,284 @@
+<!-- OFFCANVAS DETAIL 75% LEBAR LAYAR (Muncul dari kanan saat titik lokasi diklik) -->
+    <template x-teleport="body">
+    <div x-show="selectedPoint" style="display: none; z-index: 99999;"
+        class="fixed inset-0 overflow-hidden font-sans pointer-events-none">
+        <div class="fixed inset-0 w-full flex justify-end pointer-events-none">
+            <!-- Offcanvas Panel kanan 60% layar - Fixed Layar Tanpa Scroll -->
+            <div x-show="selectedPoint" @click.away="closeDetailPanel()"
+                style="width: 60vw !important; max-width: 60vw !important;"
+                x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
+                x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+                x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
+                x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+                class="w-3/5 h-full bg-white dark:bg-gray-900 shadow-2xl flex flex-col text-left pointer-events-auto border-l border-gray-200/80 dark:border-gray-800 overflow-hidden">
+
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-start flex-shrink-0 bg-white dark:bg-gray-900 shadow-sm gap-4">
+                    <div class="flex flex-col items-start gap-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shrink-0"
+                                :class="selectedPoint?.tahap === 'serah_terima' ?
+                                    'bg-success/10 dark:bg-success/20 text-success dark:text-emerald-400 border border-success/20' :
+                                    'bg-warning/10 dark:bg-amber-400/10 text-warning dark:text-amber-400 border border-warning/20'"
+                                x-text="selectedPoint?.tahap_label"></span>
+                        </div>
+                        <h3 class="text-[15px] font-semibold tracking-tight text-gray-800 dark:text-white leading-snug truncate w-full"
+                            x-text="selectedPoint?.nama"></h3>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate w-full" 
+                            x-text="[selectedPoint?.desa, selectedPoint?.kecamatan, selectedPoint?.kabupaten, selectedPoint?.provinsi].filter(Boolean).join(', ') || '-'"></p>
+                    </div>
+
+                    <div class="flex items-center shrink-0">
+                        <button type="button" @click="closeDetailPanel()"
+                            class="cursor-pointer text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1.5 transition-colors focus:outline-none rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                            title="Tutup Panel">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Body (Fit to screen, no scroll ideally) -->
+                <div class="flex-1 min-h-0 flex flex-col overflow-hidden bg-gray-50/50 dark:bg-gray-950/50 p-6 gap-6">
+                    <template x-if="selectedPoint">
+                        <div class="flex flex-col gap-6 w-full h-full">
+                        
+                            <!-- KONSTRUKSI LAYOUT -->
+                            <template x-if="selectedPoint?.tahap === 'konstruksi'">
+                                <div class="flex flex-col gap-6 w-full h-full">
+                                    
+                                    <!-- Baris 1: Profil KNMP & 6 Gambar -->
+                                    <div class="grid grid-cols-2 gap-6 shrink-0">
+                                        <!-- Kolom Kiri: Profil KNMP -->
+                                        <div class="flex flex-col">
+                                            <h4 class="text-xs font-bold flex items-center gap-2 mb-3 text-gray-800 dark:text-gray-200">
+                                                Profil KNMP
+                                            </h4>
+                                            <!-- NO BORDERS OR WHITE BOXES -->
+                                            <div class="grid grid-cols-2 gap-y-4 gap-x-2">
+                                                <div class="flex flex-col gap-0.5">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Jumlah Nelayan</div>
+                                                    <div class="text-xs font-medium text-gray-800 dark:text-gray-200">1.250 Orang</div>
+                                                </div>
+                                                <div class="flex flex-col gap-0.5">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Jumlah Kapal</div>
+                                                    <div class="text-xs font-medium text-gray-800 dark:text-gray-200">320 Unit</div>
+                                                </div>
+                                                <div class="flex flex-col gap-0.5">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Pendapatan Rata-rata</div>
+                                                    <div class="text-xs font-medium text-gray-800 dark:text-gray-200">Rp 3.5 Juta/Bln</div>
+                                                </div>
+                                                <div class="flex flex-col gap-0.5">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Volume Tangkapan</div>
+                                                    <div class="text-xs font-medium text-gray-800 dark:text-gray-200">450 Ton/Bln</div>
+                                                </div>
+                                                <div class="flex flex-col gap-0.5 col-span-2">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Kontraktor Pelaksana</div>
+                                                    <div class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate" x-text="selectedPoint?.kontraktor || 'PT. Nusantara Bangun'"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Kolom Kanan: 6 Gambar (3 Before, 3 Progres) -->
+                                        <div class="flex flex-col">
+                                            <h4 class="text-xs font-bold flex items-center gap-2 mb-3 text-gray-800 dark:text-gray-200">
+                                                Dokumentasi Fisik
+                                            </h4>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <!-- 3 Gambar Before -->
+                                                <div class="flex flex-col gap-2">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Before (0%)</div>
+                                                    <!-- Fixed small heights so they don't stretch -->
+                                                    <div class="flex gap-2">
+                                                        <div class="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                            <template x-if="selectedPoint?.fotosBefore && selectedPoint.fotosBefore[0]">
+                                                                <img :src="selectedPoint.fotosBefore[0].url" class="w-full h-full object-cover">
+                                                            </template>
+                                                        </div>
+                                                        <div class="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                            <template x-if="selectedPoint?.fotosBefore && selectedPoint.fotosBefore[1]">
+                                                                <img :src="selectedPoint.fotosBefore[1].url" class="w-full h-full object-cover">
+                                                            </template>
+                                                        </div>
+                                                        <div class="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                            <template x-if="selectedPoint?.fotosBefore && selectedPoint.fotosBefore[2]">
+                                                                <img :src="selectedPoint.fotosBefore[2].url" class="w-full h-full object-cover">
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- 3 Gambar Progres -->
+                                                <div class="flex flex-col gap-2">
+                                                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">Progres Current</div>
+                                                    <div class="flex gap-2">
+                                                        <div class="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                            <template x-if="selectedPoint?.fotosAfter && selectedPoint.fotosAfter[0]">
+                                                                <img :src="selectedPoint.fotosAfter[0].url" class="w-full h-full object-cover">
+                                                            </template>
+                                                        </div>
+                                                        <div class="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                            <template x-if="selectedPoint?.fotosAfter && selectedPoint.fotosAfter[1]">
+                                                                <img :src="selectedPoint.fotosAfter[1].url" class="w-full h-full object-cover">
+                                                            </template>
+                                                        </div>
+                                                        <div class="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                            <template x-if="selectedPoint?.fotosAfter && selectedPoint.fotosAfter[2]">
+                                                                <img :src="selectedPoint.fotosAfter[2].url" class="w-full h-full object-cover">
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Baris 2: Kurva S -->
+                                    <div x-data="{
+                                        activePoint: null,
+                                        get kurva() {
+                                            const arr = selectedPoint?.kurvaS || [];
+                                            const n = Math.max(1, arr.length - 1);
+                                            return arr.map((k, idx) => ({
+                                                ...k,
+                                                idx,
+                                                minggu: k.minggu || ('Mg-' + (idx+1)),
+                                                x: 10 + (idx / n) * 380,
+                                                yRencana: k.rencana !== null && k.rencana !== undefined ? 95 - (k.rencana / 100) * 85 : null,
+                                                yRealisasi: k.realisasi !== null && k.realisasi !== undefined ? 95 - (k.realisasi / 100) * 85 : null
+                                            }));
+                                        },
+                                        getRencanaPath() {
+                                            if (!this.kurva.length) return '';
+                                            return this.kurva.map((k, i) => ${i === 0 ? 'M' : 'L'}  ).join(' ');
+                                        },
+                                        getRealisasiPath() {
+                                            const valid = this.kurva.filter(k => k.yRealisasi !== null);
+                                            if (!valid.length) return '';
+                                            return valid.map((k, i) => ${i === 0 ? 'M' : 'L'}  ).join(' ');
+                                        },
+                                        getFillPath() {
+                                            const valid = this.kurva.filter(k => k.yRealisasi !== null);
+                                            if (!valid.length) return '';
+                                            let path = M  95;
+                                            valid.forEach(p => path +=  L  );
+                                            path +=  L  95 Z;
+                                            return path;
+                                        }
+                                    }"
+                                        x-init="$watch('selectedPoint', () => { activePoint = null; })"
+                                        class="flex flex-col flex-1 min-h-0 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl p-4 shadow-sm relative">
+                                        
+                                        <div class="flex justify-between items-center mb-4 shrink-0">
+                                            <h4 class="text-xs font-bold text-gray-800 dark:text-gray-200">
+                                                Kurva S (Kinerja & Fisik)
+                                            </h4>
+                                            
+                                            <!-- Legend -->
+                                            <div class="flex items-center gap-4 text-[11px]">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="w-4 border-b border-dashed border-gray-400 block"></span>
+                                                    <span class="text-gray-500">Rencana <span x-show="activePoint" class="font-bold text-gray-800 ml-1" x-text="formatDec(activePoint?.rencana) + '%'"></span></span>
+                                                </div>
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="w-4 border-b border-solid border-gray-700 block"></span>
+                                                    <span class="text-gray-500">Realisasi <span x-show="activePoint && activePoint.realisasi !== null" class="font-bold text-gray-800 ml-1" x-text="formatDec(activePoint?.realisasi) + '%'"></span></span>
+                                                </div>
+                                                <div x-show="activePoint" class="bg-gray-100 px-2 py-0.5 rounded font-bold text-gray-700 ml-2" x-text="activePoint?.minggu"></div>
+                                            </div>
+                                        </div>
+
+                                        <template x-if="(selectedPoint?.progres || 0) >= 0">
+                                            <div class="w-full relative flex items-center justify-center select-none flex-1 min-h-[140px] pl-6 pb-4">
+                                                <!-- HTML Labels Absolute to prevent distortion -->
+                                                <div class="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-gray-400 pb-[5%] pt-[5%] pr-1">
+                                                    <span>100</span>
+                                                    <span>50</span>
+                                                    <span>0</span>
+                                                </div>
+                                                <!-- SVG Container -->
+                                                <svg class="w-full h-full overflow-visible" viewBox="0 0 400 110" preserveAspectRatio="none">
+                                                    <!-- Grid Lines -->
+                                                    <line x1="10" y1="10" x2="390" y2="10" stroke="currentColor" class="text-gray-100 dark:text-gray-800" stroke-width="1" stroke-dasharray="2,2" />
+                                                    <line x1="10" y1="52.5" x2="390" y2="52.5" stroke="currentColor" class="text-gray-100 dark:text-gray-800" stroke-width="1" stroke-dasharray="2,2" />
+                                                    <line x1="10" y1="95" x2="390" y2="95" stroke="currentColor" class="text-gray-200 dark:text-gray-700" stroke-width="1" />
+                                                    
+                                                    <template x-if="activePoint !== null">
+                                                        <line :x1="activePoint.x" y1="10" :x2="activePoint.x" y2="95" stroke="#9ca3af" stroke-width="1" stroke-dasharray="3,3" opacity="0.5" />
+                                                    </template>
+
+                                                    <!-- Rencana (Dashed Line) -->
+                                                    <path :d="getRencanaPath()" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5,4" />
+                                                    
+                                                    <!-- Realisasi (Solid Line + Fill) -->
+                                                    <path :d="getFillPath()" fill="rgba(75, 85, 99, 0.08)" />
+                                                    <path :d="getRealisasiPath()" fill="none" stroke="#374151" stroke-width="2.5" />
+
+                                                    <!-- Data Points -->
+                                                    <template x-for="(pt, idx) in kurva" :key="idx">
+                                                        <g class="cursor-pointer" @mouseenter="activePoint = pt" @click="activePoint = pt">
+                                                            <circle :cx="pt.x" :cy="pt.yRencana" r="2.5" class="fill-gray-400 transition-all" />
+                                                            <template x-if="pt.realisasi !== null && pt.realisasi !== undefined">
+                                                                <circle :cx="pt.x" :cy="pt.yRealisasi" r="3.5" class="fill-gray-700 dark:fill-gray-300 transition-all stroke-white dark:stroke-gray-900" stroke-width="1.5" />
+                                                            </template>
+                                                            <!-- Invisible hover catch area -->
+                                                            <rect :x="pt.x - 10" y="10" width="20" height="85" fill="transparent" />
+                                                        </g>
+                                                    </template>
+                                                </svg>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- Baris 3: Alert Kendala -->
+                                    <template x-if="selectedPoint?.deviasi < 0">
+                                        <div class="bg-danger/10 border border-danger/30 rounded-lg p-3 flex items-center gap-3 w-full shrink-0">
+                                            <div class="w-6 h-6 rounded-full bg-danger/20 text-danger flex items-center justify-center shrink-0">
+                                                <i class="fa-solid fa-triangle-exclamation text-[10px]"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-[11px] text-danger/90 leading-snug">
+                                                    <strong>Deviasi Negatif <span x-text="formatDec(selectedPoint.deviasi) + '%'"></span></strong> &mdash; Realisasi <span x-text="formatDec(selectedPoint.progres) + '%'"></span> tertinggal dari rencana <span x-text="formatDec(selectedPoint.progres_rencana) + '%'"></span>.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- SERAH TERIMA SPECIFIC -->
+                            <template x-if="selectedPoint?.tahap === 'serah_terima'">
+                                <div class="flex flex-col gap-6 w-full h-full">
+                                    <div class="flex flex-col">
+                                        <h4 class="text-xs font-bold flex items-center gap-2 mb-3 text-gray-800 dark:text-gray-200">
+                                            Data Operasional & BAST
+                                        </h4>
+                                        <!-- NO BORDERS -->
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-4">
+                                            <div class="flex flex-col gap-0.5">
+                                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Nomor Kontrak BAST</div>
+                                                <div class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate" x-text="selectedPoint?.tahapSerahTerima?.nomor_kontrak || 'BAST-2026/01'"></div>
+                                            </div>
+                                            <div class="flex flex-col gap-0.5">
+                                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Tanggal Serah Terima</div>
+                                                <div class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate" x-text="selectedPoint?.tahapSerahTerima?.tanggal_serah || selectedPoint?.tahapSerahTerima?.tanggal || '-'"></div>
+                                            </div>
+                                            <div class="flex flex-col gap-0.5">
+                                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Status Sarpras</div>
+                                                <div class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">Beroperasi Penuh</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start gap-3 p-3 bg-gray-100 dark:bg-gray-800/80 rounded-lg text-[11px] text-gray-700 dark:text-gray-300">
+                                            <i class="fa-solid fa-circle-check mt-0.5 text-gray-500"></i>
+                                            <p>Lokasi ini telah diserahterimakan dan saat ini dalam fase operasional pemanfaatan. Fasilitas KNMP diharapkan dapat memberikan peningkatan kesejahteraan secara terukur kepada komunitas nelayan setempat.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+    </template>

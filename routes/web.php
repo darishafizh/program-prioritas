@@ -40,10 +40,12 @@ Route::middleware('auth')->group(function () {
     // KNMP Routes
     // ==========================================
 
-    // Dashboard - Super Admin, Admin Roren, Verifikator, Menteri
-    Route::prefix('dashboard/knmp')->name('program.')->middleware('role:super_admin,admin_roren,verifikator,menteri')->group(function () {
+    // Dashboard - Super Admin, Admin Roren, Verifikator
+    Route::prefix('dashboard/knmp')->name('program.')->middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::get('/siklus', [\App\Http\Controllers\Knmp\Dashboard\SiklusController::class, 'index'])->defaults('program', 'knmp')->name('dashboard.siklus');
         Route::get('/', [\App\Http\Controllers\Knmp\Dashboard\ProgresFisikController::class, 'index'])->defaults('program', 'knmp')->name('dashboard');
+        Route::get('/konstruksi', [\App\Http\Controllers\Knmp\Dashboard\KonstruksiKnmpController::class, 'index'])->defaults('program', 'knmp')->name('dashboard.konstruksi');
+        Route::get('/operasional', [\App\Http\Controllers\Knmp\Dashboard\OperasionalKnmpController::class, 'index'])->defaults('program', 'knmp')->name('dashboard.operasional');
         Route::get('/export-pdf', [\App\Http\Controllers\Knmp\Dashboard\ExportController::class, 'pdf'])->defaults('program', 'knmp')->name('dashboard.export-pdf');
     });
 
@@ -86,8 +88,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/calon-lokasi/{id}/penetapan', [\App\Http\Controllers\Knmp\Master\CalonLokasiController::class, 'uploadSkPenetapan'])->defaults('program', 'knmp')->name('master.calon-lokasi.upload-sk-penetapan');
     });
 
-    // Operasional - Super Admin, Admin Roren, Verifikator, Menteri
-    Route::prefix('operasional/knmp')->name('program.')->middleware('role:super_admin,admin_roren,verifikator,menteri')->group(function () {
+    // Operasional - Super Admin, Admin Roren, Verifikator
+    Route::prefix('operasional/knmp')->name('program.')->middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::post('/upload-foto', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'uploadFoto'])->defaults('program', 'knmp')->name('operasional.upload-foto');
         Route::post('/pindah-tahap', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'moveStage'])->defaults('program', 'knmp')->name('operasional.pindah-tahap');
         
@@ -100,8 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\Knmp\Operasional\PelaksanaanController::class, 'index'])->defaults('program', 'knmp')->name('operasional');
     });
 
-    // Evaluasi - Super Admin, Admin Roren, Verifikator, Menteri
-    Route::prefix('evaluasi/knmp')->name('program.')->middleware('role:super_admin,admin_roren,verifikator,menteri')->group(function () {
+    // Evaluasi - Super Admin, Admin Roren, Verifikator
+    Route::prefix('evaluasi/knmp')->name('program.')->middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::get('/', function () { return redirect()->route('program.evaluasi.calon-lokasi'); });
         Route::get('/calon-lokasi', [\App\Http\Controllers\Knmp\Evaluasi\CalonLokasiEvaluasiController::class, 'index'])->defaults('program', 'knmp')->name('evaluasi.calon-lokasi');
         Route::get('/calon-lokasi/pdf', [\App\Http\Controllers\Knmp\Evaluasi\CalonLokasiEvaluasiController::class, 'pdf'])->defaults('program', 'knmp')->name('evaluasi.calon-lokasi.pdf');
@@ -112,9 +114,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==========================================
-    // BINS Routes - Super Admin, Admin Roren, Verifikator, Menteri
+    // BINS Routes - Super Admin, Admin Roren, Verifikator
     // ==========================================
-    Route::middleware('role:super_admin,admin_roren,verifikator,menteri')->group(function () {
+    Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::prefix('dashboard/bins')->name('program.bins.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Bins\DashboardController::class, 'index'])->defaults('program', 'bins')->name('dashboard');
         });
@@ -130,9 +132,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==========================================
-    // Budidaya Tematik (Bioflok) Routes - Super Admin, Admin Roren, Verifikator, Menteri
+    // Budidaya Tematik (Bioflok) Routes - Super Admin, Admin Roren, Verifikator
     // ==========================================
-    Route::middleware('role:super_admin,admin_roren,verifikator,menteri')->group(function () {
+    Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::prefix('dashboard/budidaya-tematik')->name('program.budidaya-tematik.dashboard.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Bioflok\DashboardController::class, 'produksi'])->defaults('program', 'budidaya-tematik')->name('index');
             Route::get('/progres-fisik', [\App\Http\Controllers\Bioflok\DashboardController::class, 'progresFisik'])->defaults('program', 'budidaya-tematik')->name('progres-fisik');
@@ -155,7 +157,7 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     // Budidaya Tematik Master Routes
     // ==========================================
-    Route::middleware('role:super_admin,admin_roren,verifikator,menteri,user_daerah')->group(function () {
+    Route::middleware('role:super_admin,admin_roren,verifikator,user_daerah')->group(function () {
         Route::prefix('master/budidaya-tematik')->name('program.budidaya-tematik.master.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'budidaya-tematik')->name('index');
             Route::get('/kdkmp', [\App\Http\Controllers\Bioflok\Master\KdkmpController::class, 'index'])->defaults('program', 'budidaya-tematik')->name('kdkmp.index');
@@ -168,13 +170,13 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     // Default Program Routes
     // ==========================================
-    Route::middleware('role:super_admin,admin_roren,verifikator,menteri')->group(function () {
+    Route::middleware('role:super_admin,admin_roren,verifikator')->group(function () {
         Route::get('/dashboard/{program}', [\App\Http\Controllers\DefaultProgram\DashboardController::class, 'index'])->name('program.dashboard.default');
         Route::get('/operasional/{program}/{menu?}', [\App\Http\Controllers\DefaultProgram\OperasionalController::class, 'index'])->name('program.operasional.default');
         Route::get('/evaluasi/{program}/{menu?}', [\App\Http\Controllers\DefaultProgram\EvaluasiController::class, 'index'])->name('program.evaluasi.default');
     });
 
-    Route::middleware('role:super_admin,admin_roren,verifikator,menteri,user_daerah')->group(function () {
+    Route::middleware('role:super_admin,admin_roren,verifikator,user_daerah')->group(function () {
         Route::get('/master/{program}/{menu?}', [\App\Http\Controllers\DefaultProgram\MasterController::class, 'index'])->name('program.master.default');
     });
 });

@@ -12,10 +12,7 @@ class SiklusController extends ProgramBaseController
     {
         $this->checkAuth();
         $activeProgram = $this->formatProgramName($program);
-        if (\Illuminate\Support\Facades\Auth::user()->isMenteri()) {
-            return redirect()->route('program.dashboard', ['program' => 'knmp']);
-        }
-        
+
         $requestedBatchId = request('batch_id');
 
         $maxUpdateCalon = \Illuminate\Support\Facades\Schema::connection('mysql_knmp')->hasColumn('calon_lokasi', 'updated_at')

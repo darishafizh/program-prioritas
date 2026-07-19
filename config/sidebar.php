@@ -6,12 +6,12 @@ return [
             'heading' => 'Ringkasan Eksekutif',
             'items' => [
                 [
-                    'label' => 'Siklus',
+                    'label' => 'Lokasi Usulan',
                     'icon' => 'fa-arrows-spin',
                     'url' => '/dashboard/knmp/siklus',
                 ],
                 [
-                    'label' => 'Progres Fisik',
+                    'label' => 'Pembangunan',
                     'icon' => 'fa-person-digging',
                     'url' => '/dashboard/knmp',
                 ]

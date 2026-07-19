@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Knmp\Dashboard;
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
 use App\Models\Knmp;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ProgresFisikController extends ProgramBaseController
 {
@@ -12,14 +15,12 @@ class ProgresFisikController extends ProgramBaseController
     {
         $this->checkAuth();
         $activeProgram = $this->formatProgramName($program);
-        if (\Illuminate\Support\Facades\Auth::user()->isMenteri()) {
-            return $this->menteriDashboard($activeProgram);
-        }
+
         $requestedDate = request('date');
         $requestedBatchId = request('batch_id');
         
         if (!$requestedDate) {
-            $latestDateQuery = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
+            $latestDateQuery = DB::connection('mysql_knmp')
                 ->table('progres_harian')
                 ->join('konstruksi_knmp', 'konstruksi_knmp.id', '=', 'progres_harian.knmp_konstruksi_id')
                 ->join('knmp', 'knmp.id', '=', 'konstruksi_knmp.knmp_id');
@@ -34,26 +35,28 @@ class ProgresFisikController extends ProgramBaseController
             $effectiveDate = $requestedDate;
         }
 
-        $maxTanggalProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
-        $maxUpdateProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('updated_at');
-        $maxUpdateKnmp = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
+        $maxTanggalProgres = DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
+        $maxUpdateProgres = DB::connection('mysql_knmp')->table('progres_harian')->max('updated_at');
+        $maxUpdateKnmp = DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
         
         if ($requestedDate) {
-            $lastUpdatedText = \Carbon\Carbon::parse($requestedDate)->locale('id')->translatedFormat('d F Y') . ' (Filter Tanggal)';
+            $lastUpdatedText = Carbon::parse($requestedDate)->locale('id')->translatedFormat('d F Y') . ' (Filter Tanggal)';
         } else {
-            $dateStr = $effectiveDate ? \Carbon\Carbon::parse($effectiveDate)->locale('id')->translatedFormat('d F Y') : ($maxTanggalProgres ? \Carbon\Carbon::parse($maxTanggalProgres)->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y'));
+            $dateStr = $effectiveDate ? Carbon::parse($effectiveDate)->locale('id')->translatedFormat('d F Y') : ($maxTanggalProgres ? Carbon::parse($maxTanggalProgres)->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y'));
             $latestTs = $maxUpdateProgres ?: $maxUpdateKnmp;
             if ($latestTs && strlen($latestTs) > 10) {
-                $timeStr = \Carbon\Carbon::parse($latestTs)->locale('id')->translatedFormat('H:i') . ' WIB';
+                $timeStr = Carbon::parse($latestTs)->locale('id')->translatedFormat('H:i') . ' WIB';
                 $lastUpdatedText = "{$dateStr} (Pukul {$timeStr})";
             } else {
                 $lastUpdatedText = $dateStr;
             }
         }
 
-        $queryKnmp = \App\Models\Knmp::query();
-        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $queryKnmp->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
+        $queryKnmp = Knmp::query()
+            ->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima']);
+            
+        if (Auth::user()->isUserDaerah()) {
+            $queryKnmp->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
         }
         if ($requestedBatchId) {
             $queryKnmp->where('batch_id', $requestedBatchId);
@@ -64,10 +67,10 @@ class ProgresFisikController extends ProgramBaseController
         $dalamPembangunan = (clone $queryKnmp)->where('tahap_saat_ini', 'konstruksi')->count();
         
         $avgProgres = 0;
-        $konstruksiDetails = [];
+        
         $kesehatan = ['sesuai' => 0, 'ringan' => 0, 'kritis' => 0];
 
-        $batches = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('batch')->get()->map(function($b) {
+        $batches = DB::connection('mysql_knmp')->table('batch')->get()->map(function($b) {
             return [
                 'id' => $b->id,
                 'name' => $b->nama_tahap . ' - ' . $b->tahun
@@ -75,12 +78,34 @@ class ProgresFisikController extends ProgramBaseController
         })->keyBy('id');
 
         if ($totalLokasi > 0) {
-            $semuaKnmp = (clone $queryKnmp)->where('tahap_saat_ini', 'konstruksi')
+            $semuaKnmp = (clone $queryKnmp)->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima'])
                 ->with('konstruksiKnmp.penyediaJasa', 'konstruksiKnmp.tahapKonstruksi')
                 ->get();
             
             $totalProgres = 0;
             $countWithProgres = 0;
+
+            // BULK FETCH FOR TABLE LOGIC
+            $konstruksiIds = $semuaKnmp->pluck('konstruksiKnmp.id')->filter()->toArray();
+            $allProgresHarian = collect();
+            $allTahapKonstruksi = collect();
+            
+            if (!empty($konstruksiIds)) {
+                $queryPh = DB::connection('mysql_knmp')
+                    ->table('progres_harian')
+                    ->whereIn('knmp_konstruksi_id', $konstruksiIds);
+                if ($effectiveDate) {
+                    $queryPh->whereDate('tanggal', '<=', $effectiveDate);
+                }
+                $allProgresHarian = $queryPh->orderBy('tanggal', 'desc')->get()->groupBy('knmp_konstruksi_id');
+                
+                $allTahapKonstruksi = DB::connection('mysql_knmp')
+                    ->table('tahap_konstruksi')
+                    ->whereIn('knmp_konstruksi_id', $konstruksiIds)
+                    ->orderBy('periode_mingguan', 'desc')
+                    ->get()
+                    ->groupBy('knmp_konstruksi_id');
+            }
 
             foreach($semuaKnmp as $k) {
                 $kons = $k->konstruksiKnmp;
@@ -92,29 +117,18 @@ class ProgresFisikController extends ProgramBaseController
                 $daysStagnant = 0;
 
                 if ($kons) {
-                    $query = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-                        ->table('progres_harian')
-                        ->where('knmp_konstruksi_id', $kons->id);
-                        
-                    if ($effectiveDate) {
-                        $query->whereDate('tanggal', '<=', $effectiveDate);
-                    }
-                    
-                    $allProgres = $query->orderBy('tanggal', 'desc')->get();
-                    $latestProgres = $allProgres->first();
+                    $progresHarianList = $allProgresHarian->get($kons->id, collect());
+                    $latestProgres = $progresHarianList->first();
                     $progres = $latestProgres ? (float)$latestProgres->progres : 0;
                     
                     if ($kons->tanggal_mulai) {
-                        $tanggalMulai = \Carbon\Carbon::parse($kons->tanggal_mulai);
-                        $targetDate = \Carbon\Carbon::parse($effectiveDate);
+                        $tanggalMulai = Carbon::parse($kons->tanggal_mulai);
+                        $targetDate = Carbon::parse($effectiveDate);
                         $daysDiff = $tanggalMulai->diffInDays($targetDate, false);
                         $currentWeek = $daysDiff < 0 ? 1 : floor($daysDiff / 7) + 1;
                         
-                        $tahapKonstruksi = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('tahap_konstruksi')
-                            ->where('knmp_konstruksi_id', $kons->id)
-                            ->where('periode_mingguan', '<=', $currentWeek)
-                            ->orderBy('periode_mingguan', 'desc')
-                            ->first();
+                        $tahapList = $allTahapKonstruksi->get($kons->id, collect());
+                        $tahapKonstruksi = $tahapList->where('periode_mingguan', '<=', $currentWeek)->first();
                             
                         if ($tahapKonstruksi) {
                             $val = (float)$tahapKonstruksi->bobot_rencana_kumulatif;
@@ -137,38 +151,27 @@ class ProgresFisikController extends ProgramBaseController
                     }
                     
                     if ($k->tahap_saat_ini === 'konstruksi' && $progres < 100 && $latestProgres) {
-                        $effectiveDateObj = \Carbon\Carbon::parse($effectiveDate);
+                        $effectiveDateObj = Carbon::parse($effectiveDate);
                         $dateFirstAchieved = $latestProgres->tanggal;
                         
-                        foreach($allProgres as $pRecord) {
-                            if ((float)$pRecord->progres === $progres) {
-                                $dateFirstAchieved = $pRecord->tanggal;
+                        foreach($progresHarianList as $p) {
+                            if ((float)$p->progres == $progres) {
+                                $dateFirstAchieved = $p->tanggal;
                             } else {
                                 break;
                             }
                         }
                         
-                        $daysStagnant = \Carbon\Carbon::parse($dateFirstAchieved)->diffInDays($effectiveDateObj);
+                        $daysStagnant = Carbon::parse($dateFirstAchieved)->diffInDays($effectiveDateObj);
                         if ($daysStagnant >= 5) {
                             $isStagnant = true;
                         }
                     }
                 }
 
-                $batchName = $k->batch_id && $batches->has($k->batch_id) ? $batches[$k->batch_id]['name'] : '-';
+                
 
-                $konstruksiDetails[] = [
-                    'lokasi' => $k->nama,
-                    'daerah' => $k->status ?: 'Penyangga',
-                    'konstruktor' => $kons && $kons->penyediaJasa ? $kons->penyediaJasa->nama : '-',
-                    'progres' => round($progres, 1),
-                    'rencana' => round($rencana, 1),
-                    'deviasi' => round($deviasi, 1),
-                    'tahap' => $k->tahap_saat_ini,
-                    'batch_name' => $batchName,
-                    'is_stagnant' => $isStagnant,
-                    'days_stagnant' => $daysStagnant,
-                ];
+                
             }
 
             if ($countWithProgres > 0) {
@@ -176,29 +179,24 @@ class ProgresFisikController extends ProgramBaseController
             }
         }
 
-        $sortedByProgres = collect($konstruksiDetails)->sortByDesc('progres')->values();
-        $top10 = $sortedByProgres->take(10);
-        $bottom10 = collect($konstruksiDetails)->where('progres', '<', 100)->sortBy('progres')->values()->take(10);
         
-        $stagnantList = collect($konstruksiDetails)->where('is_stagnant', true)->sortByDesc('days_stagnant')->values()->all();
-        
-        $allTableData = $sortedByProgres->all();
 
-        $mapQuery = \App\Models\Knmp::select('nama', 'provinsi', 'latitude', 'longitude', 'status')
-            ->where('tahap_saat_ini', 'konstruksi')
+        $mapQuery = Knmp::select('id', 'nama', 'provinsi', 'kabupaten', 'kecamatan', 'desa', 'latitude', 'longitude', 'status', 'tahap_saat_ini', 'batch_id', 'created_at')
+            ->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima'])
             ->whereNotNull('latitude')
-            ->whereNotNull('longitude');
+            ->whereNotNull('longitude')
+            ->with(['tahapUsulan', 'tahapSurvey', 'tahapDed', 'tahapLelang', 'tahapSerahTerima', 'konstruksiKnmp.penyediaJasa']);
             
-        if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
-            $mapQuery->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
+        if (Auth::user()->isUserDaerah()) {
+            $mapQuery->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
         }
             
         if ($requestedBatchId) {
             $mapQuery->where('batch_id', $requestedBatchId);
         }
         
-        $mapLocations = $mapQuery->get();
-            
+        $mapLocationsRaw = $mapQuery->get();
+        
         $regionBarat = 0;
         $regionTengah = 0;
         $regionTimur = 0;
@@ -211,8 +209,8 @@ class ProgresFisikController extends ProgramBaseController
             'bali_nusra' => 0,
             'maluku_papua' => 0,
         ];
-        
-        foreach ($mapLocations as $loc) {
+
+        foreach ($mapLocationsRaw as $loc) {
             if ($loc->longitude < 116) {
                 $regionBarat++;
             } elseif ($loc->longitude >= 116 && $loc->longitude < 124) {
@@ -253,6 +251,8 @@ class ProgresFisikController extends ProgramBaseController
             }
         }
 
+        $mapLocations = $this->buildMapPointsData($mapLocationsRaw, $batches);
+
         $narasi = "Sejauh ini, progres program Kampung Nelayan Merah Putih (KNMP) mencatatkan perkembangan yang terukur. Dari total <span class='text-teal-light dark:text-teal-400 font-bold'>{$totalLokasi} lokasi</span> yang terdaftar, terdapat <span class='text-warning dark:text-amber-500 font-bold'>{$dalamPembangunan} lokasi</span> yang saat ini sedang dalam tahap konstruksi aktif dengan rata-rata progres fisik mencapai <span class='font-bold'>{$avgProgres}%</span>. Selain itu, <span class='text-success font-bold'>{$totalSelesai} lokasi</span> telah berhasil diselesaikan dan diserahterimakan. Sebaran pembangunan mencakup {$regionBarat} lokasi di Wilayah Barat, {$regionTengah} di Tengah, dan {$regionTimur} di Timur Indonesia, menunjukkan komitmen pemerataan infrastruktur pesisir.";
 
         return view("programs.knmp.dashboard.index", [
@@ -265,11 +265,11 @@ class ProgresFisikController extends ProgramBaseController
                 'total_selesai' => $totalSelesai,
                 'dalam_pembangunan' => $dalamPembangunan,
                 'kesehatan' => $kesehatan,
-                'top10' => $top10,
-                'bottom10' => $bottom10,
-                'stagnant_list' => $stagnantList,
+                
+                
+                
                 'map_locations' => $mapLocations,
-                'all_konstruksi' => $allTableData,
+                
                 'filter_batches' => $batches->values()->all(),
                 'regions' => [
                     'barat' => $regionBarat,
@@ -282,48 +282,47 @@ class ProgresFisikController extends ProgramBaseController
         ]);
     }
 
-    private function menteriDashboard($activeProgram)
+
+    private function buildMapPointsData($locationsData, $batches)
     {
-        $batches = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('batch')->get()->map(function($b) {
-            return [
-                'id' => $b->id,
-                'name' => $b->nama_tahap . ' - ' . $b->tahun
-            ];
-        })->keyBy('id');
+        if ($locationsData->isEmpty()) {
+            return [];
+        }
 
-        $locationsQuery = \App\Models\Knmp::with(['tahapUsulan', 'tahapSurvey', 'tahapDed', 'tahapLelang', 'konstruksiKnmp.penyediaJasa', 'konstruksiKnmp.tahapKonstruksi', 'tahapSerahTerima'])
-            ->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima', 'serah terima', 'selesai']);
+        // 1. Bulk Load Bukti Uploads
+        $knmpIds = $locationsData->pluck('id')->filter()->unique()->toArray();
+        $allBuktiUploads = DB::connection('mysql_knmp')
+            ->table('bukti_uploads')
+            ->whereIn('knmp_id', $knmpIds)
+            ->whereIn('kondisi', ['before', 'after'])
+            ->get()
+            ->groupBy('knmp_id');
 
-        $locationsData = $locationsQuery->get();
+        // 2. Bulk Load Progres Harian & Tahap Konstruksi
+        $konstruksiIds = $locationsData->pluck('konstruksiKnmp.id')->filter()->unique()->toArray();
+        $allProgresHarian = collect();
+        $allTahapKonstruksi = collect();
+        
+        if (!empty($konstruksiIds)) {
+            $allProgresHarian = DB::connection('mysql_knmp')
+                ->table('progres_harian')
+                ->whereIn('knmp_konstruksi_id', $konstruksiIds)
+                ->orderBy('tanggal', 'desc')
+                ->get()
+                ->groupBy('knmp_konstruksi_id');
+                
+            $allTahapKonstruksi = DB::connection('mysql_knmp')
+                ->table('tahap_konstruksi')
+                ->whereIn('knmp_konstruksi_id', $konstruksiIds)
+                ->orderBy('periode_mingguan', 'asc')
+                ->get()
+                ->groupBy('knmp_konstruksi_id');
+        }
 
         $mapPoints = [];
-        $totalProgres = 0;
-        $countKonstruksi = 0;
-        $countSerahTerima = 0;
-        $regionBarat = 0;
-        $regionTengah = 0;
-        $regionTimur = 0;
+        $now = now();
 
         foreach ($locationsData as $loc) {
-            if (is_numeric($loc->longitude) && $loc->longitude != 0) {
-                if ($loc->longitude < 116) {
-                    $regionBarat++;
-                } elseif ($loc->longitude >= 116 && $loc->longitude < 124) {
-                    $regionTengah++;
-                } else {
-                    $regionTimur++;
-                }
-            } else {
-                $prov = strtolower(trim($loc->provinsi ?? ''));
-                if (str_contains($prov, 'papua') || str_contains($prov, 'maluku') || str_contains($prov, 'nusa tenggara timur')) {
-                    $regionTimur++;
-                } elseif (str_contains($prov, 'sulawesi') || str_contains($prov, 'kalimantan') || str_contains($prov, 'bali') || str_contains($prov, 'nusa tenggara barat')) {
-                    $regionTengah++;
-                } else {
-                    $regionBarat++;
-                }
-            }
-
             $tahapNorm = strtolower(trim($loc->tahap_saat_ini));
             $isSerahTerima = in_array($tahapNorm, ['serah_terima', 'serah terima', 'selesai']);
 
@@ -332,63 +331,48 @@ class ProgresFisikController extends ProgramBaseController
             $deviasi = 0;
             $kontraktor = '-';
             $currentWeek = null;
+            $kurvaS = [];
 
+            $kons = $loc->konstruksiKnmp;
+            
             if ($isSerahTerima) {
-                $countSerahTerima++;
                 $progres = 100;
                 $rencana = 100;
                 $deviasi = 0;
-            } else {
-                $countKonstruksi++;
-                $kons = $loc->konstruksiKnmp;
-                if ($kons) {
-                    $kontraktor = $kons->penyediaJasa ? $kons->penyediaJasa->nama : '-';
-                    $latestProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-                        ->table('progres_harian')
-                        ->where('knmp_konstruksi_id', $kons->id)
-                        ->orderBy('tanggal', 'desc')
-                        ->first();
-                    $progres = $latestProgres ? (float)$latestProgres->progres : 0;
+            } elseif ($kons) {
+                $kontraktor = $kons->penyediaJasa ? $kons->penyediaJasa->nama : '-';
+                $progresHarianList = $allProgresHarian->get($kons->id, collect());
+                $latestProgres = $progresHarianList->first();
+                $progres = $latestProgres ? (float)$latestProgres->progres : 0;
 
-                    if ($kons->tanggal_mulai) {
-                        $tanggalMulai = \Carbon\Carbon::parse($kons->tanggal_mulai);
-                        $daysDiff = $tanggalMulai->diffInDays(now(), false);
-                        $currentWeek = $daysDiff < 0 ? 1 : floor($daysDiff / 7) + 1;
-                        $tahapKonstruksi = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('tahap_konstruksi')
-                            ->where('knmp_konstruksi_id', $kons->id)
-                            ->where('periode_mingguan', '<=', $currentWeek)
-                            ->orderBy('periode_mingguan', 'desc')
-                            ->first();
-                        if ($tahapKonstruksi) {
-                            $val = (float)$tahapKonstruksi->bobot_rencana_kumulatif;
-                            if ($val > 100) {
-                                $val = $val / 1000;
-                            }
-                            $rencana = round($val, 2);
+                if ($kons->tanggal_mulai) {
+                    $tanggalMulai = Carbon::parse($kons->tanggal_mulai);
+                    $daysDiff = $tanggalMulai->diffInDays($now, false);
+                    $currentWeek = $daysDiff < 0 ? 1 : floor($daysDiff / 7) + 1;
+                    
+                    $tahapList = $allTahapKonstruksi->get($kons->id, collect());
+                    $tahapKonstruksi = $tahapList->where('periode_mingguan', '<=', $currentWeek)->last();
+                    
+                    if ($tahapKonstruksi) {
+                        $val = (float)$tahapKonstruksi->bobot_rencana_kumulatif;
+                        if ($val > 100) {
+                            $val = $val / 1000;
                         }
+                        $rencana = round($val, 2);
                     }
-                    $deviasi = round($progres - $rencana, 2);
                 }
+                $deviasi = round($progres - $rencana, 2);
             }
 
-            if (!$isSerahTerima) {
-                $totalProgres += $progres;
-            }
-            $batchName = $loc->batch_id && $batches->has($loc->batch_id) ? $batches[$loc->batch_id]['name'] : '-';
-
-            // Kurva S & Detail Logic
-            $kurvaS = [];
-            $kons = $loc->konstruksiKnmp;
+            // Kurva S Logic using Memory Collections
             if ($kons) {
-                $tahaps = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('tahap_konstruksi')
-                    ->where('knmp_konstruksi_id', $kons->id)
-                    ->orderBy('periode_mingguan', 'asc')
-                    ->get();
-
+                $tahaps = $allTahapKonstruksi->get($kons->id, collect());
                 if ($tahaps->count() > 0) {
                     $maxWeek = $tahaps->max('periode_mingguan');
                     if ($maxWeek < 4) $maxWeek = 4;
                     if ($maxWeek > 20) $maxWeek = 20;
+
+                    $progresHarianList = $allProgresHarian->get($kons->id, collect());
 
                     for ($w = 1; $w <= $maxWeek; $w++) {
                         $tk = $tahaps->firstWhere('periode_mingguan', $w);
@@ -409,15 +393,10 @@ class ProgresFisikController extends ProgramBaseController
                         $realisasiVal = null;
                         if (!isset($currentWeek) || $w <= $currentWeek) {
                             $weekEndDate = $kons->tanggal_mulai 
-                                ? \Carbon\Carbon::parse($kons->tanggal_mulai)->addDays($w * 7)->endOfDay()->format('Y-m-d H:i:s')
-                                : \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+                                ? Carbon::parse($kons->tanggal_mulai)->addDays($w * 7)->endOfDay()
+                                : Carbon::now();
 
-                            $ph = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-                                ->table('progres_harian')
-                                ->where('knmp_konstruksi_id', $kons->id)
-                                ->where('tanggal', '<=', $weekEndDate)
-                                ->orderBy('tanggal', 'desc')
-                                ->first();
+                            $ph = $progresHarianList->where('tanggal', '<=', $weekEndDate->format('Y-m-d H:i:s'))->first();
 
                             if ($ph) {
                                 $realisasiVal = round((float)$ph->progres, 2);
@@ -452,19 +431,9 @@ class ProgresFisikController extends ProgramBaseController
                 ];
             }
 
-            $fotosBefore = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-                ->table('bukti_uploads')
-                ->where('knmp_id', $loc->id)
-                ->where('kondisi', 'before')
-                ->get()
-                ->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
-
-            $fotosAfter = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-                ->table('bukti_uploads')
-                ->where('knmp_id', $loc->id)
-                ->where('kondisi', 'after')
-                ->get()
-                ->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
+            $buktiUploads = $allBuktiUploads->get($loc->id, collect());
+            $fotosBefore = $buktiUploads->where('kondisi', 'before')->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
+            $fotosAfter = $buktiUploads->where('kondisi', 'after')->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
 
             $tahapDed = $loc->tahapDed;
             $dokumenDedUrl = null;
@@ -483,6 +452,8 @@ class ProgresFisikController extends ProgramBaseController
                     $lngVal = 118.0;
                 }
             }
+
+            $batchName = $loc->batch_id && $batches->has($loc->batch_id) ? $batches[$loc->batch_id]['name'] : '-';
 
             $mapPoints[] = [
                 'id' => $loc->id,
@@ -536,38 +507,6 @@ class ProgresFisikController extends ProgramBaseController
             ];
         }
 
-
-        $totalLokasi = $countKonstruksi + $countSerahTerima;
-        $avgProgres = $countKonstruksi > 0 ? round($totalProgres / $countKonstruksi, 1) : 0;
-
-        $maxTanggalProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
-        $maxUpdateProgres = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('progres_harian')->max('updated_at');
-        $maxUpdateKnmp = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
-
-        $dateStr = $maxTanggalProgres ? \Carbon\Carbon::parse($maxTanggalProgres)->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y');
-        $latestTs = $maxUpdateProgres ?: $maxUpdateKnmp;
-        if ($latestTs && strlen($latestTs) > 10) {
-            $timeStr = \Carbon\Carbon::parse($latestTs)->locale('id')->translatedFormat('H:i') . ' WIB';
-            $lastUpdatedText = "{$dateStr} (Pukul {$timeStr})";
-        } else {
-            $lastUpdatedText = $dateStr;
-        }
-
-        return view('programs.knmp.dashboard.menteri', [
-            'activeProgram' => $activeProgram,
-            'stats' => [
-                'total_lokasi' => $totalLokasi,
-                'total_konstruksi' => $countKonstruksi,
-                'total_serah_terima' => $countSerahTerima,
-                'rata_progres' => $avgProgres,
-                'regions' => [
-                    'barat' => $regionBarat,
-                    'tengah' => $regionTengah,
-                    'timur' => $regionTimur,
-                ],
-                'map_points' => $mapPoints,
-                'last_updated' => $lastUpdatedText,
-            ]
-        ]);
+        return $mapPoints;
     }
 }
