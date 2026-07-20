@@ -65,22 +65,22 @@ class AppServiceProvider extends ServiceProvider
             return $user->isSuperAdmin();
         });
 
-        // Super Admin + Admin Roren + Menteri: generate PDF
+        // Super Admin + Admin Roren: generate PDF
         Gate::define('generate-pdf', function (User $user) {
-            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isMenteri();
+            return $user->isSuperAdmin() || $user->isAdminRoren();
         });
 
-        // Super Admin + Admin Roren + Verifikator + Menteri: access dashboard/operasional/evaluasi
+        // Super Admin + Admin Roren + Verifikator: access dashboard/operasional/evaluasi
         Gate::define('access-dashboard', function (User $user) {
-            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isVerifikator() || $user->isMenteri();
+            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isVerifikator();
         });
 
         Gate::define('access-operasional', function (User $user) {
-            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isVerifikator() || $user->isMenteri();
+            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isVerifikator();
         });
 
         Gate::define('access-evaluasi', function (User $user) {
-            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isVerifikator() || $user->isMenteri();
+            return $user->isSuperAdmin() || $user->isAdminRoren() || $user->isVerifikator();
         });
     }
 }
