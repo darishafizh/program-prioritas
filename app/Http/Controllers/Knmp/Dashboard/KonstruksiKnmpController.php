@@ -173,9 +173,12 @@ class KonstruksiKnmpController extends ProgramBaseController
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
+        $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
+
         return view('programs.knmp.dashboard.partials.konstruksi', [
             'activeModule' => 'Dashboard',
             'activeProgram' => $activeProgram,
+            'masterSarpras' => $masterSarpras,
             'paginatedDetails' => $paginatedItems,
             'paginator' => $paginator,
             'perPage' => $perPage,

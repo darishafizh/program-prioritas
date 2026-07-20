@@ -14,14 +14,17 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex items-center gap-3 sm:gap-4">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-teal-light/10 text-teal-light dark:text-teal-400 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-chart-column text-lg sm:text-xl"></i>
-                </div>
                 <div>
-                    <h2 class="text-base sm:text-lg font-bold text-textMain-light dark:text-textMain-dark tracking-tight">Monitoring Konstruksi KNMP</h2>
-                    <p class="text-[11px] sm:text-xs text-textMuted-light dark:text-textMuted-dark mt-0.5">
-                        Menampilkan <strong>{{ count($paginatedDetails) }}</strong> dari <strong>{{ $paginator->total() }}</strong> lokasi konstruksi aktif &bull; Rata-rata progres: <strong>{{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}%</strong>
-                    </p>
+                    <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Monitoring Konstruksi KNMP</h2>
+                    <div class="flex items-center gap-2 mt-1">
+                        <p class="text-[11px] sm:text-xs text-textMuted-light dark:text-textMuted-dark">
+                            Menampilkan <strong>{{ count($paginatedDetails) }}</strong> dari <strong>{{ $paginator->total() }}</strong> lokasi konstruksi
+                        </p>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-teal-light/10 dark:bg-teal-400/10 text-teal-light dark:text-teal-400 text-[11px] font-semibold border border-teal-light/20 dark:border-teal-400/20">
+                            <i class="fa-solid fa-chart-line"></i>
+                            Rata-rata Progres: {{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}%
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -58,8 +61,45 @@
 
     {{-- Pagination --}}
     @if(isset($paginator) && $paginator->hasPages())
-    <div class="mb-6">
-        {{ $paginator->links() }}
+    <div class="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-1">
+        <div class="text-xs text-textMuted-light dark:text-textMuted-dark">
+            Menampilkan <span class="font-medium text-textMain-light dark:text-textMain-dark">{{ $paginator->firstItem() }}</span> 
+            sampai <span class="font-medium text-textMain-light dark:text-textMain-dark">{{ $paginator->lastItem() }}</span> 
+            dari <span class="font-medium text-textMain-light dark:text-textMain-dark">{{ $paginator->total() }}</span> hasil
+        </div>
+        <div class="flex items-center gap-1">
+            @if ($paginator->onFirstPage())
+                <button type="button" disabled class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 opacity-30 cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                </button>
+            @else
+                <a href="{{ $paginator->appends(request()->query())->previousPageUrl() }}" class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                </a>
+            @endif
+
+            @foreach ($paginator->getUrlRange(max(1, $paginator->currentPage() - 2), min($paginator->lastPage(), $paginator->currentPage() + 2)) as $page => $url)
+                @if ($page == $paginator->currentPage())
+                    <button type="button" class="w-8 h-8 rounded-lg font-medium text-xs flex items-center justify-center bg-teal-light text-white shadow-xs">
+                        {{ $page }}
+                    </button>
+                @else
+                    <a href="{{ $paginator->appends(request()->query())->url($page) }}" class="w-8 h-8 rounded-lg font-medium text-xs flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        {{ $page }}
+                    </a>
+                @endif
+            @endforeach
+
+            @if ($paginator->hasMorePages())
+                <a href="{{ $paginator->appends(request()->query())->nextPageUrl() }}" class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </a>
+            @else
+                <button type="button" disabled class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 opacity-30 cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </button>
+            @endif
+        </div>
     </div>
     @endif
 
@@ -103,49 +143,6 @@
         </div>
     @endif
 
-    {{-- Scatter Plot: Rencana vs Realisasi --}}
-    <style>
-        .apexcharts-tooltip-z,
-        .apexcharts-tooltip-z-group,
-        .apexcharts-tooltip-text-z-label,
-        .apexcharts-tooltip-text-z-value {
-            display: none !important;
-        }
-    </style>
-    <div class="bg-bgSurface-light dark:bg-bgSurface-dark border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden flex flex-col mb-6">
-        <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h3 class="font-medium text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line text-teal-light"></i> Scatter Plot: Rencana vs Realisasi
-                </h3>
-                <p class="text-xs text-textMuted-light mt-1">Titik di bawah garis diagonal menunjukkan lokasi dengan deviasi progres negatif (realisasi di bawah rencana).</p>
-            </div>
-            <div class="flex items-center gap-4 text-[11px]">
-                <div class="flex items-center gap-1.5">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #10B981;"></span>
-                    <span class="text-textMuted-light dark:text-textMuted-dark">Deviasi Positif</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #EF4444;"></span>
-                    <span class="text-textMuted-light dark:text-textMuted-dark">Deviasi Negatif</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-6">
-            @if(count($allDetails ?? []) > 0)
-                <div id="scatter-rencana-realisasi" style="min-height: 420px;"></div>
-            @else
-                <div class="flex flex-col items-center justify-center p-12 text-center min-h-[350px] bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-                    <div class="w-14 h-14 rounded-3xl bg-gray-200/50 dark:bg-gray-700/50 flex items-center justify-center text-textMuted-light dark:text-textMuted-dark mb-4">
-                        <i class="fa-solid fa-chart-line text-2xl"></i>
-                    </div>
-                    <h4 class="font-bold text-sm text-textMain-light dark:text-textMain-dark">Plot Deviasi Tidak Tersedia</h4>
-                    <p class="text-xs text-textMuted-light dark:text-textMuted-dark max-w-md mt-1.5 leading-relaxed">Tidak ada data konstruksi pada filter yang dipilih.</p>
-                </div>
-            @endif
-        </div>
-    </div>
-
 </div>
 
 {{-- ========== SCRIPTS ========== --}}
@@ -181,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plotOptions: {
                 bar: {
                     borderRadius: 4,
+                    borderRadiusApplication: 'end',
                     horizontal: true,
                     barHeight: '70%',
                     dataLabels: { position: 'right' }
@@ -188,8 +186,9 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             dataLabels: {
                 enabled: true,
-                offsetX: 5,
-                style: { fontSize: '10px', colors: [isDark ? '#D1D5DB' : '#4B5563'] },
+                textAnchor: 'end',
+                offsetX: -5,
+                style: { fontSize: '10px', fontWeight: 'bold', colors: ['#FFFFFF'] },
                 formatter: val => val + '%'
             },
             xaxis: {
@@ -243,7 +242,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         theme: { mode: d ? 'dark' : 'light' },
                         xaxis: { labels: { style: { colors: d ? '#9CA3AF' : '#6B7280' } } },
                         yaxis: { labels: { style: { colors: d ? '#E5E7EB' : '#374151' } } },
-                        dataLabels: { style: { colors: [d ? '#D1D5DB' : '#4B5563'] } },
                         grid: { borderColor: d ? '#374151' : '#F3F4F6' }
                     });
                 }
@@ -252,122 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
         barObserver.observe(document.documentElement, { attributes: true });
     }
 
-    // ===== SCATTER PLOT =====
-    const allData = @json($allDetails ?? []);
 
-    if (document.getElementById('scatter-rencana-realisasi') && allData.length > 0) {
-        const positif = [];
-        const negatif = [];
-
-        allData.forEach(item => {
-            const point = [item.rencana, item.progres, { lokasi: item.lokasi, konstruktor: item.konstruktor, deviasi: item.deviasi }];
-            if (item.deviasi >= 0) { positif.push(point); } else { negatif.push(point); }
-        });
-
-        const scatterOptions = {
-            series: [
-                { name: 'Deviasi Positif', data: positif },
-                { name: 'Deviasi Negatif', data: negatif }
-            ],
-            chart: {
-                type: 'scatter', height: 420,
-                toolbar: { show: true, tools: { download: false, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true } },
-                background: 'transparent', fontFamily: 'Inter, sans-serif',
-                zoom: { enabled: true, type: 'xy' }
-            },
-            colors: ['#10B981', '#EF4444'],
-            markers: { size: 7, strokeWidth: 1, strokeColors: isDark ? '#1F2937' : '#FFFFFF', hover: { sizeOffset: 3 } },
-            xaxis: {
-                type: 'numeric',
-                title: { text: 'Rencana (%)', style: { fontSize: '12px', fontWeight: 600, color: isDark ? '#D1D5DB' : '#4B5563' } },
-                min: 0, max: 100, tickAmount: 10,
-                labels: { formatter: val => Math.round(val) + '%', style: { colors: isDark ? '#9CA3AF' : '#6B7280', fontSize: '10px' } }
-            },
-            yaxis: {
-                title: { text: 'Realisasi (%)', style: { fontSize: '12px', fontWeight: 600, color: isDark ? '#D1D5DB' : '#4B5563' } },
-                min: 0, max: 100, tickAmount: 10,
-                labels: { formatter: val => Math.round(val) + '%', style: { colors: isDark ? '#9CA3AF' : '#6B7280', fontSize: '10px' } }
-            },
-            grid: { borderColor: isDark ? '#374151' : '#F3F4F6', strokeDashArray: 4 },
-            theme: { mode: isDark ? 'dark' : 'light' },
-            legend: { show: false },
-            tooltip: {
-                enabled: true, intersect: false, shared: false,
-                theme: isDark ? 'dark' : 'light',
-                z: { formatter: () => '', title: '' },
-                x: {
-                    formatter: function(val, { seriesIndex, dataPointIndex, w }) {
-                        const pointArr = w.config.series[seriesIndex].data[dataPointIndex];
-                        return (pointArr && pointArr[2]) ? pointArr[2].lokasi : val;
-                    }
-                },
-                y: {
-                    title: { formatter: () => 'Progres:' },
-                    formatter: val => val + '%'
-                }
-            }
-        };
-
-        const scatterChart = new ApexCharts(document.querySelector('#scatter-rencana-realisasi'), scatterOptions);
-        scatterChart.render();
-
-        // Diagonal line
-        setTimeout(() => {
-            const plotArea = document.querySelector('#scatter-rencana-realisasi .apexcharts-plot-area');
-            if (plotArea) {
-                const rect = plotArea.getBBox();
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.classList.add('diagonal-ref');
-                line.setAttribute('x1', rect.x);
-                line.setAttribute('y1', rect.y + rect.height);
-                line.setAttribute('x2', rect.x + rect.width);
-                line.setAttribute('y2', rect.y);
-                line.setAttribute('stroke', isDark ? '#4B5563' : '#D1D5DB');
-                line.setAttribute('stroke-width', '1.5');
-                line.setAttribute('stroke-dasharray', '6,4');
-                line.setAttribute('opacity', '0.8');
-                line.setAttribute('pointer-events', 'none');
-                plotArea.appendChild(line);
-            }
-        }, 500);
-
-        // Theme observer for scatter
-        const scatterObserver = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-                if (mutation.attributeName === 'class') {
-                    const d = document.documentElement.classList.contains('dark');
-                    scatterChart.updateOptions({
-                        theme: { mode: d ? 'dark' : 'light' },
-                        markers: { strokeColors: d ? '#1F2937' : '#FFFFFF' },
-                        xaxis: { title: { style: { color: d ? '#D1D5DB' : '#4B5563' } }, labels: { style: { colors: d ? '#9CA3AF' : '#6B7280' } } },
-                        yaxis: { title: { style: { color: d ? '#D1D5DB' : '#4B5563' } }, labels: { style: { colors: d ? '#9CA3AF' : '#6B7280' } } },
-                        grid: { borderColor: d ? '#374151' : '#F3F4F6' }
-                    });
-                    setTimeout(() => {
-                        const plotArea = document.querySelector('#scatter-rencana-realisasi .apexcharts-plot-area');
-                        if (plotArea) {
-                            const oldLine = plotArea.querySelector('line.diagonal-ref');
-                            if (oldLine) oldLine.remove();
-                            const rect = plotArea.getBBox();
-                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                            line.classList.add('diagonal-ref');
-                            line.setAttribute('x1', rect.x);
-                            line.setAttribute('y1', rect.y + rect.height);
-                            line.setAttribute('x2', rect.x + rect.width);
-                            line.setAttribute('y2', rect.y);
-                            line.setAttribute('stroke', d ? '#4B5563' : '#D1D5DB');
-                            line.setAttribute('stroke-width', '1.5');
-                            line.setAttribute('stroke-dasharray', '6,4');
-                            line.setAttribute('opacity', '0.8');
-                            line.setAttribute('pointer-events', 'none');
-                            plotArea.appendChild(line);
-                        }
-                    }, 300);
-                }
-            });
-        });
-        scatterObserver.observe(document.documentElement, { attributes: true });
-    }
 
     // Force resize after layout
     requestAnimationFrame(() => {

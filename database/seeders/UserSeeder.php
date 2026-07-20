@@ -48,13 +48,6 @@ class UserSeeder extends Seeder
             ]
         );
 
-        \App\Models\User::updateOrCreate(
-            ['email' => 'menteri@roren.com'],
-            [
-                'name' => 'Menteri KKP',
-                'password' => \Illuminate\Support\Facades\Hash::make('M3nt3r!@kkp'),
-                'role' => 'Menteri'
-            ]
-        );
+
     }
 }

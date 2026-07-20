@@ -255,9 +255,12 @@ class ProgresFisikController extends ProgramBaseController
 
         $narasi = "Sejauh ini, progres program Kampung Nelayan Merah Putih (KNMP) mencatatkan perkembangan yang terukur. Dari total <span class='text-teal-light dark:text-teal-400 font-bold'>{$totalLokasi} lokasi</span> yang terdaftar, terdapat <span class='text-warning dark:text-amber-500 font-bold'>{$dalamPembangunan} lokasi</span> yang saat ini sedang dalam tahap konstruksi aktif dengan rata-rata progres fisik mencapai <span class='font-bold'>{$avgProgres}%</span>. Selain itu, <span class='text-success font-bold'>{$totalSelesai} lokasi</span> telah berhasil diselesaikan dan diserahterimakan. Sebaran pembangunan mencakup {$regionBarat} lokasi di Wilayah Barat, {$regionTengah} di Tengah, dan {$regionTimur} di Timur Indonesia, menunjukkan komitmen pemerataan infrastruktur pesisir.";
 
+        $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
+
         return view("programs.knmp.dashboard.index", [
             'activeModule' => 'Dashboard',
             'activeProgram' => $activeProgram,
+            'masterSarpras' => $masterSarpras,
             'stats' => [
                 'last_updated' => $lastUpdatedText,
                 'total_lokasi' => $totalLokasi,
@@ -297,6 +300,43 @@ class ProgresFisikController extends ProgramBaseController
             ->whereIn('kondisi', ['before', 'after'])
             ->get()
             ->groupBy('knmp_id');
+            
+        // 1.5 Bulk Load Profil KNMP
+        $allProfilKnmp = DB::connection('mysql_knmp')
+            ->table('profil_knmp')
+            ->whereIn('knmp_id', $knmpIds)
+            ->get()
+            ->keyBy('knmp_id');
+            
+        // 1.6 Bulk Load API Sarpras
+        $apiData = \Illuminate\Support\Facades\Cache::remember('knmp_api_data', 3600, function () {
+            try {
+                $response = \Illuminate\Support\Facades\Http::timeout(10)->get('https://kdmp.pdspkp.id/knmp/get_data.php');
+                if ($response->successful()) {
+                    return $response->json();
+                }
+            } catch (\Exception $e) {}
+            return [];
+        });
+
+        $apiKeys = [
+            'SPBN' => 'SPBUN_status',
+            'Docking' => 'Docking nelayan_status',
+            'Bengkel' => 'Bengkel Nelayan_status',
+            'Waserda' => 'Waserda_status',
+            'Pabrik Es' => 'Pabrik Es_status',
+            'Cold Storage' => 'Cold Storage_status',
+            'KDRN Dingin' => 'Kenderaan Berpendingin_status',
+            'Sentra Kuliner' => 'Sentra Kuliner_status',
+            'Kios Pemasaran' => 'Kios Pemasaran_status',
+            'Kapal' => 'Kapal_status',
+            'Mesin' => 'Mesin_Status',
+            'Alat Tangkap' => 'Alat_tangkap_Status',
+            'Cool Box' => 'cool_box_status',
+            'Roda 3' => 'roda3_status',
+        ];
+        
+        $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
 
         // 2. Bulk Load Progres Harian & Tahap Konstruksi
         $konstruksiIds = $locationsData->pluck('konstruksiKnmp.id')->filter()->unique()->toArray();
@@ -370,7 +410,7 @@ class ProgresFisikController extends ProgramBaseController
                 if ($tahaps->count() > 0) {
                     $maxWeek = $tahaps->max('periode_mingguan');
                     if ($maxWeek < 4) $maxWeek = 4;
-                    if ($maxWeek > 20) $maxWeek = 20;
+                    // if ($maxWeek > 20) $maxWeek = 20; // Removed per user request to allow >20 weeks
 
                     $progresHarianList = $allProgresHarian->get($kons->id, collect());
 
@@ -433,7 +473,7 @@ class ProgresFisikController extends ProgramBaseController
 
             $buktiUploads = $allBuktiUploads->get($loc->id, collect());
             $fotosBefore = $buktiUploads->where('kondisi', 'before')->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
-            $fotosAfter = $buktiUploads->where('kondisi', 'after')->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
+            $fotosAfter = $buktiUploads->where('kondisi', $isSerahTerima ? 'after' : 'progres')->map(fn($f) => ['url' => asset('storage/' . $f->path_file), 'nama' => $f->nama_file])->values()->all();
 
             $tahapDed = $loc->tahapDed;
             $dokumenDedUrl = null;
@@ -454,6 +494,8 @@ class ProgresFisikController extends ProgramBaseController
             }
 
             $batchName = $loc->batch_id && $batches->has($loc->batch_id) ? $batches[$loc->batch_id]['name'] : '-';
+
+            $profil = $allProfilKnmp->get($loc->id);
 
             $mapPoints[] = [
                 'id' => $loc->id,
@@ -477,8 +519,84 @@ class ProgresFisikController extends ProgramBaseController
                 'kontraktor' => $kontraktor,
                 'konstruktor' => $kontraktor,
                 'batch_name' => $batchName,
+                
+                // --- PROFIL KNMP ---
+                'jumlah_kk' => $profil && $profil->jml_kk ? number_format($profil->jml_kk, 0, ',', '.') . ' KK' : '-',
+                'jumlah_nelayan' => $profil && $profil->jml_nelayan ? number_format($profil->jml_nelayan, 0, ',', '.') . ' Orang' : '-',
+                'komoditas' => $profil && $profil->komoditas ? $profil->komoditas : '-',
+                'penjualan_ikan' => $profil && $profil->penjualan_ikan ? $profil->penjualan_ikan : '-',
+                'jumlah_hari_melaut' => $profil && $profil->jml_hari_melaut ? $profil->jml_hari_melaut . ' Hari/bln' : '-',
+                'pendapatan_rata_saat_ini' => $profil && $profil->pend_avg_saat_ini ? 'Rp ' . rtrim(rtrim(number_format($profil->pend_avg_saat_ini, 2, ',', '.'), '0'), ',') . ' Jt' : '-',
+                'pendapatan_pasca_intervensi' => $profil && $profil->pend_avg_intervensi ? 'Rp ' . rtrim(rtrim(number_format($profil->pend_avg_intervensi, 2, ',', '.'), '0'), ',') . ' Jt' : '-',
+                'vol_produksi_daerah' => $profil && $profil->vol_produksi_daerah ? number_format($profil->vol_produksi_daerah, 0, ',', '.') . ' Ton/thn' : '-',
+                'nilai_produksi_daerah' => $profil && $profil->nilai_produksi_daerah ? 'Rp ' . rtrim(rtrim(number_format($profil->nilai_produksi_daerah, 2, ',', '.'), '0'), ',') . ' M' : '-',
+                'vol_produksi_pasca_intervensi' => $profil && $profil->vol_produksi_intervensi ? number_format($profil->vol_produksi_intervensi, 0, ',', '.') . ' Ton/thn' : '-',
+                'nilai_produksi_pasca_intervensi' => $profil && $profil->nilai_produksi_intervensi ? 'Rp ' . rtrim(rtrim(number_format($profil->nilai_produksi_intervensi, 2, ',', '.'), '0'), ',') . ' M' : '-',
+                'serapan_tenaga_kerja' => $profil && $profil->serapan_tenaga_kerja ? number_format($profil->serapan_tenaga_kerja, 0, ',', '.') . ' Orang' : '-',
+                // -------------------
+                
                 'created_at' => $loc->created_at ? $loc->created_at->format('d M Y, H:i') : '-',
                 'kurvaS' => $kurvaS,
+                'sarpras' => (function() use ($apiData, $apiKeys, $masterSarpras, $loc) {
+                    $pointSarpras = [];
+                    $apiItem = null;
+                    if (is_array($apiData)) {
+                        $normalize = function($str) {
+                            return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', str_replace(['KNMP', 'Desa'], '', $str)));
+                        };
+                        $locDesaNorm = $loc->desa ? $normalize($loc->desa) : '';
+                        $locNamaNorm = $loc->nama ? $normalize($loc->nama) : '';
+
+                        foreach ($apiData as $item) {
+                            $itemDesaNorm = isset($item['Desa']) ? $normalize($item['Desa']) : '';
+                            $itemNamaNorm = isset($item['KNMP']) ? $normalize($item['KNMP']) : '';
+                            
+                            $matchDesa = false;
+                            if ($locDesaNorm && $itemDesaNorm) {
+                                similar_text($locDesaNorm, $itemDesaNorm, $pctDesa);
+                                if ($pctDesa >= 85 || strpos($itemDesaNorm, $locDesaNorm) !== false || strpos($locDesaNorm, $itemDesaNorm) !== false) {
+                                    $matchDesa = true;
+                                }
+                            }
+                            
+                            $matchNama = false;
+                            if ($locNamaNorm && $itemNamaNorm) {
+                                similar_text($locNamaNorm, $itemNamaNorm, $pctNama);
+                                if ($pctNama >= 85 || strpos($itemNamaNorm, $locNamaNorm) !== false || strpos($locNamaNorm, $itemNamaNorm) !== false) {
+                                    $matchNama = true;
+                                }
+                            }
+
+                            if ($matchDesa || $matchNama) {
+                                $apiItem = $item;
+                                break;
+                            }
+                        }
+                    }
+
+                    foreach ($masterSarpras as $s) {
+                        $icon = \App\Http\Controllers\Knmp\Dashboard\OperasionalKnmpController::SARPRAS_ICONS[$s->nama] ?? 'fa-solid fa-box';
+                        $statusSarpras = 0; // 0=Tidak Ada, 1=Belum Operasional, 2=Sudah Operasional
+                        
+                        if ($apiItem) {
+                            $apiKey = $apiKeys[$s->nama] ?? null;
+                            if ($apiKey && isset($apiItem[$apiKey])) {
+                                if (stripos($apiItem[$apiKey], '2. Sudah Operasional') !== false) {
+                                    $statusSarpras = 2;
+                                } elseif (stripos($apiItem[$apiKey], '1. Belum Operasional') !== false) {
+                                    $statusSarpras = 1;
+                                }
+                            }
+                        }
+
+                        $pointSarpras[] = [
+                            'nama' => $s->nama,
+                            'icon' => $icon,
+                            'status' => $statusSarpras
+                        ];
+                    }
+                    return $pointSarpras;
+                })(),
                 'fotosBefore' => $fotosBefore,
                 'fotosAfter' => $fotosAfter,
                 'tahapUsulan' => [

@@ -58,86 +58,59 @@
                                 </h4>
                                 <div class="grid grid-cols-2 gap-x-6" style="row-gap: 24px;">
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Jumlah KK</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.jumlah_kk || '120 KK'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Jumlah KK</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.jumlah_kk || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Komoditas Utama</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.komoditas || 'Ikan Tongkol'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Jumlah Nelayan</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.jumlah_nelayan || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Pendapatan</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.pendapatan || 'Rp 5.000.000 / bln'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Komoditas Utama</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.komoditas || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Penjualan Ikan</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.penjualan_ikan || 'Pasar Lokal'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Penjualan Ikan</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.penjualan_ikan || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Jum. Hari Melaut</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.jumlah_hari_melaut || '15 Hari / bln'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Jum. Hari Melaut</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.jumlah_hari_melaut || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Pendpt. Rata2 Saat Ini</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.pendapatan_rata_saat_ini || 'Rp 3.500.000'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Pendpt. Rata2 Saat Ini</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.pendapatan_rata_saat_ini || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Pendpt. Pasca Intervensi</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.pendapatan_pasca_intervensi || 'Rp 7.000.000'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Pendpt. Pasca Intervensi</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.pendapatan_pasca_intervensi || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Serapan Tenaga Kerja</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.serapan_tenaga_kerja || '50 Orang'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Serapan Tenaga Kerja</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.serapan_tenaga_kerja || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Vol. Produksi Daerah</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.vol_produksi_daerah || '120 Ton / thn'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Vol. Produksi Daerah</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.vol_produksi_daerah || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Nilai Produksi Daerah</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.nilai_produksi_daerah || 'Rp 2 Milyar'"></span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Nilai Produksi Daerah</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.nilai_produksi_daerah || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Vol. Produksi Pasca Inter.</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.vol_produksi_pasca_intervensi || '250 Ton / thn'">
-                                        </span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Vol. Prod Pasca Inter.</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.vol_produksi_pasca_intervensi || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
-                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">
-                                            Nilai Produksi Pasca Inter.</span>
-                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.nilai_produksi_pasca_intervensi || 'Rp 5 Milyar'">
-                                        </span>
+                                        <span class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Nilai Prod Pasca Inter.</span>
+                                        <span class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug" x-text="selectedPoint?.nilai_produksi_pasca_intervensi || '-'"></span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Kolom Kanan: Dokumentasi (Before & After) -->
+                            <!-- Kolom Kanan: Dokumentasi (Before & After/Progres) -->
                             <div class="flex flex-col justify-start">
-                                <h4 class="text-sm font-bold tracking-tight text-textMain-light dark:text-white mb-4">
-                                    Dokumentasi (Before & After)
+                                <h4 class="text-sm font-bold tracking-tight text-textMain-light dark:text-white mb-4" x-text="'Dokumentasi (Before & ' + (stageLevel(selectedPoint?.tahap_saat_ini) === 6 ? 'After' : 'Progres') + ')'">
                                 </h4>
                                 <div class="grid grid-cols-2 gap-4 flex-1 min-h-0">
                                     <!-- Before -->
@@ -169,10 +142,10 @@
                                         </div>
                                     </div>
 
-                                    <!-- After -->
+                                    <!-- After/Progres -->
                                     <div class="flex flex-col gap-2.5 h-full">
                                         <div
-                                            class="text-[10px] font-semibold text-teal-600 dark:text-teal-400 text-center uppercase tracking-wider shrink-0">
+                                            class="text-[10px] font-semibold text-teal-600 dark:text-teal-400 text-center uppercase tracking-wider shrink-0" x-text="stageLevel(selectedPoint?.tahap_saat_ini) === 6 ? 'After' : 'Progres'">
                                             After</div>
                                         <div class="grid grid-rows-3 gap-2.5 flex-1 min-h-0">
                                             <template x-for="i in 3" :key="'after-' + i">
@@ -204,203 +177,219 @@
                         <!-- BODY BARIS 2: Dinamis (Kurva S atau Sarpras) -->
                         <template x-if="stageLevel(selectedPoint?.tahap_saat_ini) !== 6">
                             <!-- Kurva S Full Width -->
-                        <div x-data="{
-                            activePoint: null,
-                            get kurva() {
-                                const arr = selectedPoint?.kurvaS || [];
-                                const n = Math.max(1, arr.length - 1);
-                                return arr.map((k, idx) => ({
-                                    ...k,
-                                    idx,
-                                    x: 28 + (idx / n) * 362,
-                                    yRencana: k.rencana !== null && k.rencana !== undefined ? 95 - (k.rencana / 100) * 80 : null,
-                                    yRealisasi: k.realisasi !== null && k.realisasi !== undefined ? 95 - (k.realisasi / 100) * 80 : null
-                                }));
-                            },
-                            getRencanaPath() {
-                                if (!this.kurva.length) return '';
-                                return this.kurva.map((k, i) => `${i === 0 ? 'M' : 'L'} ${k.x} ${k.yRencana}`).join(' ');
-                            },
-                            getRealisasiPath() {
-                                const valid = this.kurva.filter(k => k.yRealisasi !== null);
-                                if (!valid.length) return '';
-                                return valid.map((k, i) => `${i === 0 ? 'M' : 'L'} ${k.x} ${k.yRealisasi}`).join(' ');
-                            },
-                            getFillPath() {
-                                const valid = this.kurva.filter(k => k.yRealisasi !== null);
-                                if (!valid.length) return '';
-                                let path = `M ${valid[0].x} 95`;
-                                valid.forEach(p => path += ` L ${p.x} ${p.yRealisasi}`);
-                                path += ` L ${valid[valid.length - 1].x} 95 Z`;
-                                return path;
-                            }
-                        }" x-init="$watch('selectedPoint', () => { activePoint = null; })"
-                            class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm shrink-0 w-full flex flex-col overflow-hidden h-64 sm:h-72">
-                            <div class="flex justify-between items-start mb-4 shrink-0">
-                                <h4 class="text-sm font-bold tracking-tight text-textMain-light dark:text-white">
-                                    Kurva S (Kinerja dan Fisik Konstruksi)
-                                </h4>
-                                <!-- Legend -->
-                                <div class="flex items-center gap-4 text-[10px] font-medium text-gray-500">
-                                    <div class="flex items-center gap-1.5">
-                                        <svg width="16" height="4" viewBox="0 0 16 4"
-                                            class="overflow-visible">
-                                            <line x1="0" y1="2" x2="16" y2="2"
-                                                stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4,4" />
-                                        </svg>
-                                        <span>Rencana</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <svg width="16" height="4" viewBox="0 0 16 4"
-                                            class="overflow-visible">
-                                            <line x1="0" y1="2" x2="16" y2="2"
-                                                stroke="#0d9488" stroke-width="2" />
-                                        </svg>
-                                        <span class="text-teal-700 dark:text-teal-300">Realisasi</span>
+                            <div x-data="{
+                                activePoint: null,
+                                get kurva() {
+                                    const arr = selectedPoint?.kurvaS || [];
+                                    const n = Math.max(1, arr.length - 1);
+                                    let lastRealIdx = -1;
+                                    arr.forEach((k, i) => { if (k.realisasi !== null && k.realisasi !== undefined) lastRealIdx = i; });
+                                    return arr.map((k, idx) => ({
+                                        ...k,
+                                        idx,
+                                        isLastRealisasi: idx === lastRealIdx,
+                                        x: 35 + (idx / n) * 350,
+                                        yRencana: k.rencana !== null && k.rencana !== undefined ? 10 + (1 - k.rencana / 100) * 75 : null,
+                                        yRealisasi: k.realisasi !== null && k.realisasi !== undefined ? 10 + (1 - k.realisasi / 100) * 75 : null
+                                    }));
+                                },
+                                getRencanaPath() {
+                                    const valid = this.kurva.filter(k => k.yRencana !== null);
+                                    if (valid.length === 0) return '';
+                                    if (valid.length === 1) return `M ${valid[0].x} ${valid[0].yRencana}`;
+                                    if (valid.length === 2) return `M ${valid[0].x} ${valid[0].yRencana} L ${valid[1].x} ${valid[1].yRencana}`;
+                                    let path = `M ${valid[0].x} ${valid[0].yRencana}`;
+                                    valid.forEach((curr, i, arr) => {
+                                        if (i === 0 || i === arr.length - 1) return;
+                                        const prev = arr[i - 1];
+                                        const midX = (prev.x + curr.x) / 2;
+                                        const midY = (prev.yRencana + curr.yRencana) / 2;
+                                        if (i === 1) path += ` L ${midX} ${midY}`;
+                                        const next = arr[i + 1];
+                                        const nextMidX = (curr.x + next.x) / 2;
+                                        const nextMidY = (curr.yRencana + next.yRencana) / 2;
+                                        path += ` Q ${curr.x} ${curr.yRencana}, ${nextMidX} ${nextMidY}`;
+                                    });
+                                    path += ` L ${valid[valid.length - 1].x} ${valid[valid.length - 1].yRencana}`;
+                                    return path;
+                                },
+                                getRealisasiPath() {
+                                    const valid = this.kurva.filter(k => k.yRealisasi !== null);
+                                    if (valid.length === 0) return '';
+                                    if (valid.length === 1) return `M ${valid[0].x} ${valid[0].yRealisasi}`;
+                                    if (valid.length === 2) return `M ${valid[0].x} ${valid[0].yRealisasi} L ${valid[1].x} ${valid[1].yRealisasi}`;
+                                    let path = `M ${valid[0].x} ${valid[0].yRealisasi}`;
+                                    valid.forEach((curr, i, arr) => {
+                                        if (i === 0 || i === arr.length - 1) return;
+                                        const prev = arr[i - 1];
+                                        const midX = (prev.x + curr.x) / 2;
+                                        const midY = (prev.yRealisasi + curr.yRealisasi) / 2;
+                                        if (i === 1) path += ` L ${midX} ${midY}`;
+                                        const next = arr[i + 1];
+                                        const nextMidX = (curr.x + next.x) / 2;
+                                        const nextMidY = (curr.yRealisasi + next.yRealisasi) / 2;
+                                        path += ` Q ${curr.x} ${curr.yRealisasi}, ${nextMidX} ${nextMidY}`;
+                                    });
+                                    path += ` L ${valid[valid.length - 1].x} ${valid[valid.length - 1].yRealisasi}`;
+                                    return path;
+                                },
+                                getFillPath() {
+                                    const valid = this.kurva.filter(k => k.yRealisasi !== null);
+                                    if (valid.length === 0) return '';
+                                    const baseline = 85;
+                                    let path = `M ${valid[0].x} ${baseline} L ${valid[0].x} ${valid[0].yRealisasi}`;
+                                    if (valid.length === 2) {
+                                        path += ` L ${valid[1].x} ${valid[1].yRealisasi}`;
+                                    } else if (valid.length > 2) {
+                                        valid.forEach((curr, i, arr) => {
+                                            if (i === 0 || i === arr.length - 1) return;
+                                            const prev = arr[i - 1];
+                                            const midX = (prev.x + curr.x) / 2;
+                                            const midY = (prev.yRealisasi + curr.yRealisasi) / 2;
+                                            if (i === 1) path += ` L ${midX} ${midY}`;
+                                            const next = arr[i + 1];
+                                            const nextMidX = (curr.x + next.x) / 2;
+                                            const nextMidY = (curr.yRealisasi + next.yRealisasi) / 2;
+                                            path += ` Q ${curr.x} ${curr.yRealisasi}, ${nextMidX} ${nextMidY}`;
+                                        });
+                                        path += ` L ${valid[valid.length - 1].x} ${valid[valid.length - 1].yRealisasi}`;
+                                    }
+                                    path += ` L ${valid[valid.length - 1].x} ${baseline} Z`;
+                                    return path;
+                                },
+                                getTooltipStyle() {
+                                    if (!this.activePoint) return '';
+                                    const pt = this.activePoint;
+                                    const xPct = pt.x / 400 * 100;
+                                    const yPct = Math.min(pt.yRencana ?? 100, pt.yRealisasi ?? 100);
+                                    
+                                    let translateX = '-50%';
+                                    let translateY = 'calc(-100% - 12px)'; // 12px above the point
+                                    
+                                    if (xPct < 20) translateX = '0%';
+                                    else if (xPct > 80) translateX = '-100%';
+                                    
+                                    if (yPct < 30) translateY = '12px'; // 12px below the point
+                                    
+                                    return `left: ${xPct}%; top: ${yPct}%; transform: translate(${translateX}, ${translateY});`;
+                                }
+                            }" x-init="$watch('selectedPoint', () => { activePoint = null; })"
+                                class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm shrink-0 w-full flex flex-col overflow-hidden"
+                                style="min-height: 420px;">
+
+                                <div class="flex justify-between items-center px-4 pt-3 pb-2 shrink-0">
+                                    <h4 class="text-[13px] font-semibold tracking-tight text-textMain-light dark:text-white">
+                                        Kurva S
+                                    </h4>
+                                    <div class="flex items-center gap-3 text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                        <div class="flex items-center gap-1">
+                                            <span class="inline-block w-3 border-t border-dashed" style="border-color: #9ca3af;"></span>
+                                            <span>Rencana</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <span class="inline-block w-3 border-t-2 rounded-full" style="border-color: #10B981;"></span>
+                                            <span style="color: #10B981;">Realisasi</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <template
-                                x-if="stageLevel(selectedPoint?.tahap_saat_ini) >= 5 || (selectedPoint?.progres || 0) > 0">
-                                <div class="flex-1 min-h-0 w-full relative select-none py-1 overflow-hidden"
-                                    @mouseleave="activePoint = null">
+                                <template
+                                    x-if="stageLevel(selectedPoint?.tahap_saat_ini) >= 5 || (selectedPoint?.progres || 0) > 0">
+                                    <div class="flex-1 min-h-0 w-full relative select-none overflow-hidden px-1 pb-2"
+                                        @mouseleave="activePoint = null">
 
-                                    <!-- BASE SVG CHART (Static Grids & Paths) -->
-                                    <svg class="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 400 130"
-                                        preserveAspectRatio="none">
-                                        <!-- Y-Axis Grid Lines -->
-                                        <line x1="28" y1="15" x2="395" y2="15"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="23" x2="395" y2="23"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="31" x2="395" y2="31"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="39" x2="395" y2="39"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="47" x2="395" y2="47"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="55" x2="395" y2="55"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="63" x2="395" y2="63"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="71" x2="395" y2="71"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="79" x2="395" y2="79"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="87" x2="395" y2="87"
-                                            stroke="currentColor" class="text-gray-100 dark:text-gray-800"
-                                            stroke-width="1" />
-                                        <line x1="28" y1="95" x2="395" y2="95"
-                                            stroke="currentColor" class="text-gray-300 dark:text-gray-700"
-                                            stroke-width="1" />
+                                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
+                                            <defs>
+                                                <linearGradient id="areaGradKurvaS" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="rgba(16, 185, 129, 0.25)" />
+                                                    <stop offset="100%" stop-color="rgba(16, 185, 129, 0.02)" />
+                                                </linearGradient>
+                                            </defs>
 
-                                        <!-- Rencana Path -->
-                                        <path :d="getRencanaPath()" fill="none" stroke="#9ca3af"
-                                            stroke-width="1.5" stroke-dasharray="4,4" />
-                                        <!-- Realisasi Path & Fill -->
-                                        <path :d="getFillPath()" fill="rgba(13, 148, 136, 0.1)" />
-                                        <path :d="getRealisasiPath()" fill="none" stroke="#0d9488"
-                                            stroke-width="2.5" />
-                                    </svg>
+                                            @foreach([0, 25, 50, 75, 100] as $val)
+                                                <line x1="35" y1="{{ 10 + (1 - $val / 100) * 75 }}" x2="385" y2="{{ 10 + (1 - $val / 100) * 75 }}"
+                                                    stroke="currentColor" class="{{ $val === 0 ? 'text-gray-200 dark:text-gray-700' : 'text-gray-100 dark:text-gray-800' }}"
+                                                    stroke-width="1" vector-effect="non-scaling-stroke" />
+                                            @endforeach
 
-                                    <!-- HTML OVERLAYS (Y-Axis Labels, X-Labels, Interactive Points) -->
-                                    <template x-for="val in [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"
-                                        :key="'y-' + val">
+                                            <path :d="getRencanaPath()" fill="none" stroke="#b0b0b0"
+                                                stroke-width="1.5" stroke-dasharray="6,4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+
+                                            <path :d="getFillPath()" fill="url(#areaGradKurvaS)" />
+
+                                            <path :d="getRealisasiPath()" fill="none" stroke="#10B981"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+                                        </svg>
+
+                                        @foreach([0, 25, 50, 75, 100] as $val)
+                                            <span class="absolute text-[9px] font-light text-gray-400 dark:text-gray-500 tabular-nums text-right w-6"
+                                                style="left: 6px; top: {{ 10 + (1 - $val / 100) * 75 }}%; transform: translateY(-50%);">{{ $val }}</span>
+                                        @endforeach
+
+                                        <template x-for="(pt, idx) in kurva" :key="'x-' + idx">
+                                            <div class="absolute top-0 bottom-0 cursor-pointer z-10"
+                                                :style="'left: ' + (pt.x / 400 * 100) + '%; width: ' + (350 / Math.max(1, kurva.length - 1) / 400 * 100) + '%; transform: translateX(-50%);'"
+                                                @mouseenter="activePoint = pt" @click="activePoint = pt">
+
+                                                <template x-if="activePoint === pt">
+                                                    <div class="absolute w-px"
+                                                        style="background-color: rgba(16, 185, 129, 0.2); top: 10%; bottom: 15%; left: 50%;"></div>
+                                                </template>
+
+                                                <template x-if="pt.realisasi !== null && pt.realisasi !== undefined && (pt.isLastRealisasi || activePoint === pt)">
+                                                    <div class="absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-150"
+                                                        :style="'background-color: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); top: ' + pt.yRealisasi + '%; left: 50%; width: ' + (activePoint === pt ? '10px' : '7px') + '; height: ' + (activePoint === pt ? '10px' : '7px') + ';'">
+                                                    </div>
+                                                </template>
+
+                                                <span class="absolute text-[8px] font-light text-gray-400 dark:text-gray-500 whitespace-nowrap transform -translate-x-1/2 tabular-nums"
+                                                    style="bottom: 8px; left: 50%;" x-text="pt.minggu"></span>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="activePoint !== null && activePoint.realisasi !== null">
+                                            <div class="absolute z-30 pointer-events-none rounded-xl text-xs min-w-[130px] transition-all duration-150"
+                                                style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(255,255,255,0.92); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);"
+                                                :style="getTooltipStyle()">
+                                                <div class="px-3 pt-2.5 pb-1 border-b text-center" style="border-color: rgba(0,0,0,0.06);">
+                                                    <span class="font-semibold text-[11px] text-gray-800" x-text="activePoint.label"></span>
+                                                </div>
+                                                <div class="px-3 py-2 flex flex-col gap-1.5">
+                                                    <div class="flex justify-between items-center gap-3">
+                                                        <span class="text-gray-400 text-[10px]">Rencana</span>
+                                                        <span class="font-semibold text-gray-700 tabular-nums" x-text="formatDec(activePoint.rencana) + '%'"></span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center gap-3">
+                                                        <span class="text-[10px]" style="color: #10B981;">Realisasi</span>
+                                                        <span class="font-bold tabular-nums" style="color: #10B981;" x-text="formatDec(activePoint.realisasi) + '%'"></span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center gap-3 pt-1.5 mt-0.5" style="border-top: 1px solid rgba(0,0,0,0.05);">
+                                                        <span class="text-gray-400 text-[10px]">Deviasi</span>
+                                                        <span class="font-bold tabular-nums"
+                                                            :class="(activePoint.realisasi - activePoint.rencana) >= 0 ? 'text-success' : 'text-danger'"
+                                                            x-text="((activePoint.realisasi - activePoint.rencana) > 0 ? '+' : '') + formatDec(activePoint.realisasi - activePoint.rencana) + '%'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <template
+                                    x-if="stageLevel(selectedPoint?.tahap_saat_ini) < 5 && (selectedPoint?.progres || 0) <= 0">
+                                    <div
+                                        class="flex-1 min-h-0 flex flex-col items-center justify-center text-center p-4">
+                                        <i
+                                            class="fa-solid fa-chart-line text-gray-300 dark:text-gray-600 text-2xl mb-1.5"></i>
                                         <span
-                                            class="absolute text-[9px] font-sans font-light text-gray-400 dark:text-gray-500 text-right w-6"
-                                            :style="'right: 94.25%; top: ' + ((95 - val * 0.8) / 130 * 100) +
-                                            '%; transform: translateY(-50%);'"
-                                            x-text="val"></span>
-                                    </template>
-
-                                    <template x-for="(pt, idx) in kurva" :key="'x-' + idx">
-                                        <div class="absolute top-0 bottom-0 cursor-pointer z-10"
-                                            :style="'left: ' + (pt.x / 400 * 100) + '%; width: ' + (362 / Math.max(1, kurva
-                                                .length - 1) / 400 * 100) + '%; transform: translateX(-50%);'"
-                                            @mouseenter="activePoint = pt" @click="activePoint = pt">
-
-                                            <!-- Vertical Hover Guide -->
-                                            <template x-if="activePoint === pt">
-                                                <div class="absolute w-px bg-teal-500/30 border-l border-dashed border-teal-500/40"
-                                                    style="top: 11.53%; bottom: 26.92%; left: 50%;"></div>
-                                            </template>
-
-                                            <!-- Rencana Dot -->
-                                            <div class="absolute w-2 h-2 bg-gray-400 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-transform"
-                                                :style="'top: ' + (pt.yRencana / 130 * 100) + '%; left: 50%;'"
-                                                :class="{ 'scale-150 bg-gray-500': activePoint === pt }"></div>
-
-                                            <!-- Realisasi Dot -->
-                                            <template x-if="pt.realisasi !== null && pt.realisasi !== undefined">
-                                                <div class="absolute w-2.5 h-2.5 bg-teal-500 border border-white dark:border-gray-900 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-transform z-10"
-                                                    :style="'top: ' + (pt.yRealisasi / 130 * 100) + '%; left: 50%;'"
-                                                    :class="{ 'scale-[1.7] bg-teal-400': activePoint === pt }"></div>
-                                            </template>
-
-                                            <!-- X Label (Minggu) -->
-                                            <span
-                                                class="absolute text-[9px] font-sans font-light text-gray-400 dark:text-gray-500 whitespace-nowrap transform -translate-x-1/2"
-                                                style="bottom: 5%; left: 50%;" x-text="pt.minggu"></span>
-                                        </div>
-                                    </template>
-
-                                    <!-- HTML Tooltip Overlay -->
-                                    <template x-if="activePoint !== null && activePoint.realisasi !== null">
-                                        <div class="absolute z-20 pointer-events-none bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl rounded-lg p-3 text-xs flex flex-col gap-1.5 min-w-[120px]"
-                                            :style="'left: ' + (activePoint.x / 400 * 100) + '%; top: ' + (Math.min(activePoint
-                                                .yRencana, activePoint.yRealisasi) / 130 * 100) +
-                                            '%; transform: translate(-50%, -115%);'">
-                                            <div class="font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-1 mb-0.5 text-center"
-                                                x-text="activePoint.label"></div>
-                                            <div class="flex justify-between items-center gap-4">
-                                                <span
-                                                    class="text-gray-500 font-light text-[10px] uppercase tracking-wide">Rencana</span>
-                                                <span class="font-semibold text-gray-700 dark:text-gray-300"
-                                                    x-text="formatDec(activePoint.rencana) + '%'"></span>
-                                            </div>
-                                            <div class="flex justify-between items-center gap-4">
-                                                <span
-                                                    class="text-teal-600 font-light text-[10px] uppercase tracking-wide">Realisasi</span>
-                                                <span class="font-bold text-teal-700 dark:text-teal-400"
-                                                    x-text="formatDec(activePoint.realisasi) + '%'"></span>
-                                            </div>
-                                            <div
-                                                class="flex justify-between items-center gap-4 mt-1 pt-1 border-t border-gray-50 dark:border-gray-700">
-                                                <span
-                                                    class="text-gray-500 font-light text-[10px] uppercase tracking-wide">Deviasi</span>
-                                                <span class="font-bold"
-                                                    :class="(activePoint.realisasi - activePoint.rencana) >= 0 ?
-                                                        'text-success' : 'text-danger'"
-                                                    x-text="((activePoint.realisasi - activePoint.rencana) > 0 ? '+' : '') + formatDec(activePoint.realisasi - activePoint.rencana) + '%'"></span>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </template>
-
-                            <template
-                                x-if="stageLevel(selectedPoint?.tahap_saat_ini) < 5 && (selectedPoint?.progres || 0) <= 0">
-                                <div class="flex-1 min-h-0 flex flex-col items-center justify-center text-center p-4">
-                                    <i
-                                        class="fa-solid fa-chart-line text-gray-300 dark:text-gray-600 text-2xl mb-1.5"></i>
-                                    <span
-                                        class="text-xs font-semibold text-textMain-light dark:text-textMain-dark">Kurva
-                                        S belum aktif</span>
-                                    <p class="text-[11px] text-textMuted-light max-w-sm mt-0.5">Pemantauan deviasi &
-                                        grafik Kurva S akan berjalan otomatis saat tahap konstruksi dimulai.</p>
-                                </div>
-                            </template>
-                        </div>
+                                            class="text-xs font-semibold text-textMain-light dark:text-textMain-dark">Kurva
+                                            S belum aktif</span>
+                                        <p class="text-[11px] text-textMuted-light max-w-sm mt-0.5">Pemantauan deviasi
+                                            &
+                                            grafik Kurva S akan berjalan otomatis saat tahap konstruksi dimulai.</p>
+                                    </div>
+                                </template>
+                            </div>
                         </template>
 
                         <!-- Daftar Progres Sarpras (Serah Terima) -->
@@ -410,21 +399,29 @@
                                     <h4 class="text-sm font-bold tracking-tight text-textMain-light dark:text-white">
                                         Daftar Progres Sarpras (Tahap Serah Terima)
                                     </h4>
-                                    <span class="text-[10px] font-medium px-2 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 rounded">14 Sarpras Selesai</span>
+                                    <span
+                                        class="text-[10px] font-medium px-2 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 rounded"
+                                        x-text="(selectedPoint?.sarpras?.filter(s => s.status === 2)?.length || 0) + ' Sarpras Operasional'"></span>
                                 </div>
-                                <div class="flex-1 min-h-0 grid gap-3" style="grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr));" x-data="{
-                                    sarpras: Array.from({length: 14}).map((_, i) => ({
-                                        nama: 'Fasilitas ' + (i + 1),
-                                        progres: 100
-                                    }))
-                                }">
-                                    <template x-for="(s, idx) in sarpras" :key="idx">
-                                        <div class="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50 hover:border-teal-500/50 hover:bg-teal-50/50 transition-all cursor-default group">
-                                            <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                                <i class="fa-solid fa-check text-xs"></i>
+                                <div class="flex-1 min-h-0 grid gap-3"
+                                    style="grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr));">
+                                    <template x-for="(s, idx) in (selectedPoint?.sarpras || [])" :key="idx">
+                                        <div
+                                            class="flex flex-col items-center justify-center p-2 rounded-xl border transition-all cursor-default group"
+                                            :class="s.status === 2 ? 'bg-teal-50/50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800' : (s.status === 1 ? 'bg-warning/10 border-warning/20' : 'bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700/50')">
+                                            
+                                            <div
+                                                class="w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-transform"
+                                                :class="s.status === 2 ? 'bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400' : (s.status === 1 ? 'bg-warning/20 text-warning' : 'bg-gray-200 dark:bg-gray-700 text-gray-400')">
+                                                <i class="text-xs" :class="s.icon" :style="s.status === 2 ? 'color: #0d9488;' : (s.status === 1 ? 'color: #d97706;' : 'color: #9ca3af;')"></i>
                                             </div>
-                                            <span class="text-[10px] font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight truncate w-full" x-text="s.nama"></span>
-                                            <span class="text-[9px] text-teal-600 dark:text-teal-400 font-bold mt-0.5" x-text="s.progres + '%'"></span>
+                                            <span
+                                                class="text-[10px] font-semibold text-center leading-tight truncate w-full"
+                                                :class="s.status === 2 ? 'text-teal-700 dark:text-teal-300' : (s.status === 1 ? 'text-warning-dark' : 'text-gray-400 dark:text-gray-500')"
+                                                x-text="s.nama"></span>
+                                            <span class="text-[9px] font-bold mt-0.5"
+                                                :class="s.status === 2 ? 'text-teal-600 dark:text-teal-400' : (s.status === 1 ? 'text-warning' : 'text-gray-400 dark:text-gray-500')"
+                                                x-text="s.status === 2 ? 'Operasional' : (s.status === 1 ? 'Belum Ops.' : 'Tidak Ada')"></span>
                                         </div>
                                     </template>
                                 </div>

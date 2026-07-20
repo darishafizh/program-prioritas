@@ -14,6 +14,7 @@ return [
                     'label' => 'Pembangunan',
                     'icon' => 'fa-person-digging',
                     'url' => '/dashboard/knmp',
+                    'active' => ['dashboard/knmp', 'dashboard/knmp/konstruksi*', 'dashboard/knmp/operasional*']
                 ]
             ]
         ],

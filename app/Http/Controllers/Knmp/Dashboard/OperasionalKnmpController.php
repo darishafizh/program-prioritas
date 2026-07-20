@@ -13,21 +13,24 @@ class OperasionalKnmpController extends ProgramBaseController
      * Daftar 14 Sarpras standar KNMP.
      * Kunci mengacu pada field/slug yang nantinya bisa dijadikan kolom di DB.
      */
-    private const SARPRAS_LIST = [
-        ['key' => 'dermaga',        'nama' => 'Dermaga',              'icon' => 'fa-solid fa-anchor'],
-        ['key' => 'breakwater',     'nama' => 'Breakwater',           'icon' => 'fa-solid fa-water'],
-        ['key' => 'tpi',            'nama' => 'TPI',                  'icon' => 'fa-solid fa-fish'],
-        ['key' => 'cold_storage',   'nama' => 'Cold Storage',         'icon' => 'fa-solid fa-snowflake'],
-        ['key' => 'pabrik_es',      'nama' => 'Pabrik Es',            'icon' => 'fa-solid fa-cubes-stacked'],
-        ['key' => 'spbn',           'nama' => 'SPBN',                 'icon' => 'fa-solid fa-gas-pump'],
-        ['key' => 'jalan_akses',    'nama' => 'Jalan Akses',          'icon' => 'fa-solid fa-road'],
-        ['key' => 'drainase',       'nama' => 'Drainase',             'icon' => 'fa-solid fa-droplet'],
-        ['key' => 'air_bersih',     'nama' => 'Air Bersih',           'icon' => 'fa-solid fa-faucet-drip'],
-        ['key' => 'listrik',        'nama' => 'Listrik',              'icon' => 'fa-solid fa-bolt'],
-        ['key' => 'mushola',        'nama' => 'Mushola',              'icon' => 'fa-solid fa-mosque'],
-        ['key' => 'mck',            'nama' => 'MCK',                  'icon' => 'fa-solid fa-restroom'],
-        ['key' => 'rumah_nelayan',  'nama' => 'Rumah Nelayan',        'icon' => 'fa-solid fa-house'],
-        ['key' => 'pasar_ikan',     'nama' => 'Pasar Ikan',           'icon' => 'fa-solid fa-store'],
+    /**
+     * Mapping Ikon untuk master_sarpras.
+     */
+    public const SARPRAS_ICONS = [
+        'SPBN' => 'fa-solid fa-gas-pump',
+        'Docking' => 'fa-solid fa-anchor',
+        'Bengkel' => 'fa-solid fa-wrench',
+        'Waserda' => 'fa-solid fa-store',
+        'Pabrik Es' => 'fa-solid fa-cubes-stacked',
+        'Cold Storage' => 'fa-solid fa-snowflake',
+        'KDRN Dingin' => 'fa-solid fa-temperature-arrow-down',
+        'Sentra Kuliner' => 'fa-solid fa-utensils',
+        'Kios Pemasaran' => 'fa-solid fa-shop',
+        'Kapal' => 'fa-solid fa-ship',
+        'Mesin' => 'fa-solid fa-gears',
+        'Alat Tangkap' => 'fa-solid fa-fish',
+        'Cool Box' => 'fa-solid fa-box-archive',
+        'Roda 3' => 'fa-solid fa-motorcycle',
     ];
 
     public function index($program)
@@ -61,17 +64,56 @@ class OperasionalKnmpController extends ProgramBaseController
         $semuaKnmp = (clone $baseQuery)->get();
 
         // ---------- Hitung statistik sarpras ----------
-        // Karena belum ada tabel sarpras per KNMP di database,
-        // kita asumsikan setiap KNMP yang sudah serah_terima memiliki seluruh 14 sarpras (100%).
-        // Nantinya ketika tabel sarpras sudah ada, tinggal diganti query-nya di sini.
-        $sarprasStats = collect(self::SARPRAS_LIST)->map(function ($s) use ($totalSelesai) {
+        $apiData = \Illuminate\Support\Facades\Cache::remember('knmp_api_data', 3600, function () {
+            try {
+                $response = \Illuminate\Support\Facades\Http::timeout(10)->get('https://kdmp.pdspkp.id/knmp/get_data.php');
+                if ($response->successful()) {
+                    return $response->json();
+                }
+            } catch (\Exception $e) {
+                // Ignore and return empty
+            }
+            return [];
+        });
+
+        $apiKeys = [
+            'SPBN' => 'SPBUN_status',
+            'Docking' => 'Docking nelayan_status',
+            'Bengkel' => 'Bengkel Nelayan_status',
+            'Waserda' => 'Waserda_status',
+            'Pabrik Es' => 'Pabrik Es_status',
+            'Cold Storage' => 'Cold Storage_status',
+            'KDRN Dingin' => 'Kenderaan Berpendingin_status',
+            'Sentra Kuliner' => 'Sentra Kuliner_status',
+            'Kios Pemasaran' => 'Kios Pemasaran_status',
+            'Kapal' => 'Kapal_status',
+            'Mesin' => 'Mesin_Status',
+            'Alat Tangkap' => 'Alat_tangkap_Status',
+            'Cool Box' => 'cool_box_status',
+            'Roda 3' => 'roda3_status',
+        ];
+
+        $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
+        $sarprasStats = $masterSarpras->map(function ($s) use ($totalSelesai, $apiData, $apiKeys) {
+            $icon = self::SARPRAS_ICONS[$s->nama] ?? 'fa-solid fa-box';
+            
+            $tersedia = 0;
+            $apiKey = $apiKeys[$s->nama] ?? null;
+            if ($apiKey && is_array($apiData)) {
+                foreach ($apiData as $item) {
+                    if (isset($item[$apiKey]) && stripos($item[$apiKey], '2. Sudah Operasional') !== false) {
+                        $tersedia++;
+                    }
+                }
+            }
+
             return [
-                'key'       => $s['key'],
-                'nama'      => $s['nama'],
-                'icon'      => $s['icon'],
-                'total'     => $totalSelesai,     // jumlah KNMP yang memiliki sarpras ini
-                'target'    => $totalSelesai,     // target total KNMP serah_terima
-                'persen'    => $totalSelesai > 0 ? 100 : 0,
+                'key'       => \Illuminate\Support\Str::slug($s->nama, '_'),
+                'nama'      => $s->nama,
+                'icon'      => $icon,
+                'total'     => $tersedia,     // jumlah KNMP yang memiliki sarpras ini berstatus sudah operasional
+                'target'    => count($apiData) > 0 ? count($apiData) : $totalSelesai, // target berdasarkan jumlah lokasi di API atau fallback ke db
+                'persen'    => (count($apiData) > 0) ? ($tersedia / count($apiData)) * 100 : 0,
             ];
         })->all();
 
