@@ -13,6 +13,11 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'processLogin']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Sinkronisasi Google Sheets
+Route::post('/webhook/google-sheets/knmp-sync', [\App\Http\Controllers\Api\GoogleSheetsWebhookController::class, 'sync'])
+    ->middleware('webhook.auth');
+
+
 // Portal Routes (requires auth)
 Route::middleware('auth')->group(function () {
     Route::get('/greetings', [PortalController::class, 'greetings'])->name('greetings');

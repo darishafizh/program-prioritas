@@ -11,10 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->validateCsrfTokens(except: [
+            'webhook/google-sheets/*',
+        ]);
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'webhook.auth' => \App\Http\Middleware\VerifyWebhookToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
