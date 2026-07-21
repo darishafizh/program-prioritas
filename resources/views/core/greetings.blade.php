@@ -38,8 +38,8 @@
 
  <div class="flex items-center gap-3">
  @can('manage-users')
- <a href="{{ url('users') }}" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-textMain-light dark:text-teal-400 text-xs font-medium transition-colors">
- <i class="fa-solid fa-users-gear"></i> Pengguna
+ <a href="{{ url('roles') }}" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-textMain-light dark:text-teal-400 text-xs font-medium transition-colors">
+ <i class="fa-solid fa-shield-halved"></i> Role & Permission
  </a>
  @endcan
 

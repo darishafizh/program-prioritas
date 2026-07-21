@@ -16,41 +16,9 @@ class ProgresFisikController extends ProgramBaseController
         $this->checkAuth();
         $activeProgram = $this->formatProgramName($program);
 
-        $requestedDate = request('date');
-        $requestedBatchId = request('batch_id');
-        
-        if (!$requestedDate) {
-            $latestDateQuery = DB::connection('mysql_knmp')
-                ->table('progres_harian')
-                ->join('konstruksi_knmp', 'konstruksi_knmp.id', '=', 'progres_harian.knmp_konstruksi_id')
-                ->join('knmp', 'knmp.id', '=', 'konstruksi_knmp.knmp_id');
-                
-            if ($requestedBatchId) {
-                $latestDateQuery->where('knmp.batch_id', $requestedBatchId);
-            }
-            
-            $latestDateRecord = $latestDateQuery->orderBy('progres_harian.tanggal', 'desc')->select('progres_harian.tanggal')->first();
-            $effectiveDate = $latestDateRecord ? $latestDateRecord->tanggal : now()->format('Y-m-d');
-        } else {
-            $effectiveDate = $requestedDate;
-        }
-
+        // No filters for Dashboard Utama
         $maxTanggalProgres = DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
-        $maxUpdateProgres = DB::connection('mysql_knmp')->table('progres_harian')->max('updated_at');
-        $maxUpdateKnmp = DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
-        
-        if ($requestedDate) {
-            $lastUpdatedText = Carbon::parse($requestedDate)->locale('id')->translatedFormat('d F Y') . ' (Filter Tanggal)';
-        } else {
-            $dateStr = $effectiveDate ? Carbon::parse($effectiveDate)->locale('id')->translatedFormat('d F Y') : ($maxTanggalProgres ? Carbon::parse($maxTanggalProgres)->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y'));
-            $latestTs = $maxUpdateProgres ?: $maxUpdateKnmp;
-            if ($latestTs && strlen($latestTs) > 10) {
-                $timeStr = Carbon::parse($latestTs)->locale('id')->translatedFormat('H:i') . ' WIB';
-                $lastUpdatedText = "{$dateStr} (Pukul {$timeStr})";
-            } else {
-                $lastUpdatedText = $dateStr;
-            }
-        }
+        $effectiveDate = $maxTanggalProgres ?: now()->format('Y-m-d');
 
         $queryKnmp = Knmp::query()
             ->whereIn('tahap_saat_ini', ['konstruksi', 'serah_terima']);
@@ -58,9 +26,7 @@ class ProgresFisikController extends ProgramBaseController
         if (Auth::user()->isUserDaerah()) {
             $queryKnmp->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
         }
-        if ($requestedBatchId) {
-            $queryKnmp->where('batch_id', $requestedBatchId);
-        }
+
 
         $totalLokasi = (clone $queryKnmp)->count();
         $totalSelesai = (clone $queryKnmp)->where('tahap_saat_ini', 'serah_terima')->count();
@@ -191,9 +157,7 @@ class ProgresFisikController extends ProgramBaseController
             $mapQuery->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
         }
             
-        if ($requestedBatchId) {
-            $mapQuery->where('batch_id', $requestedBatchId);
-        }
+
         
         $mapLocationsRaw = $mapQuery->get();
         
@@ -256,18 +220,52 @@ class ProgresFisikController extends ProgramBaseController
         $narasi = "Sejauh ini, progres program Kampung Nelayan Merah Putih (KNMP) mencatatkan perkembangan yang terukur. Dari total <span class='text-teal-light dark:text-teal-400 font-bold'>{$totalLokasi} lokasi</span> yang terdaftar, terdapat <span class='text-warning dark:text-amber-500 font-bold'>{$dalamPembangunan} lokasi</span> yang saat ini sedang dalam tahap konstruksi aktif dengan rata-rata progres fisik mencapai <span class='font-bold'>{$avgProgres}%</span>. Selain itu, <span class='text-success font-bold'>{$totalSelesai} lokasi</span> telah berhasil diselesaikan dan diserahterimakan. Sebaran pembangunan mencakup {$regionBarat} lokasi di Wilayah Barat, {$regionTengah} di Tengah, dan {$regionTimur} di Timur Indonesia, menunjukkan komitmen pemerataan infrastruktur pesisir.";
 
         $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
+        
+        $currentYear = \Carbon\Carbon::now()->year;
+        $lokasiTahunIni = (clone $queryKnmp)->whereYear('created_at', $currentYear)->count();
+
+        // --- PIPELINE CALCULATION FOR MODAL SIKLUS ---
+        $pipeline = [
+            'usulan' => (clone $queryKnmp)->where('tahap_saat_ini', 'usulan')->count(),
+            'survei' => (clone $queryKnmp)->where('tahap_saat_ini', 'survey')->count(),
+            'ded' => (clone $queryKnmp)->where('tahap_saat_ini', 'ded')->count(),
+            'lelang' => (clone $queryKnmp)->where('tahap_saat_ini', 'lelang')->count(),
+            'konstruksi' => $dalamPembangunan,
+            'serah_terima' => $totalSelesai,
+        ];
+
+        // Pipeline Pengajuan from CalonLokasi
+        $calonQuery = \App\Models\CalonLokasi::query();
+        if (Auth::user()->isUserDaerah()) {
+            $calonQuery->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
+        }
+
+        $totalPengajuan = (clone $calonQuery)->count();
+        $pipelinePengajuan = [
+            'pengajuan' => (clone $calonQuery)->where('status_tahapan', 'pengajuan')->count(),
+            'verif_admin' => (clone $calonQuery)->where('status_tahapan', 'verif_admin')->count(),
+            'ba_aktivasi' => (clone $calonQuery)->where('status_tahapan', 'ba_aktivasi')->count(),
+            'verif_teknis' => (clone $calonQuery)->where('status_tahapan', 'verif_teknis')->count(),
+            'ba_calon' => (clone $calonQuery)->where('status_tahapan', 'ba_calon')->count(),
+            'penetapan' => (clone $calonQuery)->where('status_tahapan', 'penetapan')->count(),
+        ];
+        
+        $narasiSiklus = "Pada <strong>Siklus Pengajuan Calon Lokasi</strong>, saat ini terdapat <span class='font-bold text-blue-500'>{$totalPengajuan} usulan</span> yang sedang dalam proses. Memasuki <strong>Siklus Usulan & Konstruksi KNMP</strong>, dari keseluruhan <span class='font-bold text-teal-light dark:text-teal-400'>{$totalLokasi} lokasi</span> yang telah ditetapkan, sebanyak <span class='font-bold text-warning dark:text-amber-500'>{$dalamPembangunan} lokasi</span> sedang aktif dalam tahap konstruksi, dan <span class='font-bold text-success'>{$totalSelesai} lokasi</span> telah berhasil diserahterimakan. Adapun khusus pada <strong>Fase Konstruksi</strong>, {$dalamPembangunan} proyek yang sedang berjalan saat ini mencatatkan rata-rata progres fisik sebesar <span class='font-bold'>".number_format($avgProgres, 1)."%</span>.";
 
         return view("programs.knmp.dashboard.index", [
             'activeModule' => 'Dashboard',
             'activeProgram' => $activeProgram,
             'masterSarpras' => $masterSarpras,
             'stats' => [
-                'last_updated' => $lastUpdatedText,
                 'total_lokasi' => $totalLokasi,
+                'lokasi_tahun_ini' => $lokasiTahunIni,
                 'rata_progres' => $avgProgres,
                 'total_selesai' => $totalSelesai,
                 'dalam_pembangunan' => $dalamPembangunan,
                 'kesehatan' => $kesehatan,
+                'pipeline' => $pipeline,
+                'pipeline_pengajuan' => $pipelinePengajuan,
+                'narasi_siklus' => $narasiSiklus,
                 
                 
                 

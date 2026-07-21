@@ -15,7 +15,16 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex items-center gap-3 sm:gap-4">
                 <div>
-                    <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Monitoring Konstruksi KNMP</h2>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Monitoring Konstruksi KNMP</h2>
+                        @if (isset($stats['last_updated']))
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-light/10 dark:bg-teal-400/10 border border-teal-light/20 dark:border-teal-400/20 text-teal-light dark:text-teal-300 text-xs font-medium shadow-xs">
+                                <span class="w-2 h-2 rounded-full bg-teal-light dark:bg-teal-400 animate-pulse shrink-0"></span>
+                                <i class="fa-regular fa-clock text-[11px]"></i>
+                                <span>Update Data Terakhir: <strong class="font-semibold text-textMain-light dark:text-white">{{ $stats['last_updated'] }}</strong></span>
+                            </div>
+                        @endif
+                    </div>
                     <div class="flex items-center gap-2 mt-1">
                         <p class="text-[11px] sm:text-xs text-textMuted-light dark:text-textMuted-dark">
                             Menampilkan <strong>{{ count($paginatedDetails) }}</strong> dari <strong>{{ $paginator->total() }}</strong> lokasi konstruksi
@@ -38,6 +47,11 @@
                         <option value="{{ $opt }}" {{ ($perPage ?? 20) == $opt ? 'selected' : '' }}>{{ $opt }} Data</option>
                     @endforeach
                 </select>
+
+                <button type="button" @click="isPdfModalOpen = true"
+                    class="px-4 py-1.5 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-lg text-xs font-medium hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center gap-2 shrink-0 ml-2">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </button>
             </form>
         </div>
     </div>
@@ -143,6 +157,70 @@
         </div>
     @endif
 
+    <!-- Modal PDF -->
+    <template x-teleport="body">
+        <div x-show="isPdfModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" style="display: none;">
+            <!-- Backdrop -->
+            <div x-show="isPdfModalOpen" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0" @click="isPdfModalOpen = false"
+                class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+            <!-- Modal Panel -->
+            <div x-show="isPdfModalOpen" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+                class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-100 dark:border-gray-800">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-danger/10 dark:bg-danger/20 flex items-center justify-center text-danger">
+                            <i class="fa-solid fa-file-pdf text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-textMain-light dark:text-textMain-dark">Cetak Laporan PDF</h3>
+                            <p class="text-[11px] text-textMuted-light dark:text-textMuted-dark mt-0.5">Pilih parameter laporan yang ingin dicetak</p>
+                        </div>
+                    </div>
+                    <button @click="isPdfModalOpen = false" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6">
+                    <form action="{{ route('program.dashboard.export-pdf', ['program' => strtolower($activeProgram)]) }}" method="GET" class="space-y-5" target="_blank" x-data="{ pdfBatchId: '{{ request('batch_id', '') }}', pdfDate: '{{ request('date', '') }}' }">
+                        <div>
+                            <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Pilih Tahap (Batch)</label>
+                            <select name="batch_id" x-model="pdfBatchId" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
+                                <option value="">Semua Tahap</option>
+                                @foreach ($stats['filter_batches'] ?? [] as $batch)
+                                    <option value="{{ $batch['id'] }}">{{ $batch['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Pilih Tanggal Cut-off</label>
+                            <input type="date" name="date" x-model="pdfDate" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
+                            <p class="text-[10px] text-textMuted-light dark:text-textMuted-dark mt-1.5"><i class="fa-solid fa-circle-info text-teal-light mr-1"></i>Kosongkan untuk menggunakan tanggal hari ini</p>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" @click="isPdfModalOpen = false" class="w-full py-2.5 bg-danger text-white rounded-lg text-sm font-medium hover:bg-danger-hover transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-print"></i> Generate PDF
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>
 
 {{-- ========== SCRIPTS ========== --}}

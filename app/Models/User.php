@@ -7,11 +7,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -22,28 +23,27 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
         'kabupaten',
     ];
 
     public function isSuperAdmin()
     {
-        return in_array(strtolower($this->role), ['super admin', 'super_admin']);
+        return $this->hasRole(['super_admin', 'super admin', 'Super Admin']);
     }
 
     public function isAdminRoren()
     {
-        return in_array(strtolower($this->role), ['admin', 'admin roren', 'admin_roren']);
+        return $this->hasRole(['admin_roren', 'admin roren', 'Admin Roren', 'admin', 'Admin']);
     }
 
     public function isVerifikator()
     {
-        return in_array(strtolower($this->role), ['verifikator']);
+        return $this->hasRole(['verifikator', 'Verifikator']);
     }
 
     public function isUserDaerah()
     {
-        return in_array(strtolower($this->role), ['user daerah', 'user_daerah']);
+        return $this->hasRole(['user_daerah', 'user daerah', 'User Daerah']);
     }
 
 
@@ -57,6 +57,13 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected $appends = ['role'];
+
+    public function getRoleAttribute()
+    {
+        return $this->roles->first()->name ?? 'Tanpa Role';
+    }
 
     /**
      * Get the attributes that should be cast.

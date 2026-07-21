@@ -117,8 +117,22 @@
 
     <!-- Middle Section: Accordion Branching Tree (only one module open at a time, smooth animation) -->
     <div x-data="{ activeAccordion: '{{ $defaultActiveAccordion }}' }" class="flex-1 overflow-y-auto py-2 px-4 space-y-1 border-0">
+        @php
+            $modulePermissions = [
+                'Dashboard' => 'lihat_dashboard',
+                'Master Data' => 'kelola_master_data',
+                'Operasional' => 'kelola_operasional',
+                'Evaluasi' => 'kelola_evaluasi',
+                'Pengguna & Hak Akses' => 'kelola_pengguna',
+            ];
+        @endphp
         @foreach ($programSidebar as $moduleName => $moduleData)
             @php
+                $reqPerm = $modulePermissions[$moduleName] ?? null;
+                if ($reqPerm && !\Illuminate\Support\Facades\Auth::user()->hasPermissionTo($reqPerm)) {
+                    continue;
+                }
+
                 $isModuleActive = $moduleName === $activeModule;
                 if (isset($moduleData['items'])) {
                     foreach ($moduleData['items'] as $chkItem) {
@@ -145,103 +159,109 @@
 
             <div class="space-y-1">
                 <!-- Level 1: Module Header (WITH ICON, font-sans font-medium, open state uses text color + primary icon) -->
-                <button
-                    @click="activeAccordion = (activeAccordion === '{{ $moduleName }}') ? '' : '{{ $moduleName }}'"
-                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-sans font-medium transition-all border-0 select-none"
-                    :class="activeAccordion === '{{ $moduleName }}' ?
-                        'text-textMain-light dark:text-textMain-dark font-semibold' :
-                        'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark'">
-                    <div class="flex items-center gap-3 truncate">
-                        <div class="w-6 h-6 flex items-center justify-center shrink-0 transition-colors"
-                            :class="activeAccordion === '{{ $moduleName }}' ? 'text-teal-light dark:text-teal-400' :
-                                'text-textMuted-light dark:text-textMuted-dark'">
-                            <i class="fa-solid {{ $iconClass }} text-sm"></i>
+                @if(isset($moduleData['url']))
+                    <a href="{{ url($moduleData['url']) }}"
+                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-sans font-medium transition-all border-0 select-none {{ $isModuleActive ? 'text-textMain-light dark:text-textMain-dark font-semibold' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark' }}">
+                        <div class="flex items-center gap-3 truncate">
+                            <div class="w-6 h-6 flex items-center justify-center shrink-0 transition-colors {{ $isModuleActive ? 'text-teal-light dark:text-teal-400' : 'text-textMuted-light dark:text-textMuted-dark' }}">
+                                <i class="fa-solid {{ $iconClass }} text-sm"></i>
+                            </div>
+                            <span class="truncate tracking-tight font-sans font-medium">{{ $moduleName }}</span>
                         </div>
-                        <span class="truncate tracking-tight font-sans font-medium">{{ $moduleName }}</span>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ease-in-out shrink-0"
+                    </a>
+                @else
+                    <button
+                        @click="activeAccordion = (activeAccordion === '{{ $moduleName }}') ? '' : '{{ $moduleName }}'"
+                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-sans font-medium transition-all border-0 select-none"
                         :class="activeAccordion === '{{ $moduleName }}' ?
-                            'rotate-180 text-textMain-light dark:text-textMain-dark' :
-                            'text-textMuted-light dark:text-textMuted-dark'"></i>
-                </button>
+                            'text-textMain-light dark:text-textMain-dark font-semibold' :
+                            'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark'">
+                        <div class="flex items-center gap-3 truncate">
+                            <div class="w-6 h-6 flex items-center justify-center shrink-0 transition-colors"
+                                :class="activeAccordion === '{{ $moduleName }}' ? 'text-teal-light dark:text-teal-400' :
+                                    'text-textMuted-light dark:text-textMuted-dark'">
+                                <i class="fa-solid {{ $iconClass }} text-sm"></i>
+                            </div>
+                            <span class="truncate tracking-tight font-sans font-medium">{{ $moduleName }}</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ease-in-out shrink-0"
+                            :class="activeAccordion === '{{ $moduleName }}' ?
+                                'rotate-180 text-textMain-light dark:text-textMain-dark' :
+                                'text-textMuted-light dark:text-textMuted-dark'"></i>
+                    </button>
+                @endif
 
                 <!-- Level 2: Sub-Menu Items with smooth accordion collapse animation -->
-                <div x-show="activeAccordion === '{{ $moduleName }}'" x-collapse.duration.400ms
-                    style="position: relative; padding-top: 4px; padding-bottom: 4px;">
+                @if(!isset($moduleData['url']))
+                    <div x-show="activeAccordion === '{{ $moduleName }}'" x-collapse.duration.400ms
+                        style="position: relative; padding-top: 4px; padding-bottom: 4px;">
 
-                    @if (isset($moduleData['items']) && count($moduleData['items']) > 0)
-                        @foreach ($moduleData['items'] as $item)
-                            @php
-                                // Role filtering
-                                if (
-                                    !\Illuminate\Support\Facades\Auth::user()->isSuperAdmin() &&
-                                    in_array($item['label'], ['Tahap (Batch)', 'Data Vendor/Penyedia'])
-                                ) {
-                                    continue;
-                                }
+                        @if (isset($moduleData['items']) && count($moduleData['items']) > 0)
+                            @foreach ($moduleData['items'] as $item)
+                                @php
+                                    // Cek apakah URL sama dengan halaman saat ini
+                                    $pathOnly = strtok($item['url'], '?');
+                                    $isActive =
+                                        request()->is(ltrim($pathOnly, '/')) ||
+                                        ($item['url'] !== '#' && request()->url() === url($pathOnly));
 
-                                // Cek apakah URL sama dengan halaman saat ini
-                                $pathOnly = strtok($item['url'], '?');
-                                $isActive =
-                                    request()->is(ltrim($pathOnly, '/')) ||
-                                    ($item['url'] !== '#' && request()->url() === url($pathOnly));
-
-                                // Cek pattern tambahan jika ada
-                                if (isset($item['active']) && is_array($item['active'])) {
-                                    foreach ($item['active'] as $pattern) {
-                                        if (request()->is($pattern)) {
-                                            $isActive = true;
-                                            break;
+                                    // Cek pattern tambahan jika ada
+                                    if (isset($item['active']) && is_array($item['active'])) {
+                                        foreach ($item['active'] as $pattern) {
+                                            if (request()->is($pattern)) {
+                                                $isActive = true;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                            @endphp
-                            <div style="position: relative; display: flex; align-items: center; padding: 2px 0;"
-                                class="group">
-                                <!-- Vertical Line: full height for non-last, half for last -->
-                                @if (!$loop->last)
+                                @endphp
+                                <div style="position: relative; display: flex; align-items: center; padding: 2px 0;"
+                                    class="group">
+                                    <!-- Vertical Line: full height for non-last, half for last -->
+                                    @if (!$loop->last)
+                                        <div
+                                            :style="darkMode ?
+                                                'position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background-color: #475569; border-radius: 1px;' :
+                                                'position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background-color: #cbd5e1; border-radius: 1px;'">
+                                        </div>
+                                    @else
+                                        <div
+                                            :style="darkMode ?
+                                                'position: absolute; left: 24px; top: 0; height: calc(50% - 5px); width: 2px; background-color: #475569; border-radius: 1px;' :
+                                                'position: absolute; left: 24px; top: 0; height: calc(50% - 5px); width: 2px; background-color: #cbd5e1; border-radius: 1px;'">
+                                        </div>
+                                    @endif
+
+                                    <!-- Curved L-connector: rounded corner from vertical to horizontal -->
                                     <div
                                         :style="darkMode ?
-                                            'position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background-color: #475569; border-radius: 1px;' :
-                                            'position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background-color: #cbd5e1; border-radius: 1px;'">
+                                            'position: absolute; left: 24px; top: calc(50% - 6px); width: 12px; height: 12px; border-left: 2px solid #475569; border-bottom: 2px solid #475569; border-radius: 0 0 0 8px; border-top: none; border-right: none;' :
+                                            'position: absolute; left: 24px; top: calc(50% - 6px); width: 12px; height: 12px; border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; border-radius: 0 0 0 8px; border-top: none; border-right: none;'">
                                     </div>
-                                @else
+
+                                    <!-- Short horizontal extension after the curve -->
                                     <div
                                         :style="darkMode ?
-                                            'position: absolute; left: 24px; top: 0; height: calc(50% - 5px); width: 2px; background-color: #475569; border-radius: 1px;' :
-                                            'position: absolute; left: 24px; top: 0; height: calc(50% - 5px); width: 2px; background-color: #cbd5e1; border-radius: 1px;'">
+                                            'position: absolute; left: 36px; top: calc(50% + 4px); width: 6px; height: 2px; background-color: #475569; border-radius: 1px;' :
+                                            'position: absolute; left: 36px; top: calc(50% + 4px); width: 6px; height: 2px; background-color: #cbd5e1; border-radius: 1px;'">
                                     </div>
-                                @endif
 
-                                <!-- Curved L-connector: rounded corner from vertical to horizontal -->
-                                <div
-                                    :style="darkMode ?
-                                        'position: absolute; left: 24px; top: calc(50% - 6px); width: 12px; height: 12px; border-left: 2px solid #475569; border-bottom: 2px solid #475569; border-radius: 0 0 0 8px; border-top: none; border-right: none;' :
-                                        'position: absolute; left: 24px; top: calc(50% - 6px); width: 12px; height: 12px; border-left: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; border-radius: 0 0 0 8px; border-top: none; border-right: none;'">
+                                    <!-- Sub-menu link: active = text color only, no bg/shadow/border -->
+                                    <a href="{{ $item['url'] !== '#' ? url($item['url']) : '#' }}"
+                                        style="margin-left: 44px;"
+                                        class="relative w-full mr-1.5 px-3 py-2 rounded-xl text-xs font-sans font-medium transition-all duration-200 truncate {{ $isActive ? 'text-textMain-light dark:text-textMain-dark' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark' }}">
+                                        {{ $item['label'] }}
+                                    </a>
                                 </div>
-
-                                <!-- Short horizontal extension after the curve -->
-                                <div
-                                    :style="darkMode ?
-                                        'position: absolute; left: 36px; top: calc(50% + 4px); width: 6px; height: 2px; background-color: #475569; border-radius: 1px;' :
-                                        'position: absolute; left: 36px; top: calc(50% + 4px); width: 6px; height: 2px; background-color: #cbd5e1; border-radius: 1px;'">
-                                </div>
-
-                                <!-- Sub-menu link: active = text color only, no bg/shadow/border -->
-                                <a href="{{ $item['url'] !== '#' ? url($item['url']) : '#' }}"
-                                    style="margin-left: 44px;"
-                                    class="relative w-full mr-1.5 px-3 py-2 rounded-xl text-xs font-sans font-medium transition-all duration-200 truncate {{ $isActive ? 'text-textMain-light dark:text-textMain-dark' : 'text-textMuted-light dark:text-textMuted-dark hover:text-textMain-light dark:hover:text-textMain-dark' }}">
-                                    {{ $item['label'] }}
-                                </a>
+                            @endforeach
+                        @else
+                            <div style="margin-left: 44px;"
+                                class="px-3 py-2 text-[11px] font-sans font-medium text-textMuted-light dark:text-textMuted-dark italic">
+                                Belum ada sub-menu
                             </div>
-                        @endforeach
-                    @else
-                        <div style="margin-left: 44px;"
-                            class="px-3 py-2 text-[11px] font-sans font-medium text-textMuted-light dark:text-textMuted-dark italic">
-                            Belum ada sub-menu
-                        </div>
-                    @endif
-                </div>
+                        @endif
+                    </div>
+                @endif
             </div>
         @endforeach
     </div>

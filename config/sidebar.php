@@ -4,19 +4,8 @@ return [
     'knmp' => [
         'Dashboard' => [
             'heading' => 'Ringkasan Eksekutif',
-            'items' => [
-                [
-                    'label' => 'Lokasi Usulan',
-                    'icon' => 'fa-arrows-spin',
-                    'url' => '/dashboard/knmp/siklus',
-                ],
-                [
-                    'label' => 'Pembangunan',
-                    'icon' => 'fa-person-digging',
-                    'url' => '/dashboard/knmp',
-                    'active' => ['dashboard/knmp', 'dashboard/knmp/konstruksi*', 'dashboard/knmp/operasional*']
-                ]
-            ]
+            'url' => '/dashboard/knmp',
+            'active' => ['dashboard/knmp', 'dashboard/knmp/konstruksi*', 'dashboard/knmp/operasional*', 'dashboard/knmp/siklus*']
         ],
         'Master Data' => [
             'heading' => 'Manajemen Data',

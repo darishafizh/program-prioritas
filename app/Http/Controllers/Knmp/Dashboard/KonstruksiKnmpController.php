@@ -175,6 +175,23 @@ class KonstruksiKnmpController extends ProgramBaseController
 
         $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
 
+        $maxTanggalProgres = DB::connection('mysql_knmp')->table('progres_harian')->max('tanggal');
+        $maxUpdateProgres = DB::connection('mysql_knmp')->table('progres_harian')->max('updated_at');
+        $maxUpdateKnmp = DB::connection('mysql_knmp')->table('knmp')->max('updated_at');
+        
+        if ($requestedDate) {
+            $lastUpdatedText = Carbon::parse($requestedDate)->locale('id')->translatedFormat('d F Y') . ' (Filter Tanggal)';
+        } else {
+            $dateStr = $effectiveDate ? Carbon::parse($effectiveDate)->locale('id')->translatedFormat('d F Y') : ($maxTanggalProgres ? Carbon::parse($maxTanggalProgres)->locale('id')->translatedFormat('d F Y') : now()->locale('id')->translatedFormat('d F Y'));
+            $latestTs = $maxUpdateProgres ?: $maxUpdateKnmp;
+            if ($latestTs && strlen($latestTs) > 10) {
+                $timeStr = Carbon::parse($latestTs)->locale('id')->translatedFormat('H:i') . ' WIB';
+                $lastUpdatedText = "{$dateStr} (Pukul {$timeStr})";
+            } else {
+                $lastUpdatedText = $dateStr;
+            }
+        }
+
         return view('programs.knmp.dashboard.partials.konstruksi', [
             'activeModule' => 'Dashboard',
             'activeProgram' => $activeProgram,
@@ -189,6 +206,7 @@ class KonstruksiKnmpController extends ProgramBaseController
                 'dalam_pembangunan' => $totalLokasi,
                 'rata_progres' => $avgProgres,
                 'filter_batches' => $batches->values()->all(),
+                'last_updated' => $lastUpdatedText,
             ],
         ]);
     }

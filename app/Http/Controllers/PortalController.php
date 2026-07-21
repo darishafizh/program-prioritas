@@ -78,30 +78,6 @@ class PortalController extends Controller
         return view('core.greetings', compact('programs'));
     }
 
-    public function users()
-    {
-        if (!\Illuminate\Support\Facades\Gate::allows('manage-users')) {
-            return redirect()->route('login');
-        }
-        
-        $users = User::orderBy('created_at', 'desc')->get();
-        
-        $kabupatenList = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
-            ->table('knmp')
-            ->select('kabupaten')
-            ->distinct()
-            ->whereNotNull('kabupaten')
-            ->where('kabupaten', '!=', '')
-            ->orderBy('kabupaten', 'asc')
-            ->pluck('kabupaten');
-
-        return view('core.users', [
-            'activeModule' => 'Pengguna', 
-            'activeProgram' => 'Manajemen Sistem',
-            'users' => $users,
-            'kabupatenList' => $kabupatenList
-        ]);
-    }
 
     public function storeUser(Request $request)
     {
@@ -113,17 +89,24 @@ class PortalController extends Controller
             'name' => 'required|string|max:255|unique:users,name',
             'password' => 'required|string|min:6',
             'role' => 'required|string',
-            'kabupaten' => 'nullable|string'
+            'kabupaten' => 'nullable|string',
+            'permissions' => 'nullable|array'
         ]);
 
         try {
-            User::create([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => \Illuminate\Support\Str::slug($request->name) . rand(1000, 9999) . '@system.local',
                 'password' => Hash::make($request->password),
-                'role' => $request->role,
-                'kabupaten' => $request->role === 'User Daerah' ? $request->kabupaten : null,
+                'kabupaten' => $request->role === 'user_daerah' ? $request->kabupaten : null,
             ]);
+            
+            $user->assignRole($request->role);
+
+            // Assign direct permissions to user
+            if ($request->has('permissions') && is_array($request->permissions)) {
+                $user->syncPermissions($request->permissions);
+            }
 
             return response()->json(['success' => true, 'message' => 'Pengguna berhasil ditambahkan.']);
         } catch (\Exception $e) {
@@ -138,23 +121,35 @@ class PortalController extends Controller
         }
 
         $user = User::findOrFail($id);
+        
+        if ($user->hasRole('super_admin')) {
+            return response()->json(['success' => false, 'message' => 'Data Super Admin tidak dapat diubah.'], 403);
+        }
 
         $request->validate([
             'name' => 'required|string|max:255|unique:users,name,'.$id,
             'role' => 'required|string',
-            'kabupaten' => 'nullable|string'
+            'kabupaten' => 'nullable|string',
+            'permissions' => 'nullable|array'
         ]);
 
         try {
             $user->name = $request->name;
-            $user->role = $request->role;
-            $user->kabupaten = $request->role === 'User Daerah' ? $request->kabupaten : null;
+            $user->kabupaten = $request->role === 'user_daerah' ? $request->kabupaten : null;
 
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
             }
 
             $user->save();
+            $user->syncRoles([$request->role]);
+
+            // Assign direct permissions to user
+            if ($request->has('permissions') && is_array($request->permissions)) {
+                $user->syncPermissions($request->permissions);
+            } else {
+                $user->syncPermissions([]);
+            }
 
             return response()->json(['success' => true, 'message' => 'Pengguna berhasil diperbarui.']);
         } catch (\Exception $e) {
@@ -172,6 +167,10 @@ class PortalController extends Controller
 
         if ($user->id === Auth::id()) {
             return response()->json(['success' => false, 'message' => 'Tidak dapat menghapus akun Anda sendiri.'], 400);
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return response()->json(['success' => false, 'message' => 'Pengguna Super Admin tidak dapat dihapus.'], 403);
         }
 
         try {

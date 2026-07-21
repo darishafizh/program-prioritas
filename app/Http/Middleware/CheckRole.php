@@ -39,10 +39,8 @@ class CheckRole
                 return $next($request);
             }
 
-
-            // Normalize fallback: accept both 'super_admin' and 'Super Admin'
-            $normalizedRole = strtolower(str_replace(' ', '_', $user->role));
-            if ($normalizedRole === $role) {
+            // Fallback for custom roles passed to middleware
+            if ($user->hasRole($role)) {
                 return $next($request);
             }
         }

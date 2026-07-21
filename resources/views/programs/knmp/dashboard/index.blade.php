@@ -51,48 +51,13 @@
             <div>
                 <div class="flex items-center gap-3 flex-wrap">
                     <h2 class="text-xl font-semibold tracking-tight">Dashboard KNMP</h2>
-                    @if (isset($stats['last_updated']))
-                        <div
-                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-light/10 dark:bg-teal-400/10 border border-teal-light/20 dark:border-teal-400/20 text-teal-light dark:text-teal-300 text-xs font-medium shadow-xs">
-                            <span class="w-2 h-2 rounded-full bg-teal-light dark:bg-teal-400 animate-pulse shrink-0"></span>
-                            <i class="fa-regular fa-clock text-[11px]"></i>
-                            <span>Update Data Terakhir: <strong
-                                    class="font-semibold text-textMain-light dark:text-white">{{ $stats['last_updated'] }}</strong></span>
-                        </div>
-                    @endif
+
                 </div>
                 <p class="text-textMuted-light dark:text-textMuted-dark text-[11px] font-normal mt-1.5">Ringkasan Eksekutif &
                     Pantauan Konstruksi Kampung Nelayan Merah Putih</p>
             </div>
 
-            <!-- Filters -->
-            <form id="dashboardFilterForm" action="{{ url()->current() }}" method="GET"
-                class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                <div class="relative">
-                    <select name="batch_id" onchange="this.form.submit()"
-                        class="appearance-none bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-2 pr-10 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-light focus:border-teal-light text-textMain-light dark:text-textMain-dark ">
-                        <option value="">Semua Tahap</option>
-                        @foreach ($stats['filter_batches'] ?? [] as $batch)
-                            <option value="{{ $batch['id'] }}" {{ request('batch_id') == $batch['id'] ? 'selected' : '' }}>
-                                {{ $batch['name'] }}</option>
-                        @endforeach
-                    </select>
-                    <i
-                        class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
 
-                <div
-                    class="relative flex items-center bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-2 text-xs font-medium focus-within:ring-2 focus-within:ring-teal-light focus-within:border-teal-light">
-                    <i class="fa-regular fa-calendar text-gray-400 mr-2"></i>
-                    <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()"
-                        class="bg-transparent border-none outline-none text-textMain-light dark:text-textMain-dark w-32">
-                </div>
-
-                <button type="button" @click="isPdfModalOpen = true"
-                    class="px-4 py-2 bg-danger/10 dark:bg-danger/20 border border-danger/20 text-danger rounded-xl text-xs font-medium hover:bg-danger/20 dark:hover:bg-danger/30 transition-colors flex items-center gap-2 shrink-0">
-                    <i class="fa-solid fa-file-pdf"></i> PDF
-                </button>
-            </form>
         </div>
 
 
@@ -101,7 +66,9 @@
             <x-stat-card title="Total Lokasi" icon="fa-solid fa-house-chimney-window"
                 icon-color="text-teal-light dark:text-teal-400" icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
                 value="{{ $stats['total_lokasi'] ?? 0 }}" unit="Lokasi"
-                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> +12 Lokasi dari tahun lalu</span>" />
+                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> +{{ $stats['lokasi_tahun_ini'] ?? 0 }} Lokasi dari tahun ini</span>"
+                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                onclick="window.location.href='{{ route('program.dashboard.siklus', ['program' => strtolower($activeProgram)]) }}'" />
 
             <x-stat-card title="Rata-Rata Progres" icon="fa-solid fa-chart-pie"
                 icon-color="text-teal-light dark:text-teal-400" icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
@@ -349,10 +316,6 @@
                 Alpine.data('dashboardTableManager', () => ({
                     selectedPoint: null,
                     isOffcanvasOpen: false,
-                    
-                    isPdfModalOpen: false,
-                    pdfBatchId: '{{ request('batch_id') }}',
-                    pdfDate: '{{ request('date') ?: date('Y-m-d') }}',
 
                     init() {
                         window.addEventListener('open-map-detail', (e) => {
@@ -405,53 +368,6 @@
         @include('programs.knmp.dashboard.partials.offcanvas_map')
         
 
-        <!-- Modal PDF -->
-        <div x-show="isPdfModalOpen" style="display: none;"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div @click.away="isPdfModalOpen = false" x-transition.opacity.duration.200ms
-                class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-xl border border-gray-100 dark:border-gray-800 relative">
-                <div class="flex justify-between items-center mb-5">
-                    <h3 class="text-lg font-bold text-textMain-light dark:text-textMain-dark">Export Laporan PDF</h3>
-                    <button @click="isPdfModalOpen = false" class="text-gray-400 hover:text-danger transition-colors">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
 
-                <form action="{{ route('program.dashboard.export-pdf', ['program' => strtolower($activeProgram)]) }}"
-                    method="GET" target="_blank" @submit="setTimeout(() => isPdfModalOpen = false, 500)">
-                    <div class="space-y-4">
-                        <div>
-                            <label
-                                class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Pilih
-                                Tahap (Batch)</label>
-                            <select name="batch_id" x-model="pdfBatchId"
-                                class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
-                                <option value="">Semua Tahap</option>
-                                @foreach ($stats['filter_batches'] ?? [] as $batch)
-                                    <option value="{{ $batch['id'] }}">{{ $batch['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label
-                                class="block text-xs font-medium text-textMuted-light dark:text-textMuted-dark mb-1.5">Pilih
-                                Tanggal</label>
-                            <input type="date" name="date" x-model="pdfDate"
-                                class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-teal-light text-textMain-light dark:text-textMain-dark">
-                        </div>
-                    </div>
-
-                    <div class="mt-8 flex justify-end gap-3">
-                        <button type="button" @click="isPdfModalOpen = false"
-                            class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Batal</button>
-                        <button type="submit"
-                            class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2">
-                            <i class="fa-solid fa-download"></i> Generate PDF
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 @endsection
