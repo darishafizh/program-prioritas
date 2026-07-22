@@ -280,10 +280,6 @@
                         // Apply default permissions based on Role
                         if (this.userFormData.role === 'super_admin') {
                             this.userFormData.permissions = this.allPermissions.map(p => p.name);
-                        } else if (this.userFormData.role === 'admin') {
-                            this.userFormData.permissions = ['lihat_dashboard', 'kelola_evaluasi'];
-                        } else if (this.userFormData.role === 'user_daerah') {
-                            this.userFormData.permissions = ['lihat_dashboard', 'kelola_operasional'];
                         } else {
                             this.userFormData.permissions = [];
                         }

@@ -41,16 +41,9 @@ class RoleAndPermissionSeeder extends Seeder
         // Super Admin mendapatkan semua hak akses
         $roleSuperAdmin->syncPermissions($permissions);
 
-        // Admin: dashboard & evaluasi
-        $roleAdmin->syncPermissions([
-            'lihat_dashboard',
-            'kelola_evaluasi'
-        ]);
-
-        // User Daerah: operasional (tambahkan dashboard agar bisa masuk)
-        $roleUserDaerah->syncPermissions([
-            'lihat_dashboard',
-            'kelola_operasional'
-        ]);
+        // Admin & User Daerah tidak lagi memiliki default permissions di level role.
+        // Permissions akan diberikan secara direct ke masing-masing User melalui UI.
+        $roleAdmin->syncPermissions([]);
+        $roleUserDaerah->syncPermissions([]);
     }
 }
