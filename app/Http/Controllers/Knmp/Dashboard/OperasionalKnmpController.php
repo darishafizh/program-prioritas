@@ -64,17 +64,25 @@ class OperasionalKnmpController extends ProgramBaseController
         $semuaKnmp = (clone $baseQuery)->get();
 
         // ---------- Hitung statistik sarpras ----------
-        $apiData = \Illuminate\Support\Facades\Cache::remember('knmp_api_data', 3600, function () {
+        $apiData = \Illuminate\Support\Facades\Cache::get('knmp_api_data');
+        if (!is_array($apiData)) {
             try {
-                $response = \Illuminate\Support\Facades\Http::timeout(10)->get('https://kdmp.pdspkp.id/knmp/get_data.php');
+                $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->timeout(15)
+                    ->get('https://kdmp.pdspkp.id/knmp/get_data.php');
+                
                 if ($response->successful()) {
-                    return $response->json();
+                    $apiData = $response->json();
+                    \Illuminate\Support\Facades\Cache::put('knmp_api_data', $apiData, 3600);
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('API Sarpras failed with status: ' . $response->status());
+                    $apiData = [];
                 }
             } catch (\Exception $e) {
-                // Ignore and return empty
+                \Illuminate\Support\Facades\Log::error('API Sarpras Exception: ' . $e->getMessage());
+                $apiData = [];
             }
-            return [];
-        });
+        }
 
         $apiKeys = [
             'SPBN' => 'SPBUN_status',
