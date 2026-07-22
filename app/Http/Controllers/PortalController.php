@@ -122,7 +122,7 @@ class PortalController extends Controller
 
         $user = User::findOrFail($id);
         
-        if ($user->hasRole('super_admin')) {
+        if ($user->isSuperAdmin()) {
             return response()->json(['success' => false, 'message' => 'Data Super Admin tidak dapat diubah.'], 403);
         }
 
@@ -169,7 +169,7 @@ class PortalController extends Controller
             return response()->json(['success' => false, 'message' => 'Tidak dapat menghapus akun Anda sendiri.'], 400);
         }
 
-        if ($user->hasRole('super_admin')) {
+        if ($user->isSuperAdmin()) {
             return response()->json(['success' => false, 'message' => 'Pengguna Super Admin tidak dapat dihapus.'], 403);
         }
 

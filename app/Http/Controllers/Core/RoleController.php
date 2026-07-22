@@ -16,7 +16,13 @@ class RoleController extends Controller
             return redirect()->route('login');
         }
 
-        $users = User::with(['roles', 'permissions'])->orderBy('created_at', 'desc')->get();
+        $users = User::with(['roles', 'permissions'])->orderBy('created_at', 'desc')->get()->map(function ($user) {
+            // Append all inherited and direct permissions for AlpineJS
+            $user->all_permissions = $user->getAllPermissions()->map(function ($perm) {
+                return ['name' => $perm->name];
+            })->toArray();
+            return $user;
+        });
         
         $kabupatenList = \Illuminate\Support\Facades\DB::connection('mysql_knmp')
             ->table('knmp')
@@ -41,12 +47,7 @@ class RoleController extends Controller
             Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
         }
 
-        $fixedRoles = ['super_admin', 'admin', 'user_daerah'];
-        foreach ($fixedRoles as $r) {
-            Role::firstOrCreate(['name' => $r, 'guard_name' => 'web']);
-        }
-
-        $roles = Role::whereIn('name', $fixedRoles)->get();
+        $roles = Role::all();
         
         // Fetch the static permissions to show as checkboxes
         $permissions = Permission::whereIn('name', $staticPermissions)->orderBy('name', 'asc')->get();

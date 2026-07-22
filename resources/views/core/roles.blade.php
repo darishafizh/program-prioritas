@@ -83,13 +83,13 @@
                                 </td>
                                 <td class="px-6 py-4 max-w-[200px] whitespace-normal">
                                     <div class="flex flex-wrap gap-1">
-                                        <template x-if="user.permissions && user.permissions.length > 0">
-                                            <template x-for="perm in user.permissions">
+                                        <template x-if="user.all_permissions && user.all_permissions.length > 0">
+                                            <template x-for="perm in user.all_permissions">
                                                 <span class="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-textMain-light dark:text-textMain-dark text-[9px] border border-gray-200 dark:border-gray-700" 
                                                       x-text="perm.name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')"></span>
                                             </template>
                                         </template>
-                                        <template x-if="!user.permissions || user.permissions.length === 0">
+                                        <template x-if="!user.all_permissions || user.all_permissions.length === 0">
                                             <span class="text-[10px] text-textMuted-light italic">Belum ada hak akses</span>
                                         </template>
                                     </div>
@@ -312,7 +312,7 @@
                         this.isUserFormOpen = true;
                     } else if (mode === 'edit') {
                         let userRole = (user.roles && user.roles.length > 0) ? user.roles[0].name : '';
-                        let perms = (user.permissions && user.permissions.length > 0) ? user.permissions.map(p => p.name) : [];
+                        let perms = (user.all_permissions && user.all_permissions.length > 0) ? user.all_permissions.map(p => p.name) : [];
 
                         this.userFormData = { 
                             name: user.name, 
