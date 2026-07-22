@@ -40,8 +40,8 @@ class FixSuperAdmin extends Command
             // Hapus semua direct permissions (karena harusnya ikut role)
             $user->syncPermissions([]);
             
-            // Set ulang role nya menjadi role yang benar 'Super Admin'
-            $user->syncRoles(['Super Admin']);
+            // Set ulang role nya menjadi role yang benar 'super_admin'
+            $user->syncRoles(['super_admin']);
             
             $this->info("Berhasil mengembalikan akses penuh untuk user: " . $user->name);
         }

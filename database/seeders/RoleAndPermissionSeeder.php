@@ -33,12 +33,12 @@ class RoleAndPermissionSeeder extends Seeder
         }
 
         // 2. Definisikan Roles
-        // Pastikan nama role sesuai dengan yang ada di sistem (Super Admin, Admin Roren, Verifikator, dll)
-        $roleSuperAdmin = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
-        $roleAdminRoren = Role::firstOrCreate(['name' => 'Admin Roren', 'guard_name' => 'web']);
-        $roleVerifikator = Role::firstOrCreate(['name' => 'Verifikator', 'guard_name' => 'web']);
-        $roleUserDaerah = Role::firstOrCreate(['name' => 'User Daerah', 'guard_name' => 'web']);
-        $roleMenteri = Role::firstOrCreate(['name' => 'Menteri', 'guard_name' => 'web']);
+        // Pastikan nama role sesuai dengan yang ada di sistem (snake_case)
+        $roleSuperAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+        $roleAdminRoren = Role::firstOrCreate(['name' => 'admin_roren', 'guard_name' => 'web']);
+        $roleVerifikator = Role::firstOrCreate(['name' => 'verifikator', 'guard_name' => 'web']);
+        $roleUserDaerah = Role::firstOrCreate(['name' => 'user_daerah', 'guard_name' => 'web']);
+        $roleMenteri = Role::firstOrCreate(['name' => 'menteri', 'guard_name' => 'web']);
 
         // 3. Assign Permissions ke Role
         // Super Admin mendapatkan semua hak akses
