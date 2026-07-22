@@ -109,12 +109,9 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-700">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-teal-light/10 text-teal-light flex items-center justify-center">
-                            <i :class="modalIcon + ' text-lg'"></i>
-                        </div>
                         <div>
-                            <h3 class="text-base font-bold text-gray-900 dark:text-white" id="modal-title">
-                                Detail Operasional <span x-text="modalTitle" class="text-teal-light"></span>
+                            <h3 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark" id="modal-title">
+                                Detail Operasional <span x-text="modalTitle"></span>
                             </h3>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Daftar lokasi berdasarkan status operasional</p>
                         </div>
@@ -130,19 +127,18 @@
                         
                         <!-- Sudah Operasional -->
                         <div class="flex flex-col bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-                            <div class="bg-teal-light/10 dark:bg-teal-900/20 px-4 py-3 border-b border-teal-light/20 flex justify-between items-center sticky top-0 backdrop-blur-md">
+                            <div class="bg-success/10 dark:bg-success/20 px-4 py-3 border-b border-success/20 flex justify-between items-center sticky top-0 backdrop-blur-md">
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-circle-check text-teal-light"></i>
-                                    <span class="font-bold text-sm text-teal-light dark:text-teal-400">Sudah Operasional</span>
+                                    <i class="fa-solid fa-circle-check text-success"></i>
+                                    <span class="font-bold text-sm text-success dark:text-emerald-400">Sudah Operasional</span>
                                 </div>
-                                <span class="bg-white dark:bg-gray-800 text-teal-light text-xs font-bold px-2.5 py-0.5 rounded-full" x-text="operasionalCount"></span>
+                                <span class="bg-white dark:bg-gray-800 text-success text-xs font-bold px-2.5 py-0.5 rounded-full" x-text="operasionalCount"></span>
                             </div>
                             <div class="p-4 overflow-y-auto max-h-[50vh] custom-scrollbar">
                                 <ul class="space-y-2">
                                     <template x-for="(lokasi, index) in modalOperasional" :key="index">
-                                        <li class="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300 py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0 last:pb-0">
-                                            <span class="text-teal-light text-[10px] mt-1"><i class="fa-solid fa-location-dot"></i></span>
-                                            <span x-text="lokasi" class="font-medium leading-tight"></span>
+                                        <li class="flex items-start text-xs text-textMuted-light dark:text-textMuted-dark py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0 last:pb-0">
+                                            <span x-text="lokasi" class="leading-relaxed"></span>
                                         </li>
                                     </template>
                                     <template x-if="operasionalCount === 0">
@@ -157,19 +153,18 @@
 
                         <!-- Belum Operasional -->
                         <div class="flex flex-col bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-                            <div class="bg-danger/10 dark:bg-danger-900/20 px-4 py-3 border-b border-danger/20 flex justify-between items-center sticky top-0 backdrop-blur-md">
+                            <div class="bg-warning/10 dark:bg-warning-900/20 px-4 py-3 border-b border-warning/20 flex justify-between items-center sticky top-0 backdrop-blur-md">
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-clock text-danger"></i>
-                                    <span class="font-bold text-sm text-danger dark:text-danger-400">Belum Operasional</span>
+                                    <i class="fa-solid fa-clock text-warning"></i>
+                                    <span class="font-bold text-sm text-warning dark:text-warning-400">Belum Operasional</span>
                                 </div>
-                                <span class="bg-white dark:bg-gray-800 text-danger text-xs font-bold px-2.5 py-0.5 rounded-full" x-text="belumCount"></span>
+                                <span class="bg-white dark:bg-gray-800 text-warning text-xs font-bold px-2.5 py-0.5 rounded-full" x-text="belumCount"></span>
                             </div>
                             <div class="p-4 overflow-y-auto max-h-[50vh] custom-scrollbar">
                                 <ul class="space-y-2">
                                     <template x-for="(lokasi, index) in modalBelum" :key="index">
-                                        <li class="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300 py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0 last:pb-0">
-                                            <span class="text-danger text-[10px] mt-1"><i class="fa-solid fa-location-dot"></i></span>
-                                            <span x-text="lokasi" class="font-medium leading-tight"></span>
+                                        <li class="flex items-start text-xs text-textMuted-light dark:text-textMuted-dark py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0 last:pb-0">
+                                            <span x-text="lokasi" class="leading-relaxed"></span>
                                         </li>
                                     </template>
                                     <template x-if="belumCount === 0">

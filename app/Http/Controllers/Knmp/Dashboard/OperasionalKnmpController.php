@@ -18,7 +18,7 @@ class OperasionalKnmpController extends ProgramBaseController
      */
     public const SARPRAS_ICONS = [
         1 => 'fa-solid fa-gas-pump', // SPBUN
-        2 => 'fa-solid fa-anchor', // Docking
+        2 => 'fa-solid fa-toolbox', // Docking
         3 => 'fa-solid fa-wrench', // Bengkel
         4 => 'fa-solid fa-store', // Waserda/Kios Perbekalan
         5 => 'fa-solid fa-cubes-stacked', // Pabrik Es

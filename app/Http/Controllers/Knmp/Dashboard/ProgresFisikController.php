@@ -546,10 +546,10 @@ class ProgresFisikController extends ProgramBaseController
                 'alat_tangkap_dominan' => $profil && $profil->alat_tangkap_dominan ? $profil->alat_tangkap_dominan : '-',
                 'komoditas_utama' => $profil && $profil->komoditas_utama ? $profil->komoditas_utama : '-',
                 'pend_nelayan' => $profil && $profil->pend_nelayan ? 'Rp ' . rtrim(rtrim(number_format($profil->pend_nelayan, 2, ',', '.'), '0'), ',') : '-',
-                'prod_per_trip_per_kapal' => $profil && $profil->prod_per_trip_per_kapal ? rtrim(rtrim(number_format($profil->prod_per_trip_per_kapal, 2, ',', '.'), '0'), ',') : '-',
+                'prod_per_trip_per_kapal' => $profil && $profil->prod_per_trip_per_kapal ? rtrim(rtrim(number_format($profil->prod_per_trip_per_kapal, 2, ',', '.'), '0'), ',') . ' Kg' : '-',
                 'jml_trip_per_bulan' => $profil && $profil->jml_trip_per_bulan ? $profil->jml_trip_per_bulan : '-',
-                'prod_kapal' => $profil && $profil->prod_kapal ? rtrim(rtrim(number_format($profil->prod_kapal, 2, ',', '.'), '0'), ',') : '-',
-                'prod_total_kapal' => $profil && $profil->prod_total_kapal ? rtrim(rtrim(number_format($profil->prod_total_kapal, 2, ',', '.'), '0'), ',') : '-',
+                'prod_kapal' => $profil && $profil->prod_kapal ? rtrim(rtrim(number_format($profil->prod_kapal, 2, ',', '.'), '0'), ',') . ' Kg' : '-',
+                'prod_total_kapal' => $profil && $profil->prod_total_kapal ? rtrim(rtrim(number_format($profil->prod_total_kapal, 2, ',', '.'), '0'), ',') . ' Ton' : '-',
                 // -------------------
                 
                 'created_at' => $loc->created_at ? $loc->created_at->format('d M Y, H:i') : '-',

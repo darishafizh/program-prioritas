@@ -46,14 +46,7 @@
                                 :class="selectedPoint?.tahap === 'serah_terima' ?
                                     'bg-success/10 dark:bg-success/20 text-success dark:text-emerald-400 border border-success/20' :
                                     'bg-warning/10 dark:bg-amber-400/10 text-warning dark:text-amber-500 border border-warning/20'"
-                                x-text="'Status: ' + selectedPoint?.tahap_label"></span>
-
-                            <template x-if="selectedPoint?.tahap === 'serah_terima'">
-                                <span
-                                    class="px-2 py-0.5 rounded text-[10px] font-medium tracking-wide shrink-0 bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800">
-                                    Pra Kondisi
-                                </span>
-                            </template>
+                                x-text="selectedPoint?.tahap === 'serah_terima' ? 'Operasional' : 'Konstruksi'"></span>
                         </div>
 
                         <!-- BODY BARIS 1: Kolom Kiri Profil KNMP | Kolom Kanan Lampiran Dokumen -->

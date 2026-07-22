@@ -302,7 +302,7 @@
                         });
 
                         marker.bindTooltip(
-                            `<b>${loc.nama}</b><br/><span style="font-size:11px; opacity:0.85; font-weight:500;">${loc.tahap_label || 'Lokasi'}</span>`, {
+                            `<b>${loc.nama}</b><br/><span style="font-size:11px; opacity:0.85; font-weight:500;">${loc.tahap === 'serah_terima' ? 'Operasional' : 'Konstruksi'}</span>`, {
                                 direction: 'top',
                                 offset: [0, -10]
                             });
