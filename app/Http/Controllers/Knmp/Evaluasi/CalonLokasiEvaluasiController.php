@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Knmp\Evaluasi;
 
 use App\Http\Controllers\ProgramBaseController;
-use App\Models\CalonLokasi;
+use App\Models\Knmp\CalonLokasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

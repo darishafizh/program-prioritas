@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Knmp;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CalonLokasiVerifAdmin extends Model 
+class CalonLokasiBaCalon extends Model 
 { 
     protected $connection = 'mysql_knmp'; 
-    protected $table = 'calon_lokasi_verif_admin'; 
+    protected $table = 'calon_lokasi_ba_calon'; 
     protected $guarded = []; 
     
     public function calonLokasi() { return $this->belongsTo(CalonLokasi::class); } 

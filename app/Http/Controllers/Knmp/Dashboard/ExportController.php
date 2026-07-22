@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Knmp\Dashboard;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
-use App\Models\Knmp;
+use App\Models\Knmp\Knmp;
 
 class ExportController extends ProgramBaseController
 {
@@ -35,7 +35,7 @@ class ExportController extends ProgramBaseController
         }
 
         // Build base query with optional batch filter
-        $queryKnmp = \App\Models\Knmp::query();
+        $queryKnmp = \App\Models\Knmp\Knmp::query();
         if ($requestedBatchId) {
             $queryKnmp->where('batch_id', $requestedBatchId);
         }

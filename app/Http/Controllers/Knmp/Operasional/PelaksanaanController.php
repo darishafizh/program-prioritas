@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Knmp\Operasional;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
-use App\Models\Knmp;
-use App\Models\KonstruksiKnmp;
+use App\Models\Knmp\Knmp;
+use App\Models\Knmp\KonstruksiKnmp;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsulanTemplateExport;
 use App\Imports\UsulanImport;

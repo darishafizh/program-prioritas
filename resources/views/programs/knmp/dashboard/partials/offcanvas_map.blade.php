@@ -82,83 +82,87 @@
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
                                         <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Komoditas
-                                            Utama</span>
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Jumlah
+                                            Kapal</span>
                                         <span
                                             class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.komoditas || '-'"></span>
+                                            x-text="selectedPoint?.jumlah_kapal || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
                                         <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Penjualan
-                                            Ikan</span>
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Prod.
+                                            Total Desa</span>
                                         <span
                                             class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.penjualan_ikan || '-'"></span>
+                                            x-text="selectedPoint?.prod_total_desa || '-'"></span>
+                                    </div>
+
+                                    <hr class="col-span-2 border-gray-200 dark:border-gray-700" style="margin: -8px 0;" />
+
+                                    <div class="flex flex-col" style="gap: 2px;">
+                                        <span
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Ukuran
+                                            Perahu Dominan</span>
+                                        <span
+                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
+                                            x-text="selectedPoint?.ukuran_perahu_dominan || '-'"></span>
+                                    </div>
+                                    <div class="flex flex-col" style="gap: 2px;">
+                                        <span
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Alat
+                                            Tangkap Dominan</span>
+                                        <span
+                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
+                                            x-text="selectedPoint?.alat_tangkap_dominan || '-'"></span>
+                                    </div>
+                                    <div class="flex flex-col" style="gap: 2px;" :class="selectedPoint?.komoditas_utama?.length > 25 ? 'col-span-2' : ''">
+                                        <span
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Komoditas
+                                            Utama</span>
+                                        <span
+                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark m-0 p-0 leading-snug"
+                                            :class="selectedPoint?.komoditas_utama?.length > 25 ? 'whitespace-normal break-words' : 'truncate'"
+                                            x-text="selectedPoint?.komoditas_utama || '-'"></span>
+                                    </div>
+                                    <div class="flex flex-col" style="gap: 2px;">
+                                        <span
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Pendpt.
+                                            Nelayan</span>
+                                        <span
+                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
+                                            x-text="selectedPoint?.pend_nelayan || '-'"></span>
+                                    </div>
+                                    <div class="flex flex-col" style="gap: 2px;">
+                                        <span
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Prod.
+                                            Per Trip/Kapal</span>
+                                        <span
+                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
+                                            x-text="selectedPoint?.prod_per_trip_per_kapal || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
                                         <span
                                             class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Jum.
-                                            Hari Melaut</span>
+                                            Trip / Bulan</span>
                                         <span
                                             class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.jumlah_hari_melaut || '-'"></span>
+                                            x-text="selectedPoint?.jml_trip_per_bulan || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
                                         <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Pendpt.
-                                            Rata2 Saat Ini</span>
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Prod.
+                                            Kapal</span>
                                         <span
                                             class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.pendapatan_rata_saat_ini || '-'"></span>
+                                            x-text="selectedPoint?.prod_kapal || '-'"></span>
                                     </div>
                                     <div class="flex flex-col" style="gap: 2px;">
                                         <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Pendpt.
-                                            Pasca Intervensi</span>
+                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Prod.
+                                            Total Kapal</span>
                                         <span
                                             class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.pendapatan_pasca_intervensi || '-'"></span>
-                                    </div>
-                                    <div class="flex flex-col" style="gap: 2px;">
-                                        <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Serapan
-                                            Tenaga Kerja</span>
-                                        <span
-                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.serapan_tenaga_kerja || '-'"></span>
-                                    </div>
-                                    <div class="flex flex-col" style="gap: 2px;">
-                                        <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Vol.
-                                            Produksi Daerah</span>
-                                        <span
-                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.vol_produksi_daerah || '-'"></span>
-                                    </div>
-                                    <div class="flex flex-col" style="gap: 2px;">
-                                        <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Nilai
-                                            Produksi Daerah</span>
-                                        <span
-                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.nilai_produksi_daerah || '-'"></span>
-                                    </div>
-                                    <div class="flex flex-col" style="gap: 2px;">
-                                        <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Vol.
-                                            Prod Pasca Inter.</span>
-                                        <span
-                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.vol_produksi_pasca_intervensi || '-'"></span>
-                                    </div>
-                                    <div class="flex flex-col" style="gap: 2px;">
-                                        <span
-                                            class="text-[10px] font-medium text-textMuted-light dark:text-textMuted-dark uppercase tracking-wider m-0 p-0 leading-none">Nilai
-                                            Prod Pasca Inter.</span>
-                                        <span
-                                            class="text-[14px] font-semibold text-textMain-light dark:text-textMain-dark truncate m-0 p-0 leading-snug"
-                                            x-text="selectedPoint?.nilai_produksi_pasca_intervensi || '-'"></span>
+                                            x-text="selectedPoint?.prod_total_kapal || '-'"></span>
                                     </div>
                                 </div>
                             </div>

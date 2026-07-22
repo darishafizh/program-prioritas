@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Knmp\Dashboard;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
-use App\Models\Knmp;
+use App\Models\Knmp\Knmp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -251,7 +251,7 @@ class ProgresFisikController extends ProgramBaseController
         ];
 
         // Pipeline Pengajuan from CalonLokasi
-        $calonQuery = \App\Models\CalonLokasi::query();
+        $calonQuery = \App\Models\Knmp\CalonLokasi::query();
         if (Auth::user()->isUserDaerah()) {
             $calonQuery->where('kabupaten', 'LIKE', '%' . Auth::user()->kabupaten . '%');
         }
@@ -337,20 +337,20 @@ class ProgresFisikController extends ProgramBaseController
         });
 
         $apiKeys = [
-            'SPBN' => 'SPBUN_status',
-            'Docking' => 'Docking nelayan_status',
-            'Bengkel' => 'Bengkel Nelayan_status',
-            'Waserda' => 'Waserda_status',
-            'Pabrik Es' => 'Pabrik Es_status',
-            'Cold Storage' => 'Cold Storage_status',
-            'KDRN Dingin' => 'Kenderaan Berpendingin_status',
-            'Sentra Kuliner' => 'Sentra Kuliner_status',
-            'Kios Pemasaran' => 'Kios Pemasaran_status',
-            'Kapal' => 'Kapal_status',
-            'Mesin' => 'Mesin_Status',
-            'Alat Tangkap' => 'Alat_tangkap_Status',
-            'Cool Box' => 'cool_box_status',
-            'Roda 3' => 'roda3_status',
+            1 => 'SPBUN_status',
+            2 => 'Docking nelayan_status',
+            3 => 'Bengkel Nelayan_status',
+            4 => 'Waserda_status',
+            5 => 'Pabrik Es_status',
+            6 => 'Cold Storage_status',
+            7 => 'Kenderaan Berpendingin_status',
+            8 => 'Sentra Kuliner_status',
+            9 => 'Kios Pemasaran_status',
+            10 => 'Kapal_status',
+            11 => 'Mesin_Status',
+            12 => 'Alat_tangkap_Status',
+            13 => 'cool_box_status',
+            14 => 'roda3_status',
         ];
         
         $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
@@ -540,16 +540,16 @@ class ProgresFisikController extends ProgramBaseController
                 // --- PROFIL KNMP ---
                 'jumlah_kk' => $profil && $profil->jml_kk ? number_format($profil->jml_kk, 0, ',', '.') . ' KK' : '-',
                 'jumlah_nelayan' => $profil && $profil->jml_nelayan ? number_format($profil->jml_nelayan, 0, ',', '.') . ' Orang' : '-',
-                'komoditas' => $profil && $profil->komoditas ? $profil->komoditas : '-',
-                'penjualan_ikan' => $profil && $profil->penjualan_ikan ? $profil->penjualan_ikan : '-',
-                'jumlah_hari_melaut' => $profil && $profil->jml_hari_melaut ? $profil->jml_hari_melaut . ' Hari/bln' : '-',
-                'pendapatan_rata_saat_ini' => $profil && $profil->pend_avg_saat_ini ? 'Rp ' . rtrim(rtrim(number_format($profil->pend_avg_saat_ini, 2, ',', '.'), '0'), ',') . ' Jt' : '-',
-                'pendapatan_pasca_intervensi' => $profil && $profil->pend_avg_intervensi ? 'Rp ' . rtrim(rtrim(number_format($profil->pend_avg_intervensi, 2, ',', '.'), '0'), ',') . ' Jt' : '-',
-                'vol_produksi_daerah' => $profil && $profil->vol_produksi_daerah ? number_format($profil->vol_produksi_daerah, 0, ',', '.') . ' Ton/thn' : '-',
-                'nilai_produksi_daerah' => $profil && $profil->nilai_produksi_daerah ? 'Rp ' . rtrim(rtrim(number_format($profil->nilai_produksi_daerah, 2, ',', '.'), '0'), ',') . ' M' : '-',
-                'vol_produksi_pasca_intervensi' => $profil && $profil->vol_produksi_intervensi ? number_format($profil->vol_produksi_intervensi, 0, ',', '.') . ' Ton/thn' : '-',
-                'nilai_produksi_pasca_intervensi' => $profil && $profil->nilai_produksi_intervensi ? 'Rp ' . rtrim(rtrim(number_format($profil->nilai_produksi_intervensi, 2, ',', '.'), '0'), ',') . ' M' : '-',
-                'serapan_tenaga_kerja' => $profil && $profil->serapan_tenaga_kerja ? number_format($profil->serapan_tenaga_kerja, 0, ',', '.') . ' Orang' : '-',
+                'jumlah_kapal' => $profil && $profil->jml_kapal ? number_format($profil->jml_kapal, 0, ',', '.') . ' Unit' : '-',
+                'prod_total_desa' => $profil && $profil->prod_total_desa ? rtrim(rtrim(number_format($profil->prod_total_desa, 2, ',', '.'), '0'), ',') . ' Ton' : '-',
+                'ukuran_perahu_dominan' => $profil && $profil->ukuran_perahu_dominan ? $profil->ukuran_perahu_dominan : '-',
+                'alat_tangkap_dominan' => $profil && $profil->alat_tangkap_dominan ? $profil->alat_tangkap_dominan : '-',
+                'komoditas_utama' => $profil && $profil->komoditas_utama ? $profil->komoditas_utama : '-',
+                'pend_nelayan' => $profil && $profil->pend_nelayan ? 'Rp ' . rtrim(rtrim(number_format($profil->pend_nelayan, 2, ',', '.'), '0'), ',') : '-',
+                'prod_per_trip_per_kapal' => $profil && $profil->prod_per_trip_per_kapal ? rtrim(rtrim(number_format($profil->prod_per_trip_per_kapal, 2, ',', '.'), '0'), ',') : '-',
+                'jml_trip_per_bulan' => $profil && $profil->jml_trip_per_bulan ? $profil->jml_trip_per_bulan : '-',
+                'prod_kapal' => $profil && $profil->prod_kapal ? rtrim(rtrim(number_format($profil->prod_kapal, 2, ',', '.'), '0'), ',') : '-',
+                'prod_total_kapal' => $profil && $profil->prod_total_kapal ? rtrim(rtrim(number_format($profil->prod_total_kapal, 2, ',', '.'), '0'), ',') : '-',
                 // -------------------
                 
                 'created_at' => $loc->created_at ? $loc->created_at->format('d M Y, H:i') : '-',
@@ -592,11 +592,11 @@ class ProgresFisikController extends ProgramBaseController
                     }
 
                     foreach ($masterSarpras as $s) {
-                        $icon = \App\Http\Controllers\Knmp\Dashboard\OperasionalKnmpController::SARPRAS_ICONS[$s->nama] ?? 'fa-solid fa-box';
+                        $icon = \App\Http\Controllers\Knmp\Dashboard\OperasionalKnmpController::SARPRAS_ICONS[$s->id] ?? 'fa-solid fa-box';
                         $statusSarpras = 0; // 0=Tidak Ada, 1=Belum Operasional, 2=Sudah Operasional
                         
                         if ($apiItem) {
-                            $apiKey = $apiKeys[$s->nama] ?? null;
+                            $apiKey = $apiKeys[$s->id] ?? null;
                             if ($apiKey && isset($apiItem[$apiKey])) {
                                 if (stripos($apiItem[$apiKey], '2. Sudah Operasional') !== false) {
                                     $statusSarpras = 2;

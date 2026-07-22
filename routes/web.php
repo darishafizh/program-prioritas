@@ -17,38 +17,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/webhook/google-sheets/knmp-sync', [\App\Http\Controllers\Api\GoogleSheetsWebhookController::class, 'sync'])
     ->middleware('webhook.auth');
 
-
-Route::get('/test-api', function () {
-    try {
-        $response = \Illuminate\Support\Facades\Http::withoutVerifying()
-            ->timeout(15)
-            ->get('https://kdmp.pdspkp.id/knmp/get_data.php');
-        
-        if ($response->successful()) {
-            $data = $response->json();
-            return response()->json([
-                'status' => 'success',
-                'count' => is_array($data) ? count($data) : 'not array',
-                'data_type' => gettype($data),
-                'first_item' => is_array($data) && count($data) > 0 ? $data[0] : null
-            ]);
-        }
-        
-        return response()->json([
-            'status' => 'failed_http',
-            'http_status' => $response->status(),
-            'body' => $response->body()
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'exception',
-            'message' => $e->getMessage()
-        ]);
-    }
-});
-
-
-// Portal Routes (requires auth)
+// You can add more routes as needed
 Route::middleware('auth')->group(function () {
     Route::get('/greetings', [PortalController::class, 'greetings'])->name('greetings');
 

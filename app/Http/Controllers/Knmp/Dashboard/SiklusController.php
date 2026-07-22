@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Knmp\Dashboard;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
-use App\Models\Knmp;
+use App\Models\Knmp\Knmp;
 
 class SiklusController extends ProgramBaseController
 {
@@ -34,7 +34,7 @@ class SiklusController extends ProgramBaseController
             $lastUpdatedText = now()->locale('id')->translatedFormat('d F Y');
         }
 
-        $queryKnmp = \App\Models\Knmp::query();
+        $queryKnmp = \App\Models\Knmp\Knmp::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
             $queryKnmp->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }
@@ -56,7 +56,7 @@ class SiklusController extends ProgramBaseController
         ];
 
         // Pipeline Pengajuan from CalonLokasi
-        $calonQuery = \App\Models\CalonLokasi::query();
+        $calonQuery = \App\Models\Knmp\CalonLokasi::query();
         if (\Illuminate\Support\Facades\Auth::user()->isUserDaerah()) {
             $calonQuery->where('kabupaten', 'LIKE', '%' . \Illuminate\Support\Facades\Auth::user()->kabupaten . '%');
         }

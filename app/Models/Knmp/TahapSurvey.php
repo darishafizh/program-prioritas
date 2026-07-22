@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Knmp;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TahapSerahTerima extends Model
+use App\Models\Knmp\Knmp;
+
+class TahapSurvey extends Model
 {
     protected $connection = 'mysql_knmp';
-    protected $table = 'tahap_serah_terima';
-    protected $fillable = ['knmp_id', 'nomor_kontrak', 'tanggal_serah', 'catatan'];
+    protected $table = 'tahap_survey';
+    protected $fillable = ['knmp_id', 'tanggal', 'catatan'];
 
     public function knmp()
     {

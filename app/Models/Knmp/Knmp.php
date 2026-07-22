@@ -1,11 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Knmp;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Region\Provinsi;
+use App\Models\Region\Kabupaten;
+use App\Models\Region\Kecamatan;
+use App\Models\Region\Desa;
 
 class Knmp extends Model
 {
+    use HasFactory;
+
     protected $connection = 'mysql_knmp';
     protected $table = 'knmp';
 

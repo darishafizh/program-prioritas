@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Knmp\Dashboard;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
-use App\Models\Knmp;
+use App\Models\Knmp\Knmp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;

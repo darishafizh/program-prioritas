@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Knmp\Dashboard;
 
 use App\Http\Controllers\ProgramBaseController;
-use App\Models\Knmp;
+use App\Models\Knmp\Knmp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -17,20 +17,20 @@ class OperasionalKnmpController extends ProgramBaseController
      * Mapping Ikon untuk master_sarpras.
      */
     public const SARPRAS_ICONS = [
-        'SPBN' => 'fa-solid fa-gas-pump',
-        'Docking' => 'fa-solid fa-anchor',
-        'Bengkel' => 'fa-solid fa-wrench',
-        'Waserda' => 'fa-solid fa-store',
-        'Pabrik Es' => 'fa-solid fa-cubes-stacked',
-        'Cold Storage' => 'fa-solid fa-snowflake',
-        'KDRN Dingin' => 'fa-solid fa-temperature-arrow-down',
-        'Sentra Kuliner' => 'fa-solid fa-utensils',
-        'Kios Pemasaran' => 'fa-solid fa-shop',
-        'Kapal' => 'fa-solid fa-ship',
-        'Mesin' => 'fa-solid fa-gears',
-        'Alat Tangkap' => 'fa-solid fa-fish',
-        'Cool Box' => 'fa-solid fa-box-archive',
-        'Roda 3' => 'fa-solid fa-motorcycle',
+        1 => 'fa-solid fa-gas-pump', // SPBUN
+        2 => 'fa-solid fa-anchor', // Docking
+        3 => 'fa-solid fa-wrench', // Bengkel
+        4 => 'fa-solid fa-store', // Waserda/Kios Perbekalan
+        5 => 'fa-solid fa-cubes-stacked', // Pabrik Es
+        6 => 'fa-solid fa-snowflake', // Cold Storage
+        7 => 'fa-solid fa-temperature-arrow-down', // KDRN Dingin/Kendaraan Dingin
+        8 => 'fa-solid fa-utensils', // Sentra Kuliner
+        9 => 'fa-solid fa-shop', // Kios Pemasaran/Lapak Ikan
+        10 => 'fa-solid fa-ship', // Kapal
+        11 => 'fa-solid fa-gears', // Mesin
+        12 => 'fa-solid fa-fish', // Alat Tangkap
+        13 => 'fa-solid fa-box-archive', // Cool Box
+        14 => 'fa-solid fa-motorcycle', // Roda 3
     ];
 
     public function index($program)
@@ -77,50 +77,59 @@ class OperasionalKnmpController extends ProgramBaseController
         });
 
         $apiKeys = [
-            'SPBN' => 'SPBUN_status',
-            'Docking' => 'Docking nelayan_status',
-            'Bengkel' => 'Bengkel Nelayan_status',
-            'Waserda' => 'Waserda_status',
-            'Pabrik Es' => 'Pabrik Es_status',
-            'Cold Storage' => 'Cold Storage_status',
-            'KDRN Dingin' => 'Kenderaan Berpendingin_status',
-            'Sentra Kuliner' => 'Sentra Kuliner_status',
-            'Kios Pemasaran' => 'Kios Pemasaran_status',
-            'Kapal' => 'Kapal_status',
-            'Mesin' => 'Mesin_Status',
-            'Alat Tangkap' => 'Alat_tangkap_Status',
-            'Cool Box' => 'cool_box_status',
-            'Roda 3' => 'roda3_status',
+            1 => 'SPBUN_status',
+            2 => 'Docking nelayan_status',
+            3 => 'Bengkel Nelayan_status',
+            4 => 'Waserda_status',
+            5 => 'Pabrik Es_status',
+            6 => 'Cold Storage_status',
+            7 => 'Kenderaan Berpendingin_status',
+            8 => 'Sentra Kuliner_status',
+            9 => 'Kios Pemasaran_status',
+            10 => 'Kapal_status',
+            11 => 'Mesin_Status',
+            12 => 'Alat_tangkap_Status',
+            13 => 'cool_box_status',
+            14 => 'roda3_status',
         ];
 
         $masterSarpras = \Illuminate\Support\Facades\DB::connection('mysql_knmp')->table('master_sarpras')->get();
         $sarprasStats = $masterSarpras->map(function ($s) use ($totalSelesai, $apiData, $apiKeys) {
-            $icon = self::SARPRAS_ICONS[$s->nama] ?? 'fa-solid fa-box';
+            $icon = self::SARPRAS_ICONS[$s->id] ?? 'fa-solid fa-box';
             
             $tersedia = 0;
             $target = 0;
-            $apiKey = $apiKeys[$s->nama] ?? null;
+            $lokasiOperasional = [];
+            $lokasiBelum = [];
+
+            $apiKey = $apiKeys[$s->id] ?? null;
             if ($apiKey && is_array($apiData)) {
                 foreach ($apiData as $item) {
                     if (isset($item[$apiKey])) {
                         $val = $item[$apiKey];
+                        $namaLokasi = $item['KNMP'] ?? $item['Desa'] ?? 'Lokasi tidak diketahui';
+                        
                         if (stripos($val, '2. Sudah Operasional') !== false) {
                             $tersedia++;
                             $target++;
+                            $lokasiOperasional[] = $namaLokasi;
                         } elseif (stripos($val, '1. Belum Operasional') !== false) {
                             $target++;
+                            $lokasiBelum[] = $namaLokasi;
                         }
                     }
                 }
             }
 
             return [
-                'key'       => \Illuminate\Support\Str::slug($s->nama, '_'),
-                'nama'      => $s->nama,
-                'icon'      => $icon,
-                'total'     => $tersedia,
-                'target'    => $target,
-                'persen'    => ($target > 0) ? ($tersedia / $target) * 100 : 0,
+                'key'                => \Illuminate\Support\Str::slug($s->nama, '_'),
+                'nama'               => $s->nama,
+                'icon'               => $icon,
+                'total'              => $tersedia,
+                'target'             => $target,
+                'persen'             => ($target > 0) ? ($tersedia / $target) * 100 : 0,
+                'lokasi_operasional' => $lokasiOperasional,
+                'lokasi_belum'       => $lokasiBelum,
             ];
         })->all();
 

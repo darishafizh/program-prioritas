@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Knmp\Master;
 
 use App\Http\Controllers\ProgramBaseController;
-use App\Models\PenyediaJasaKonstruksi;
+use App\Models\Knmp\PenyediaJasaKonstruksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 

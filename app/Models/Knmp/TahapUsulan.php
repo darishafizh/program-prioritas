@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Knmp;
 
 use Illuminate\Database\Eloquent\Model;
+
+use App\Models\Knmp\Knmp;
 
 class TahapUsulan extends Model
 {

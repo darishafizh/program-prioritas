@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Knmp\Master;
 
 use App\Http\Controllers\ProgramBaseController;
 use Illuminate\Http\Request;
-use App\Models\CalonLokasi;
-use App\Models\Knmp;
-use App\Models\CalonLokasiPengajuan;
+use App\Models\Knmp\CalonLokasi;
+use App\Models\Knmp\Knmp;
+use App\Models\Knmp\CalonLokasiPengajuan;
 use App\Models\Region\Province;
 use App\Models\Region\Regency;
 use App\Models\Region\District;
@@ -205,7 +205,7 @@ class CalonLokasiController extends ProgramBaseController
             ]);
 
             // 3. Insert ke calon_lokasi_detail (Menampung jawaban kuesioner - non fisik)
-            \App\Models\CalonLokasiDetail::create([
+            \App\Models\Knmp\CalonLokasiDetail::create([
                 'calon_lokasi_id' => $calonLokasi->id,
                 'nama_pengisi' => $request->q14_5Nama,
                 'jabatan_pengisi' => $request->q22_6Jabatan,
@@ -267,7 +267,7 @@ class CalonLokasiController extends ProgramBaseController
 
             // Jika pindah ke verif_admin, buat record awal untuk verifikasi jika belum ada
             if ($status == 'verif_admin') {
-                \App\Models\CalonLokasiVerifAdmin::firstOrCreate([
+                \App\Models\Knmp\CalonLokasiVerifAdmin::firstOrCreate([
                     'calon_lokasi_id' => $calon->id
                 ], [
                     'status_verif' => 'Proses Review',
@@ -304,7 +304,7 @@ class CalonLokasiController extends ProgramBaseController
         try {
             DB::connection('mysql_knmp')->beginTransaction();
             
-            $verif = \App\Models\CalonLokasiVerifAdmin::firstOrCreate(
+            $verif = \App\Models\Knmp\CalonLokasiVerifAdmin::firstOrCreate(
                 ['calon_lokasi_id' => $calon->id],
                 ['skor_nilai' => 0, 'status_verif' => 'Proses Review']
             );
@@ -319,7 +319,7 @@ class CalonLokasiController extends ProgramBaseController
             if ($request->status_verif == 'Lolos') {
                 $calon->status_tahapan = 'ba_aktivasi';
                 // Initialize BA Aktivasi record
-                \App\Models\CalonLokasiBaAktivasi::firstOrCreate([
+                \App\Models\Knmp\CalonLokasiBaAktivasi::firstOrCreate([
                     'calon_lokasi_id' => $calon->id
                 ], [
                     'status_ba' => 'Menunggu Draft'
@@ -359,7 +359,7 @@ class CalonLokasiController extends ProgramBaseController
         try {
             DB::connection('mysql_knmp')->beginTransaction();
             
-            $verif = \App\Models\CalonLokasiVerifTeknis::firstOrCreate(
+            $verif = \App\Models\Knmp\CalonLokasiVerifTeknis::firstOrCreate(
                 ['calon_lokasi_id' => $calon->id],
                 ['skor_teknis' => 0, 'status_verif' => 'Proses Survey']
             );
@@ -374,7 +374,7 @@ class CalonLokasiController extends ProgramBaseController
             if ($request->status_verif == 'Lolos') {
                 $calon->status_tahapan = 'ba_calon';
                 // Initialize BA Calon record
-                \App\Models\CalonLokasiBaCalon::firstOrCreate([
+                \App\Models\Knmp\CalonLokasiBaCalon::firstOrCreate([
                     'calon_lokasi_id' => $calon->id
                 ], [
                     'status_ba' => 'Menunggu Draft'
@@ -414,7 +414,7 @@ class CalonLokasiController extends ProgramBaseController
         try {
             DB::connection('mysql_knmp')->beginTransaction();
             
-            $ba = \App\Models\CalonLokasiBaAktivasi::firstOrCreate(
+            $ba = \App\Models\Knmp\CalonLokasiBaAktivasi::firstOrCreate(
                 ['calon_lokasi_id' => $calon->id],
                 ['status_ba' => 'Menunggu Draft']
             );
@@ -434,7 +434,7 @@ class CalonLokasiController extends ProgramBaseController
             $calon->status_tahapan = 'verif_teknis';
             
             // Initialize Verifikasi Teknis record
-            \App\Models\CalonLokasiVerifTeknis::firstOrCreate([
+            \App\Models\Knmp\CalonLokasiVerifTeknis::firstOrCreate([
                 'calon_lokasi_id' => $calon->id
             ], [
                 'status_verif' => 'Proses Survey'
@@ -471,7 +471,7 @@ class CalonLokasiController extends ProgramBaseController
         try {
             DB::connection('mysql_knmp')->beginTransaction();
             
-            $ba = \App\Models\CalonLokasiBaCalon::firstOrCreate(
+            $ba = \App\Models\Knmp\CalonLokasiBaCalon::firstOrCreate(
                 ['calon_lokasi_id' => $calon->id],
                 ['status_ba' => 'Menunggu Draft']
             );
@@ -491,7 +491,7 @@ class CalonLokasiController extends ProgramBaseController
             $calon->status_tahapan = 'penetapan';
             
             // Initialize Penetapan (SK) record
-            \App\Models\CalonLokasiPenetapan::firstOrCreate([
+            \App\Models\Knmp\CalonLokasiPenetapan::firstOrCreate([
                 'calon_lokasi_id' => $calon->id
             ], [
                 'status_sk' => 'Menunggu Penerbitan'
@@ -528,7 +528,7 @@ class CalonLokasiController extends ProgramBaseController
         try {
             DB::connection('mysql_knmp')->beginTransaction();
             
-            $sk = \App\Models\CalonLokasiPenetapan::firstOrCreate(
+            $sk = \App\Models\Knmp\CalonLokasiPenetapan::firstOrCreate(
                 ['calon_lokasi_id' => $calon->id],
                 ['status_sk' => 'Menunggu Penerbitan']
             );
