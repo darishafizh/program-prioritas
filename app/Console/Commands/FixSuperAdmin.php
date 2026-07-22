@@ -26,24 +26,24 @@ class FixSuperAdmin extends Command
      */
     public function handle()
     {
-        // Temukan pengguna yang ada indikasi sebagai admin/super_admin
+        // 1. Panggil Seeder untuk memastikan 3 role utama terbuat dengan rapi
+        $this->call(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        // 2. Temukan pengguna super admin (dari nama atau role lama)
         $users = User::where('name', 'like', '%Super Admin%')
                      ->orWhere('name', 'like', '%Samudra%')
                      ->get();
 
-        if ($users->isEmpty()) {
-            $this->error('Tidak ada user Super Admin yang ditemukan.');
-            return;
+        foreach ($users as $user) {
+            $user->syncPermissions([]); // Hapus direct permission
+            $user->syncRoles(['super_admin']); // Pasang role super_admin baru
+            $this->info("Berhasil mereset akses Super Admin untuk: " . $user->name);
         }
 
-        foreach ($users as $user) {
-            // Hapus semua direct permissions (karena harusnya ikut role)
-            $user->syncPermissions([]);
-            
-            // Set ulang role nya menjadi role yang benar 'super_admin'
-            $user->syncRoles(['super_admin']);
-            
-            $this->info("Berhasil mengembalikan akses penuh untuk user: " . $user->name);
-        }
+        // 3. Bersihkan role lain yang tidak diinginkan (selain 3 role utama)
+        $validRoles = ['super_admin', 'admin', 'user_daerah'];
+        \Spatie\Permission\Models\Role::whereNotIn('name', $validRoles)->delete();
+        
+        $this->info("Pembersihan selesai! Sekarang sistem hanya memiliki 3 role utama.");
     }
 }

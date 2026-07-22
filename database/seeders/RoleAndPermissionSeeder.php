@@ -33,36 +33,24 @@ class RoleAndPermissionSeeder extends Seeder
         }
 
         // 2. Definisikan Roles
-        // Pastikan nama role sesuai dengan yang ada di sistem (snake_case)
         $roleSuperAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
-        $roleAdminRoren = Role::firstOrCreate(['name' => 'admin_roren', 'guard_name' => 'web']);
-        $roleVerifikator = Role::firstOrCreate(['name' => 'verifikator', 'guard_name' => 'web']);
+        $roleAdmin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $roleUserDaerah = Role::firstOrCreate(['name' => 'user_daerah', 'guard_name' => 'web']);
-        $roleMenteri = Role::firstOrCreate(['name' => 'menteri', 'guard_name' => 'web']);
 
         // 3. Assign Permissions ke Role
         // Super Admin mendapatkan semua hak akses
         $roleSuperAdmin->syncPermissions($permissions);
 
-        // Contoh pembagian akses untuk role lain (Bisa disesuaikan nanti di menu Manajemen Akses)
-        $roleAdminRoren->syncPermissions([
-            'lihat_dashboard',
-            'kelola_operasional',
-            'kelola_evaluasi'
-        ]);
-
-        $roleVerifikator->syncPermissions([
+        // Admin: dashboard & evaluasi
+        $roleAdmin->syncPermissions([
             'lihat_dashboard',
             'kelola_evaluasi'
         ]);
 
+        // User Daerah: operasional (tambahkan dashboard agar bisa masuk)
         $roleUserDaerah->syncPermissions([
             'lihat_dashboard',
             'kelola_operasional'
-        ]);
-        
-        $roleMenteri->syncPermissions([
-            'lihat_dashboard'
         ]);
     }
 }
