@@ -7,23 +7,26 @@
 
     {{-- Header --}}
     <div class="mb-6 animate-fade-in-up">
-        <a href="{{ route('program.dashboard', ['program' => strtolower($activeProgram)]) }}"
-            class="inline-flex items-center gap-2 text-xs font-medium text-textMuted-light dark:text-textMuted-dark hover:text-teal-light dark:hover:text-teal-400 transition-colors mb-5 bg-white dark:bg-gray-800 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-            <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard Utama
-        </a>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+            <a href="{{ route('program.dashboard', ['program' => strtolower($activeProgram)]) }}"
+                class="inline-flex items-center gap-2 text-xs font-medium text-textMuted-light dark:text-textMuted-dark hover:text-teal-light dark:hover:text-teal-400 transition-colors bg-white dark:bg-gray-800 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard Utama
+            </a>
+            
+            @if (isset($stats['last_updated']))
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-light/10 dark:bg-teal-400/10 border border-teal-light/20 dark:border-teal-400/20 text-teal-light dark:text-teal-300 text-xs font-medium shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-teal-light dark:bg-teal-400 animate-pulse shrink-0"></span>
+                    <i class="fa-regular fa-clock text-[11px]"></i>
+                    <span>Update Data Terakhir: <strong class="font-semibold text-textMain-light dark:text-white">{{ $stats['last_updated'] }}</strong></span>
+                </div>
+            @endif
+        </div>
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex items-center gap-3 sm:gap-4">
                 <div>
                     <div class="flex items-center gap-3 flex-wrap">
                         <h2 class="text-base font-medium tracking-tight text-textMain-light dark:text-textMain-dark">Monitoring Konstruksi KNMP</h2>
-                        @if (isset($stats['last_updated']))
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-light/10 dark:bg-teal-400/10 border border-teal-light/20 dark:border-teal-400/20 text-teal-light dark:text-teal-300 text-xs font-medium shadow-xs">
-                                <span class="w-2 h-2 rounded-full bg-teal-light dark:bg-teal-400 animate-pulse shrink-0"></span>
-                                <i class="fa-regular fa-clock text-[11px]"></i>
-                                <span>Update Data Terakhir: <strong class="font-semibold text-textMain-light dark:text-white">{{ $stats['last_updated'] }}</strong></span>
-                            </div>
-                        @endif
                     </div>
                     <div class="flex items-center gap-2 mt-1">
                         <p class="text-[11px] sm:text-xs text-textMuted-light dark:text-textMuted-dark">
@@ -59,7 +62,7 @@
     {{-- Bar Chart --}}
     <div class="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden mb-6">
         @if(count($paginatedDetails) > 0)
-            <div class="w-full relative min-w-0 p-4" style="min-height: {{ max(400, count($paginatedDetails) * 32) }}px;">
+            <div class="w-full relative min-w-0 p-4" style="min-height: {{ max(400, count($paginatedDetails) * 45) }}px;">
                 <div id="chart-progres-paginated" class="w-full h-full min-w-0 overflow-hidden"></div>
             </div>
         @else
@@ -236,7 +239,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('chart-progres-paginated') && paginatedData.length > 0) {
         const categories = paginatedData.map(item => {
             let name = item.lokasi || '';
-            return name.replace(/^KNMP\s+Desa\s+/i, 'Desa ').replace(/^KNMP\s+/i, '');
+            name = name.replace(/^KNMP\s+Desa\s+/i, 'Desa ').replace(/^KNMP\s+/i, '');
+            let kab = item.kabupaten || '';
+            if (kab) {
+                return [name, kab];
+            }
+            return name;
         });
 
         const barOptions = {
@@ -246,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }],
             chart: {
                 type: 'bar',
-                height: Math.max(400, paginatedData.length * 32),
+                height: Math.max(400, paginatedData.length * 45),
                 toolbar: { show: false },
                 background: 'transparent',
                 fontFamily: 'Inter, sans-serif',

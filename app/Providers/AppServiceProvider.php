@@ -30,6 +30,12 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
+        // Implicitly grant "Super Admin" role all permissions
+        // This makes sure Super Admin bypasses all 'permission:' middleware checks
+        Gate::before(function ($user, $ability) {
+            return $user->isSuperAdmin() ? true : null;
+        });
+
         // Super Admin: manage users
         Gate::define('manage-users', function (User $user) {
             return $user->isSuperAdmin();

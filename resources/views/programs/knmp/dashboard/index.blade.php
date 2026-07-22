@@ -62,33 +62,23 @@
 
 
         <!-- KPI Cards (Row 2) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
             <x-stat-card title="Total Lokasi" icon="fa-solid fa-house-chimney-window"
                 icon-color="text-teal-light dark:text-teal-400" icon-bg="bg-teal-light/10 dark:bg-teal-light/20"
                 value="{{ $stats['total_lokasi'] ?? 0 }}" unit="Lokasi"
-                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> +{{ $stats['lokasi_tahun_ini'] ?? 0 }} Lokasi dari tahun ini</span>"
+                description="<span class='text-teal-light dark:text-teal-400 font-medium'>{{ $stats['label_total_lokasi'] ?? '' }}</span>"
                 class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                 onclick="window.location.href='{{ route('program.dashboard.siklus', ['program' => strtolower($activeProgram)]) }}'" />
 
-            <x-stat-card title="Rata-Rata Progres" icon="fa-solid fa-chart-pie"
-                icon-color="text-teal-light dark:text-teal-400" icon-bg="bg-teal-light/10 dark:bg-teal-400/20"
-                value="{{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}" unit="%"
-                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onclick="window.location.href='{{ route('program.dashboard.konstruksi', ['program' => strtolower($activeProgram)]) }}'">
-                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-2">
-                    <div class="bg-teal-light dark:bg-teal-400 h-2 rounded-full"
-                        style="width: {{ $stats['rata_progres'] ?? 0 }}%"></div>
-                </div>
-            </x-stat-card>
-
-            <x-stat-card title="Total Selesai" icon="fa-solid fa-check-double"
+            <x-stat-card title="Total Operasional" icon="fa-solid fa-check-double"
                 icon-color="text-success dark:text-emerald-400" icon-bg="bg-success/10 dark:bg-success/20"
                 value="{{ $stats['total_selesai'] ?? 0 }}" unit="Lokasi"
-                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> Telah serah terima</span>"
+                description="<span class='text-success font-medium inline-flex items-center gap-1'><i class='fa-solid fa-arrow-trend-up'></i> Telah beroperasi</span>"
                 class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onclick="window.location.href='{{ route('program.dashboard.operasional', ['program' => strtolower($activeProgram)]) }}'" />
 
-            <x-stat-card title="Dalam Pembangunan" icon="fa-solid fa-person-digging"
+            <x-stat-card title="Total Konstruksi" icon="fa-solid fa-person-digging"
                 icon-color="text-warning dark:text-amber-500" icon-bg="bg-warning/10 dark:bg-amber-400/20"
-                value="{{ $stats['dalam_pembangunan'] ?? 0 }}" unit="Lokasi" description="Tahap konstruksi aktif"
+                value="{{ $stats['dalam_pembangunan'] ?? 0 }}" unit="Lokasi" description="<span class='text-warning dark:text-amber-500 font-medium'>Rata-rata Progres: {{ number_format($stats['rata_progres'] ?? 0, 2, ',', '.') }}%</span>"
                 class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onclick="window.location.href='{{ route('program.dashboard.konstruksi', ['program' => strtolower($activeProgram)]) }}'" />
         </div>
 
@@ -106,10 +96,25 @@
                     <p class="text-xs text-textMuted-light dark:text-textMuted-dark mt-1">Peta interaktif persebaran
                         pembangunan Kampung Nelayan Merah Putih di seluruh wilayah Indonesia.</p>
                 </div>
+                
+                @if (count($stats['map_locations'] ?? []) > 0)
+                <div class="flex items-center gap-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-lg px-3 py-2 border border-gray-100 dark:border-gray-800">
+                    <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-textMain-light dark:text-textMain-dark">
+                        <input type="checkbox" id="filter-konstruksi" checked class="rounded text-warning border-gray-300 focus:ring-warning">
+                        <div class="w-3 h-3 rounded-full bg-warning border border-white dark:border-gray-800 shadow-sm"></div>
+                        <span>Konstruksi</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-textMain-light dark:text-textMain-dark">
+                        <input type="checkbox" id="filter-operasional" checked class="rounded text-success border-gray-300 focus:ring-success">
+                        <div class="w-3 h-3 rounded-full bg-success border border-white dark:border-gray-800 shadow-sm"></div>
+                        <span>Operasional</span>
+                    </label>
+                </div>
+                @endif
             </div>
 
-            <div id="knmpMapContainer">
-                @if (($stats['dalam_pembangunan'] ?? 0) > 0)
+            <div id="knmpMapContainer" class="relative">
+                @if (count($stats['map_locations'] ?? []) > 0)
                     <div id="knmpMap" class="w-full h-[500px] z-0 bg-gray-100 dark:bg-gray-900"
                         style="height: 500px; width: 100%; min-height: 500px;"></div>
                 @else
@@ -227,8 +232,11 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Initialize map centered on Indonesia
-                var map = L.map('knmpMap').setView([-0.7893, 113.9213], 5);
+                var mapEl = document.getElementById('knmpMap');
+                if (!mapEl) return;
+                
+                // Initialize map centered on Indonesia (shifted east to push map left)
+                var map = L.map('knmpMap').setView([-0.7893, 118.9213], 5);
 
                 var lightTileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
                 var darkTileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
@@ -253,6 +261,11 @@
                 });
 
                 var locations = @json($stats['map_locations'] ?? []);
+                
+                var markers = {
+                    konstruksi: L.featureGroup().addTo(map),
+                    operasional: L.featureGroup().addTo(map)
+                };
 
                 locations.forEach(function(loc) {
                     if (loc.latitude && loc.longitude) {
@@ -294,12 +307,33 @@
                                 offset: [0, -10]
                             });
 
-                        marker.addTo(map);
+                        if (isSerahTerima) {
+                            marker.addTo(markers.operasional);
+                        } else {
+                            marker.addTo(markers.konstruksi);
+                        }
                     }
                 });
 
+                var chkKonstruksi = document.getElementById('filter-konstruksi');
+                var chkOperasional = document.getElementById('filter-operasional');
+                
+                if (chkKonstruksi) {
+                    chkKonstruksi.addEventListener('change', function(e) {
+                        if (e.target.checked) map.addLayer(markers.konstruksi);
+                        else map.removeLayer(markers.konstruksi);
+                    });
+                }
+                
+                if (chkOperasional) {
+                    chkOperasional.addEventListener('change', function(e) {
+                        if (e.target.checked) map.addLayer(markers.operasional);
+                        else map.removeLayer(markers.operasional);
+                    });
+                }
+
                 window.addEventListener('map-fly-home', () => {
-                    map.flyTo([-0.7893, 113.9213], 5, {
+                    map.flyTo([-0.7893, 118.9213], 5, {
                         duration: 1.0
                     });
                 });

@@ -147,6 +147,7 @@ class KonstruksiKnmpController extends ProgramBaseController
 
             $allDetails[] = [
                 'lokasi' => $k->nama,
+                'kabupaten' => $k->kabupaten,
                 'daerah' => $k->status ?: 'Penyangga',
                 'konstruktor' => $kons && $kons->penyediaJasa ? $kons->penyediaJasa->nama : '-',
                 'progres' => round($progres, 1),

@@ -98,11 +98,18 @@ class OperasionalKnmpController extends ProgramBaseController
             $icon = self::SARPRAS_ICONS[$s->nama] ?? 'fa-solid fa-box';
             
             $tersedia = 0;
+            $target = 0;
             $apiKey = $apiKeys[$s->nama] ?? null;
             if ($apiKey && is_array($apiData)) {
                 foreach ($apiData as $item) {
-                    if (isset($item[$apiKey]) && stripos($item[$apiKey], '2. Sudah Operasional') !== false) {
-                        $tersedia++;
+                    if (isset($item[$apiKey])) {
+                        $val = $item[$apiKey];
+                        if (stripos($val, '2. Sudah Operasional') !== false) {
+                            $tersedia++;
+                            $target++;
+                        } elseif (stripos($val, '1. Belum Operasional') !== false) {
+                            $target++;
+                        }
                     }
                 }
             }
@@ -111,9 +118,9 @@ class OperasionalKnmpController extends ProgramBaseController
                 'key'       => \Illuminate\Support\Str::slug($s->nama, '_'),
                 'nama'      => $s->nama,
                 'icon'      => $icon,
-                'total'     => $tersedia,     // jumlah KNMP yang memiliki sarpras ini berstatus sudah operasional
-                'target'    => count($apiData) > 0 ? count($apiData) : $totalSelesai, // target berdasarkan jumlah lokasi di API atau fallback ke db
-                'persen'    => (count($apiData) > 0) ? ($tersedia / count($apiData)) * 100 : 0,
+                'total'     => $tersedia,
+                'target'    => $target,
+                'persen'    => ($target > 0) ? ($tersedia / $target) * 100 : 0,
             ];
         })->all();
 

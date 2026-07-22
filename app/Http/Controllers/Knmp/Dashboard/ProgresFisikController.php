@@ -39,7 +39,9 @@ class ProgresFisikController extends ProgramBaseController
         $batches = DB::connection('mysql_knmp')->table('batch')->get()->map(function($b) {
             return [
                 'id' => $b->id,
-                'name' => $b->nama_tahap . ' - ' . $b->tahun
+                'name' => 'Tahap ' . $b->nama_tahap . ' - ' . $b->tahun,
+                'nama_tahap' => $b->nama_tahap,
+                'tahun' => $b->tahun
             ];
         })->keyBy('id');
 
@@ -111,7 +113,7 @@ class ProgresFisikController extends ProgramBaseController
                     elseif ($deviasi >= -5) $kesehatan['ringan']++;
                     else $kesehatan['kritis']++;
 
-                    if ($latestProgres) {
+                    if ($latestProgres && $k->tahap_saat_ini === 'konstruksi') {
                         $totalProgres += $progres;
                         $countWithProgres++;
                     }
@@ -144,6 +146,20 @@ class ProgresFisikController extends ProgramBaseController
                 $avgProgres = round($totalProgres / $countWithProgres, 2);
             }
         }
+        
+        $activeBatchIds = (clone $queryKnmp)->whereNotNull('batch_id')->distinct()->pluck('batch_id')->toArray();
+        
+        $batchGroups = [];
+        foreach($batches->values() as $b) {
+            if (in_array($b['id'], $activeBatchIds)) {
+                $batchGroups[$b['tahun']][] = $b['nama_tahap'];
+            }
+        }
+        $batchStrings = [];
+        foreach($batchGroups as $tahun => $tahaps) {
+            $batchStrings[] = "Tahap " . implode(' & ', $tahaps) . " Tahun " . $tahun;
+        }
+        $labelTotalLokasi = implode(', ', $batchStrings);
 
         
 
@@ -258,6 +274,7 @@ class ProgresFisikController extends ProgramBaseController
             'masterSarpras' => $masterSarpras,
             'stats' => [
                 'total_lokasi' => $totalLokasi,
+                'label_total_lokasi' => $labelTotalLokasi,
                 'lokasi_tahun_ini' => $lokasiTahunIni,
                 'rata_progres' => $avgProgres,
                 'total_selesai' => $totalSelesai,
@@ -587,8 +604,17 @@ class ProgresFisikController extends ProgramBaseController
                             }
                         }
 
+                        $displayNama = $s->nama;
+                        if ($s->nama === 'KDRN Dingin') {
+                            $displayNama = 'Kendaraan Dingin';
+                        } elseif ($s->nama === 'Waserda') {
+                            $displayNama = 'Kios Perbekalan';
+                        } elseif ($s->nama === 'Kios Pemasaran') {
+                            $displayNama = 'Lapak Ikan';
+                        }
+
                         $pointSarpras[] = [
-                            'nama' => $s->nama,
+                            'nama' => $displayNama,
                             'icon' => $icon,
                             'status' => $statusSarpras
                         ];
